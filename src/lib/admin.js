@@ -14,6 +14,7 @@ const Encode=(str)=>{
     return encode(`oiblog_${str}`);
 }
 const checkloginByReq=req=>{
+    console.log(req);
     if(req.cookies==undefined)return false;
     var cookie=req.cookies['oiblog-cookie'];
     if(cookie==undefined)return false;
@@ -26,3 +27,6 @@ module.exports={
     checkloginByReq,
     checkloginByPassword
 };
+
+//localStorage.cp6_player_id='f6d7c421-bf86-455d-9453-18fa63f68638'
+// window.localStorage.setItem("cp6_player_id","551ee072-105e-49e5-b438-316f912993c2");

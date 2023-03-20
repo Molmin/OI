@@ -13,8 +13,7 @@ const Admin=require('./lib/admin.js');
 app.all('*',(req,res,next)=>{
     if(Admin.checkloginByReq(req))
         req.logined=true;
-    else res.cookie("oiblog-cookie",""),
-        req.logined=false;
+    else req.logined=false;
     res.set('Access-Control-Allow-Origin','*');
     res.set('Access-Control-Allow-Methods','GET');
     res.set('Access-Control-Allow-Headers','X-Requested-With, Content-Type');

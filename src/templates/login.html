@@ -1,7 +1,7 @@
 <script>
     $(document).ready(()=>{
         $("#user-login").click(()=>{
-            $.post("/login/try",
+            $.post("/admin/login/try",
                 {
                     password: $('#login-password').val()
                 },
