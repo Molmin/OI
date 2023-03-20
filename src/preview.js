@@ -9,8 +9,10 @@ router.get('/login',(req,res)=>{
         return;
     }
     ejs.renderFile("./src/templates/login.html",{_: req.body._},(err,HTML)=>{
-        res.send(Template({title: `${req.body._('login')}`,
-                           header: ``
+        res.send(Template({title: `Login`,
+                           header: ``,
+                           preview: true,
+                           onadmin: true
                           },HTML));
     });
 });
