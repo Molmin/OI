@@ -1,9 +1,7 @@
 const YAML=require('yamljs');
 var Config=YAML.load('./data/config.yaml');
-Config.student=YAML.load(`./data/${Config.configure.students}`).student;
 
 module.exports=(config,HTML)=>{
-    var _=config._;
     return`
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -28,18 +26,14 @@ module.exports=(config,HTML)=>{
             </div>
             <div class="topan-header-left">
                 <span class="topan-header-text">${Config.title}&nbsp;</span>
-                <a href="/${Config.on}/test">
-                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block${config.ontest?"-showed":""}">
-                        <i class="fa fa-solid fa-fire"></i>
-                        <span>&nbsp;Tests</span>
-                    </span>
-                </a>
-                <a href="/${Config.on}/student">
-                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block${config.onstudent?"-showed":""}">
-                        <i class="fa fa-solid fa-user"></i>
-                        <span>&nbsp;Students</span>
-                    </span>
-                </a>
+                ${config.preview?`
+                    <a href="/admin">
+                        <span class="topan-button-ordinary topan-button-commonly topan-button-header-block${config.onadmin?"-showed":""}">
+                            <i class="fa fa-solid fa-wrench"></i>
+                            <span>&nbsp;Admin</span>
+                        </span>
+                    </a>
+                `:""}
             </div>
             <div class="topan-header-right">
             </div>
@@ -54,7 +48,7 @@ module.exports=(config,HTML)=>{
                 <footer class="topan-footer">
                     <p></p>
                     <p style="text-align: center; color: #555; font-size: 12px;">
-                        Powered by <a href="https://github.com/Molmin/score.git">Molmin/score</a>&nbsp;&nbsp;&nbsp;
+                        Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
                         © 2023 <a href="https://github.com/Molmin/">Milmon</a>
                     </p>
                 </footer>
