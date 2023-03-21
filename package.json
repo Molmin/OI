@@ -2,9 +2,9 @@
   "name": "oiproblems",
   "version": "0.0.0",
   "description": "",
-  "main": "src/runner.js",
+  "main": "runner.js",
   "scripts": {
-    "start": "node src/runner.js"
+    "start": "node runner.js"
   },
   "repository": {
     "type": "git",
@@ -18,6 +18,7 @@
   "homepage": "https://github.com/Molmin/OI#readme",
   "dependencies": {
     "body-parser": "^1.20.2",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dayjs": "^1.11.7",

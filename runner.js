@@ -2,18 +2,21 @@ const express=require('express'),
       app=express();
 const cors=require('cors');
 app.use(cors());
-const path=require('path');
 const bodyParser=require('body-parser');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:false}));
+const cookieParser=require('cookie-parser');
+app.use(cookieParser());
 const YAML=require('yamljs');
 var Config=YAML.load('./data/config.yaml');
-const Admin=require('./lib/admin.js');
+const Admin=require('./src/lib/admin.js');
 
 app.all('*',(req,res,next)=>{
     if(Admin.checkloginByReq(req))
         req.logined=true;
-    else req.logined=false;
+    else
+        res.cookie('oiblog-cookie',''),
+        req.logined=false;
     res.set('Access-Control-Allow-Origin','*');
     res.set('Access-Control-Allow-Methods','GET');
     res.set('Access-Control-Allow-Headers','X-Requested-With, Content-Type');
@@ -24,9 +27,9 @@ app.all('*',(req,res,next)=>{
 app.get("/",(req,res)=>{
     res.redirect(`/${Config.on}`);
 });
-app.use(`/${Config.on}`,require('./preview.js'));
-app.use(`/admin`,require('./admin.js'));
+app.use(`/${Config.on}`,require('./src/preview.js'));
+app.use(`/admin`,require('./src/admin.js'));
 
-app.listen(8499,()=>{
-    console.log('Port :8499 is opened');
+app.listen(8299,()=>{
+    console.log('Port :8299 is opened');
 });

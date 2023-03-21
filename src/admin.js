@@ -9,7 +9,7 @@ router.get('/login',(req,res)=>{
         res.redirect("/");
         return;
     }
-    ejs.renderFile("./src/templates/login.html",{_: req.body._},(err,HTML)=>{
+    ejs.renderFile("./src/templates/login.html",(err,HTML)=>{
         res.send(Template({title: `Login`,
                            header: ``,
                            preview: true,
@@ -23,7 +23,8 @@ router.post('/login/try',(req,res)=>{
         return;
     }
     if(Admin.checkloginByPassword(req.body.password)){
-        res.cookie("oiblog-cookie",Admin.Encode(req.body.password));
+        console.log(Admin.Encode(req.body.password));
+        res.cookie("oiblog-cookie",Admin.Encode(req.body.password),{maxAge: 24*60*60*1000});
         res.status(200).json({});
     }
 });

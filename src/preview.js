@@ -3,16 +3,11 @@ const express=require('express'),
 const ejs=require('ejs');
 const Template=require('./template.js');
 
-router.get('/login',(req,res)=>{
-    if(req.logined){
-        res.redirect("/");
-        return;
-    }
-    ejs.renderFile("./src/templates/login.html",{_: req.body._},(err,HTML)=>{
-        res.send(Template({title: `Login`,
+router.get('/',(req,res)=>{
+    ejs.renderFile("./src/templates/problem_list.html",{data:{}},(err,HTML)=>{
+        res.send(Template({title: `Problem List`,
                            header: ``,
-                           preview: true,
-                           onadmin: true
+                           preview: true
                           },HTML));
     });
 });
