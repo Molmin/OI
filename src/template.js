@@ -33,6 +33,11 @@ module.exports=(config,HTML)=>{
                             <span>&nbsp;Admin</span>
                         </span>
                     </a>
+                    <a href="/admin/logout">
+                        <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
+                            <i class="fa fa-solid fa-right-from-bracket"></i>
+                        </span>
+                    </a>
                 `:""}
             </div>
             <div class="topan-header-right">

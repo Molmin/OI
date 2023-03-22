@@ -13,7 +13,8 @@ const Encode=(str)=>{
     // first time
     return encode(`oiblog_${str}`);
 }
-const checkloginByReq=req=>encode(req.cookies['oiblog-cookie'])==Config.admin;
+const checkloginByReq=req=>req.cookies['oiblog-cookie']
+    &&encode(req.cookies['oiblog-cookie'])==Config.admin;
 const checkloginByPassword=password=>encode(Encode(password))==Config.admin;
 module.exports={
     encode,

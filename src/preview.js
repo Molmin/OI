@@ -4,7 +4,7 @@ const ejs=require('ejs');
 const Template=require('./template.js');
 
 router.get('/',(req,res)=>{
-    ejs.renderFile("./src/templates/problem_list.html",{data:{}},(err,HTML)=>{
+    ejs.renderFile("./src/templates/problem_list.html",{isadmin: req.logined},(err,HTML)=>{
         res.send(Template({title: `Problem List`,
                            header: ``,
                            preview: true
