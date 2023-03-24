@@ -1,5 +1,6 @@
 const express=require('express'),
       app=express();
+const path=require('path');
 const cors=require('cors');
 app.use(cors());
 const bodyParser=require('body-parser');
@@ -27,6 +28,7 @@ app.all('*',(req,res,next)=>{
 app.get("/",(req,res)=>{
     res.redirect(`/${Config.on}`);
 });
+app.use("/file",express.static(path.join(__dirname,'src/assets')));
 app.use(`/${Config.on}`,require('./src/preview.js'));
 app.use(`/admin`,require('./src/admin.js'));
 

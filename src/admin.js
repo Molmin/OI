@@ -3,12 +3,13 @@ const express=require('express'),
 const ejs=require('ejs');
 const Template=require('./template.js');
 const Admin=require('./lib/admin.js');
+const URL=require('url');
 
 router.all('*',(req,res,next)=>{
     if(req._parsedUrl.pathname.startsWith('/login')||Admin.checkloginByReq(req))next();
     else return res.redirect('/admin/login');
 });
-router.get('/login',(req,res,next)=>{
+router.get('/login',(req,res)=>{
     if(req.logined){
         res.redirect("/");
         return;
@@ -17,7 +18,8 @@ router.get('/login',(req,res,next)=>{
         res.send(Template({title: `Login`,
                            header: ``,
                            preview: true,
-                           onadmin: true
+                           onadmin: true,
+                           isadmin: req.logined
                           },HTML));
     });
 });
@@ -48,7 +50,8 @@ router.get('/create',(req,res)=>{
         res.send(Template({title: `Create`,
                            header: ``,
                            preview: true,
-                           onadmin: true
+                           onadmin: true,
+                           isadmin: req.logined
                           },HTML));
     });
 });

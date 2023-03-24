@@ -1,0 +1,94 @@
+<script src="/file/ace/ace.js"></script>
+<script src="/file/ace/ext-language_tools.js"></script>
+<script>
+    $(document).ready(()=>{
+        editor = ace.edit("code");
+        theme = "clouds"
+        language = "markdown"
+        editor.setTheme("ace/theme/" + theme);
+        editor.session.setMode("ace/mode/" + language);
+        editor.setFontSize(18);
+        editor.setReadOnly(false); 
+        editor.setOption("wrap", "free")
+        ace.require("ace/ext/language_tools");
+        editor.setOptions({
+            enableBasicAutocompletion: true,
+            enableSnippets: true,
+            enableLiveAutocompletion: true
+        });
+        $("#pro-create").click(()=>{
+            $.post("/admin/problem/0/edit",
+                {
+                    title: $('#pro-title').val(),
+                    difficulty: {
+                        algorithm: $('#pro-difficulty-algorithm').val(),
+                        thinking: $('#pro-difficulty-thinking').val(),
+                        implementation: $('#pro-difficulty-implementation').val()
+                    },
+                    judge: {
+                        time: $('#pro-judge-time').val(),
+                        memory: $('#pro-judge-memory').val(),
+                        type: $('#pro-judge-type').val()
+                    },
+                    tags: $('#pro-tags').val(),
+                    source: $('#pro-source').val(),
+                    statement: editor.getValue()
+                },
+                (data,status)=>{
+                    $('#result').text(data.res);
+                }
+            );
+        });
+    });
+</script>
+
+<style>
+    .pro-config>input{
+        width: 100px;
+    }
+</style>
+
+<div class="topan-section-shadow">
+    <p><input placeholder="题目标题" type="text" id="pro-title"></input></p>
+    <p class="pro-config">
+        <input placeholder="算法难度" type="text" id="pro-difficulty-algorithm"></input>
+        <input placeholder="思维难度" type="text" id="pro-difficulty-thinking"></input>
+        <input placeholder="实现难度" type="text" id="pro-difficulty-implementation"></input>
+        <input placeholder="时间限制" type="text" id="pro-judge-time"></input>
+        <input placeholder="空间限制" type="text" id="pro-judge-memory"></input>
+        <input placeholder="评测类型" type="text" id="pro-judge-type"></input>
+    </p>
+    <p><input placeholder="标签（用中文或英文逗号隔开）" type="text" id="pro-tags"></input></p>
+    <p><input placeholder="来源" type="text" id="pro-source"></input></p>
+    <pre id="code" class="ace_editor" style="min-height: 400px;">
+<textarea class="ace_text-input" id="sys">## 题目描述
+
+TODO
+
+## 输入格式
+
+TODO
+
+## 输出格式
+
+TODO
+
+## 样例 1
+
+```input1
+TODO
+```
+
+```output1
+TODO
+```
+
+## 样例 1 解释
+
+TODO
+
+## 数据规模
+
+TODO</textarea></pre>
+    <p><button id="pro-create" class="topan-button-emphasize topan-button-default">确认</button></p>
+</div>
