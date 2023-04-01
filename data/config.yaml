@@ -1,6 +1,5 @@
 on: OI
 readme: readme.md
 title: OI Problems
-admin: edf0de79a2dbd23c287e63ac0a8ec30401abaaaa4fdf578012e9f9c0e1364acf1f19f29a6742d11ecc97c3b05249bde6
 problems: problem.json
 configure:

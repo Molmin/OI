@@ -1,5 +1,6 @@
 const express=require('express'),
       app=express();
+const fs=require('fs');
 const path=require('path');
 const cors=require('cors');
 app.use(cors());
@@ -11,6 +12,10 @@ app.use(cookieParser());
 const YAML=require('yamljs');
 var Config=YAML.load('./data/config.yaml');
 const Admin=require('./src/lib/admin.js');
+
+var password=parseInt(Math.random()*1000000);
+fs.writeFileSync("password",`${password}`,(err)=>{});
+console.log(`Password is: ${password}`);
 
 app.all('*',(req,res,next)=>{
     if(Admin.checkloginByReq(req))
