@@ -1,7 +1,6 @@
 const crypto=require('crypto');
 const YAML=require('yamljs');
 const fs=require('fs');
-var Password=fs.readFileSync('password');
 const encode=(str)=>{
     // second time
     const MD5=crypto.createHash('md5');
@@ -15,8 +14,8 @@ const Encode=(str)=>{
     return encode(`oiblog_${str}`);
 }
 const checkloginByReq=req=>req.cookies['oiblog-cookie']
-    &&req.cookies['oiblog-cookie']==Encode(Password);
-const checkloginByPassword=password=>password==Password;
+    &&req.cookies['oiblog-cookie']==Encode(fs.readFileSync('password','utf8'));
+const checkloginByPassword=password=>password==fs.readFileSync('password','utf8');
 module.exports={
     encode,
     Encode,
