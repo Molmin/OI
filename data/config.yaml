@@ -1,5 +1,2 @@
 on: OI
-readme: readme.md
 title: OI Problems
-problems: problem.json
-configure:

@@ -1,6 +1,7 @@
 const express=require('express'),
       router=express.Router();
 const ejs=require('ejs');
+const fs=require('fs');
 const Template=require('./template.js');
 const Admin=require('./lib/admin.js');
 const URL=require('url');
@@ -54,6 +55,22 @@ router.get('/create',(req,res)=>{
                            isadmin: req.logined
                           },HTML));
     });
+});
+router.post('/problem/:id/edit',(req,res)=>{
+    if(req.params.id=='0'){
+        var randomId="",charlist="abcdefghijklmnopqrstuvwxyz01234567890123456789";
+        for(var i=0;i<6;i++)
+            randomId+=charlist[parseInt(Math.random()*charlist.length)];
+        req.params.id=randomId;
+        var problemList=fs.readFileSync('data/problem.json','utf8');
+        var tmp=JSON.parse(problemList);
+        tmp.push(randomId);
+        problemList=JSON.stringify(tmp,null,"  ");
+        fs.writeFileSync('data/problem.json',problemList);
+        fs.mkdirSync(`data/${randomId}`);
+    }
+    var pid=req.params.id,problemConfig=JSON.parse(req.body.prodata);
+    fs.writeFileSync(`data/${pid}/config.json`,JSON.stringify(problemConfig,null,"  "));
 });
 
 module.exports=router;

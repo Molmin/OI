@@ -17,23 +17,25 @@
             enableLiveAutocompletion: true
         });
         $("#pro-create").click(()=>{
-            $.post("/admin/problem/0/edit",
-                {
-                    title: $('#pro-title').val(),
-                    difficulty: {
-                        algorithm: $('#pro-difficulty-algorithm').val(),
-                        thinking: $('#pro-difficulty-thinking').val(),
-                        implementation: $('#pro-difficulty-implementation').val()
-                    },
-                    judge: {
-                        time: $('#pro-judge-time').val(),
-                        memory: $('#pro-judge-memory').val(),
-                        type: $('#pro-judge-type').val()
-                    },
-                    tags: $('#pro-tags').val(),
-                    source: $('#pro-source').val(),
-                    statement: editor.getValue()
+            var prodata={
+                title: $('#pro-title').val(),
+                difficulty: {
+                    algorithm: $('#pro-difficulty-algorithm').val(),
+                    thinking: $('#pro-difficulty-thinking').val(),
+                    implementation: $('#pro-difficulty-implementation').val()
                 },
+                judge: {
+                    time: $('#pro-judge-time').val(),
+                    memory: $('#pro-judge-memory').val(),
+                    type: $('#pro-judge-type').val()
+                },
+                tags: $('#pro-tags').val(),
+                source: $('#pro-source').val(),
+                statement: editor.getValue()
+            };
+            $.post(
+                "/admin/problem/0/edit",
+                {prodata:JSON.stringify(prodata)},
                 (data,status)=>{
                     $('#result').text(data.res);
                 }
