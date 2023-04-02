@@ -70,7 +70,10 @@ router.post('/problem/:id/edit',(req,res)=>{
         fs.mkdirSync(`data/${randomId}`);
     }
     var pid=req.params.id,problemConfig=JSON.parse(req.body.prodata);
+    problemConfig.statement={"简体中文":"statement_zh.md"};
     fs.writeFileSync(`data/${pid}/config.json`,JSON.stringify(problemConfig,null,"  "));
+    fs.writeFileSync(`data/${pid}/statement_zh.md`,req.body.statement);
+    res.status(200).json({pid});
 });
 
 module.exports=router;

@@ -1,0 +1,16 @@
+{
+  "title": "1",
+  "difficulty": {
+    "algorithm": "2",
+    "thinking": "3",
+    "implementation": "4"
+  },
+  "judge": {
+    "time": "5",
+    "memory": "6",
+    "type": "7"
+  },
+  "tags": "89",
+  "source": "0",
+  "statement": "## 题目描述\n\nTODO\n\n## 输入格式\n\nTODO\n\n## 输出格式\n\nTODO\n\n## 样例 1\n\n```input1\nTODO\n```\n\n```output1\nTODO\n```\n\n## 样例 1 解释\n\nTODO\n\n## 数据规模\n\nTODO"
+}

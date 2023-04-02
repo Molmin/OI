@@ -1,0 +1,18 @@
+{
+  "title": "1",
+  "difficulty": {
+    "algorithm": 2,
+    "thinking": 3,
+    "implementation": 4
+  },
+  "judge": {
+    "time": 5,
+    "memory": "6",
+    "type": "7"
+  },
+  "tags": "8",
+  "source": "9",
+  "statement": {
+    "简体中文": "statement_zh.md"
+  }
+}
