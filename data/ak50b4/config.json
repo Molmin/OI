@@ -1,0 +1,18 @@
+{
+  "title": "矩阵（matrix）",
+  "difficulty": {
+    "algorithm": 4,
+    "thinking": 5,
+    "implementation": 4
+  },
+  "judge": {
+    "time": "3 s",
+    "memory": "1 GiB",
+    "type": "default"
+  },
+  "tags": "数学/矩阵/矩阵乘法",
+  "source": "2023 年校内省选模拟赛 Day 11 第一题",
+  "statement": {
+    "简体中文": "statement_zh.md"
+  }
+}
