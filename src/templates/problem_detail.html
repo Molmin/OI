@@ -1,0 +1,61 @@
+<style>
+    .row:after{
+        clear: both;
+    }
+    .row:before,.row:after{
+        content: " ";
+        display: table;
+    }
+    .row{
+        margin: 0 auto;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .column-one-fifth{
+        width: 20%;
+        float: left;
+    }
+    .column-four-fifth{
+        width: 80%;
+        float: left;
+    }
+    .messages-display{
+        color: #888;
+    }
+</style>
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            <div class="topan-section-shadow">
+                <h2>#<%= prodata.pid %>. <%= prodata.title %></h2>
+                <p class="messages-display">
+                    <strong>算法难度等级：</strong><%= prodata.difficulty.algorithm %>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <strong>思维难度等级：</strong><%= prodata.difficulty.thinking %>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <strong>实现难度等级：</strong><%= prodata.difficulty.implementation %>
+                </p>
+                <p class="messages-display">
+                    <strong><i class="fa fa-solid fa-clock"></i> 时间限制：</strong><%= prodata.judge.time %>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <strong><i class="fa fa-solid fa-database"></i> 空间限制：</strong><%= prodata.judge.memory %>
+                </p>
+            </div>
+            <br>
+            <% if(prodata.source&&prodata.source.length>0){ %>
+                <blockquote class="topan-blockquote-tip">
+                    <p>本题来源于：<%= prodata.source %></p>
+                </blockquote>
+            <% } %>
+            <div class="topan-section-shadow">
+                <%- prodata.statementHtml['简体中文'] %>
+            </div>
+        </div>
+    </div>
+</div>

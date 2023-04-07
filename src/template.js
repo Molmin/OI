@@ -13,6 +13,7 @@ module.exports=(config,HTML)=>{
         <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
         <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
         <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
         ${config.header}
     </head>
     <body>
@@ -26,6 +27,12 @@ module.exports=(config,HTML)=>{
             </div>
             <div class="topan-header-left">
                 <span class="topan-header-text">${Config.title}&nbsp;</span>
+                <a href="/${Config.on}/about">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block${config.onabout?"-showed":""}">
+                        <i class="fa fa-solid fa-circle-info"></i>
+                        <span>&nbsp;关于</span>
+                    </span>
+                </a>
                 ${config.preview?`
                     <a href="/admin">
                         <span class="topan-button-ordinary topan-button-commonly topan-button-header-block${config.onadmin?"-showed":""}">
