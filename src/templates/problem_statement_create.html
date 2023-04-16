@@ -1,0 +1,124 @@
+<script src="/file/ace/ace.js"></script>
+<script src="/file/ace/ext-language_tools.js"></script>
+<script>
+    $(document).ready(()=>{
+        editor = ace.edit("code");
+        theme = "clouds"
+        language = "markdown"
+        editor.setTheme("ace/theme/" + theme);
+        editor.session.setMode("ace/mode/" + language);
+        editor.setFontSize(18);
+        editor.setReadOnly(false); 
+        editor.setOption("wrap", "free")
+        ace.require("ace/ext/language_tools");
+        editor.setOptions({
+            enableBasicAutocompletion: true,
+            enableSnippets: true,
+            enableLiveAutocompletion: true
+        });
+        $("#pro-create").click(()=>{
+            var prodata={
+                title: $('#pro-title').val(),
+                difficulty: {
+                    algorithm: Number($('#pro-difficulty-algorithm').val()),
+                    thinking: Number($('#pro-difficulty-thinking').val()),
+                    implementation: Number($('#pro-difficulty-implementation').val())
+                },
+                judge: {
+                    time: Number($('#pro-judge-time').val()),
+                    memory: $('#pro-judge-memory').val(),
+                    type: $('#pro-judge-type').val()
+                },
+                tags: $('#pro-tags').val(),
+                source: $('#pro-source').val()
+            };
+            $.post(
+                "/admin/problem/0/edit",
+                {
+                    prodata:JSON.stringify(prodata),
+                    statement: editor.getValue()
+                },
+                (data,status)=>{
+                    location.pathname=`/OI/problem/${data.pid}`;
+                }
+            );
+        });
+    });
+</script>
+
+<style>
+    .row:after{
+        clear: both;
+    }
+    .row:before,.row:after{
+        content: " ";
+        display: table;
+    }
+    .row{
+        margin: 0 auto;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .column-one-fifth{
+        width: 20%;
+        float: left;
+    }
+    .column-four-fifth{
+        width: 80%;
+        float: left;
+    }
+    .statement-config>input{
+        width: 200px;
+    }
+</style>
+
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2><%= prodata.title %></h2>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            <div class="topan-section-shadow">
+                <p class="statement-config">
+                    <input placeholder="名称" type="text" id="statement-name"></input>
+                    <input placeholder="文件名" type="text" id="statement-file"></input>
+                </p>
+    <pre id="code" class="ace_editor" style="min-height: 400px;">
+<textarea class="ace_text-input" id="sys">## 题目描述
+
+TODO
+
+## 输入格式
+
+TODO
+
+## 输出格式
+
+TODO
+
+## 样例 1
+
+```input1
+TODO
+```
+
+```output1
+TODO
+```
+
+## 样例 1 解释
+
+TODO
+
+## 数据规模
+
+TODO</textarea></pre>
+                <p><button id="statement-create" class="topan-button-emphasize topan-button-default">确认</button></p>
+            </div>
+        </div>
+    </div>
+</div>

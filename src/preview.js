@@ -47,4 +47,29 @@ router.get('/problem/:pid',(req,res)=>{
     });
 });
 
+router.get('/problem/:pid/statements',(req,res)=>{
+    var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
+    prodata.pid=req.params.pid;
+    ejs.renderFile("./src/templates/problem_statements_list.html",
+        {isadmin: req.logined, prodata, MarkdownIt, fs},(err,HTML)=>{
+        res.send(Template({title: `题面列表 - ${prodata.title}`,
+                           header: ``,
+                           preview: true,
+                           isadmin: req.logined
+                          },HTML));
+    });
+});
+router.get('/problem/:pid/statement/create',(req,res)=>{
+    var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
+    prodata.pid=req.params.pid;
+    ejs.renderFile("./src/templates/problem_statement_create.html",
+        {isadmin: req.logined, prodata},(err,HTML)=>{
+        res.send(Template({title: `创建题面 - ${prodata.title}`,
+                           header: ``,
+                           preview: true,
+                           isadmin: req.logined
+                          },HTML));
+    });
+});
+
 module.exports=router;
