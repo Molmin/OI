@@ -53,9 +53,37 @@
                     <p>本题来源于：<%= prodata.source %></p>
                 </blockquote>
             <% } %>
-            <div class="topan-section-shadow">
-                <%- prodata.statementHtml['简体中文'] %>
-            </div>
+            <% var total=0,Key;
+            for(var key in prodata.statement)total++,Key=key;
+            if(total==1){
+                var mdcode=fs.readFileSync(`data/${prodata.pid}/${prodata.statement[Key]}`,'utf8');
+                var html=MarkdownIt.render(mdcode); %>
+                <div class="topan-section-shadow">
+                    <%- html %>
+                </div>
+            <% }
+            else{ %>
+                <div class="topan-tab">
+                    <ul>
+                        <% var flag=true;
+                        for(var key in prodata.statement){ %>
+                            <li<%- flag?` class="topan-tab-showed"`:`` %>><%= key %></li>
+                        <% flag=false;
+                        } %>
+                    </ul>
+                    <% var flag2=true;
+                    for(var key in prodata.statement){
+                        var mdcode=fs.readFileSync(`data/${prodata.pid}/${prodata.statement[key]}`,'utf8');
+                        var html=MarkdownIt.render(mdcode); %>
+                        <div<%- flag2?` class="topan-tab-showed"`:`` %>>
+                            <div class="topan-section-shadow">
+                                <%- html %>
+                            </div>
+                        </div>
+                    <% flag2=false;
+                    } %>
+                </div>
+            <% } %>
         </div>
     </div>
 </div>

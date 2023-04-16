@@ -35,10 +35,7 @@ router.get('/about',(req,res)=>{
 router.get('/problem/:pid',(req,res)=>{
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     prodata.pid=req.params.pid;
-    prodata.statementHtml={};
-    var mdcode=fs.readFileSync(`data/${req.params.pid}/${prodata.statement['简体中文']}`,'utf8');
-    prodata.statementHtml['简体中文']=MarkdownIt.render(mdcode);
-    ejs.renderFile("./src/templates/problem_detail.html",{isadmin: req.logined, prodata},(err,HTML)=>{
+    ejs.renderFile("./src/templates/problem_detail.html",{isadmin: req.logined, prodata, fs, MarkdownIt},(err,HTML)=>{
         res.send(Template({title: `#${prodata.pid}. ${prodata.title}`,
                            header: ``,
                            preview: true,
