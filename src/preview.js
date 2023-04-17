@@ -3,6 +3,8 @@ const express=require('express'),
 const ejs=require('ejs');
 const fs=require('fs');
 const Template=require('./template.js');
+const YAML=require('yamljs');
+var Config=YAML.load('./data/config.yaml');
 
 var MarkdownIt=require('markdown-it')({
     html: true,
@@ -35,7 +37,7 @@ router.get('/about',(req,res)=>{
 router.get('/problem/:pid',(req,res)=>{
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     prodata.pid=req.params.pid;
-    ejs.renderFile("./src/templates/problem_detail.html",{isadmin: req.logined, prodata, fs, MarkdownIt},(err,HTML)=>{
+    ejs.renderFile("./src/templates/problem_detail.html",{isadmin: req.logined, Config, prodata, fs, MarkdownIt},(err,HTML)=>{
         res.send(Template({title: `#${prodata.pid}. ${prodata.title}`,
                            header: ``,
                            preview: true,
@@ -48,20 +50,8 @@ router.get('/problem/:pid/statements',(req,res)=>{
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     prodata.pid=req.params.pid;
     ejs.renderFile("./src/templates/problem_statements_list.html",
-        {isadmin: req.logined, prodata, MarkdownIt, fs},(err,HTML)=>{
+        {isadmin: req.logined, Config, prodata, MarkdownIt, fs},(err,HTML)=>{
         res.send(Template({title: `题面列表 - ${prodata.title}`,
-                           header: ``,
-                           preview: true,
-                           isadmin: req.logined
-                          },HTML));
-    });
-});
-router.get('/problem/:pid/statement/create',(req,res)=>{
-    var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
-    prodata.pid=req.params.pid;
-    ejs.renderFile("./src/templates/problem_statement_create.html",
-        {isadmin: req.logined, prodata},(err,HTML)=>{
-        res.send(Template({title: `创建题面 - ${prodata.title}`,
                            header: ``,
                            preview: true,
                            isadmin: req.logined

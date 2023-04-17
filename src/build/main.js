@@ -56,7 +56,7 @@ problemList=JSON.parse(problemList);
 problemList.forEach(pid=>{
     var prodata=JSON.parse(fs.readFileSync(`data/${pid}/config.json`,'utf8'));
     prodata.pid=pid;
-    ejs.renderFile("./src/templates/problem_detail.html",{isadmin: false, prodata, fs, MarkdownIt},(err,HTML)=>{
+    ejs.renderFile("./src/templates/problem_detail.html",{isadmin: false, Config, prodata, fs, MarkdownIt},(err,HTML)=>{
         fs.writeFileSync(`dist/problem/${prodata.pid}.html`,
             Template({title: `#${prodata.pid}. ${prodata.title}`,
                       header: ``},HTML)
@@ -64,5 +64,5 @@ problemList.forEach(pid=>{
     });
 });
 
-const ghpages=require('gh-pages');
-ghpages.publish('dist',function(err){});
+// const ghpages=require('gh-pages');
+// ghpages.publish('dist',function(err){});

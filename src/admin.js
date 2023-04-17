@@ -3,6 +3,8 @@ const express=require('express'),
 const ejs=require('ejs');
 const fs=require('fs');
 const Template=require('./template.js');
+const YAML=require('yamljs');
+var Config=YAML.load('./data/config.yaml');
 const Admin=require('./lib/admin.js');
 const URL=require('url');
 
@@ -74,6 +76,30 @@ router.post('/problem/:id/edit',(req,res)=>{
     fs.writeFileSync(`data/${pid}/config.json`,JSON.stringify(problemConfig,null,"  "));
     fs.writeFileSync(`data/${pid}/statement_zh.md`,req.body.statement);
     res.status(200).json({pid});
+});
+router.get('/problem/:pid/statement/create',(req,res)=>{
+    var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
+    prodata.pid=req.params.pid;
+    ejs.renderFile("./src/templates/problem_statement_create.html",
+        {isadmin: req.logined, Config, prodata},(err,HTML)=>{
+        res.send(Template({title: `创建题面 - ${prodata.title}`,
+                           header: ``,
+                           preview: true,
+                           isadmin: req.logined
+                          },HTML));
+    });
+});
+router.get('/problem/:pid/statement/:statementName/edit',(req,res)=>{
+    var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
+    prodata.pid=req.params.pid;
+    ejs.renderFile("./src/templates/problem_statement_edit.html",
+        {isadmin: req.logined, Config, prodata, statementName: req.params.statementName, fs},(err,HTML)=>{
+        res.send(Template({title: `编辑题面 - ${prodata.title}`,
+                           header: ``,
+                           preview: true,
+                           isadmin: req.logined
+                          },HTML));
+    });
 });
 
 module.exports=router;

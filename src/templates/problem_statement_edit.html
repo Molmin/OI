@@ -86,40 +86,14 @@
     <div class="column-four-fifth">
         <div style="padding-left: 20px;">
             <div class="topan-section-shadow">
+                <% var filename=prodata.statement[statementName];
+                var code=fs.readFileSync(`data/${prodata.pid}/${filename}`,'utf8'); %>
                 <p class="statement-config">
-                    <input placeholder="名称" type="text" id="statement-name"></input>
-                    <input placeholder="文件名" type="text" id="statement-file"></input>
+                    <input placeholder="名称" type="text" id="statement-name" value="<%= statementName %>"></input>
+                    <input placeholder="文件名" type="text" id="statement-file" value="<%= filename %>"></input>
                 </p>
-    <pre id="code" class="ace_editor" style="min-height: 400px;">
-<textarea class="ace_text-input" id="sys">## 题目描述
-
-TODO
-
-## 输入格式
-
-TODO
-
-## 输出格式
-
-TODO
-
-## 样例 1
-
-```input1
-TODO
-```
-
-```output1
-TODO
-```
-
-## 样例 1 解释
-
-TODO
-
-## 数据规模
-
-TODO</textarea></pre>
+                <pre id="code" class="ace_editor" style="min-height: 400px;">
+<textarea class="ace_text-input" id="sys"><%= code %></textarea></pre>
                 <p><button id="statement-create" class="topan-button-emphasize topan-button-default">确认</button></p>
             </div>
         </div>
