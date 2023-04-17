@@ -37,15 +37,26 @@ ejs.renderFile("./src/templates/problem_list.html",{isadmin: false},(err,HTML)=>
     );
 });
 
+ejs.renderFile(
+    "./src/templates/about.html",
+    {html: MarkdownIt.render(fs.readFileSync('data/readme.md','utf8'))},
+    (err,HTML)=>{
+        fs.writeFileSync("dist/about.html",
+            Template({title: `About`,
+                      header: ``,
+                      onabout: true
+                     },HTML)
+        );
+    }
+);
+
 var problemList=fs.readFileSync('data/problem.json','utf8');
 problemList=JSON.parse(problemList);
 
 problemList.forEach(pid=>{
     var prodata=JSON.parse(fs.readFileSync(`data/${pid}/config.json`,'utf8'));
-    prodata.pid=pid,prodata.statementHtml={};
-    var mdcode=fs.readFileSync(`data/${pid}/${prodata.statement['简体中文']}`,'utf8');
-    prodata.statementHtml['简体中文']=MarkdownIt.render(mdcode);
-    ejs.renderFile("./src/templates/problem_detail.html",{isadmin: false, prodata},(err,HTML)=>{
+    prodata.pid=pid;
+    ejs.renderFile("./src/templates/problem_detail.html",{isadmin: false, prodata, fs, MarkdownIt},(err,HTML)=>{
         fs.writeFileSync(`dist/problem/${prodata.pid}.html`,
             Template({title: `#${prodata.pid}. ${prodata.title}`,
                       header: ``},HTML)
