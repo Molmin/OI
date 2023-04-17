@@ -16,30 +16,16 @@
             enableSnippets: true,
             enableLiveAutocompletion: true
         });
-        $("#pro-create").click(()=>{
-            var prodata={
-                title: $('#pro-title').val(),
-                difficulty: {
-                    algorithm: Number($('#pro-difficulty-algorithm').val()),
-                    thinking: Number($('#pro-difficulty-thinking').val()),
-                    implementation: Number($('#pro-difficulty-implementation').val())
-                },
-                judge: {
-                    time: Number($('#pro-judge-time').val()),
-                    memory: $('#pro-judge-memory').val(),
-                    type: $('#pro-judge-type').val()
-                },
-                tags: $('#pro-tags').val(),
-                source: $('#pro-source').val()
-            };
+        $("#statement-create").click(()=>{
             $.post(
-                "/admin/problem/0/edit",
+                "/admin/problem/<%= prodata.pid %>/statement/create",
                 {
-                    prodata:JSON.stringify(prodata),
-                    statement: editor.getValue()
+                    code: editor.getValue(),
+                    file: $('#statement-file').val(),
+                    name: $('#statement-name').val()
                 },
                 (data,status)=>{
-                    location.pathname=`/OI/problem/${data.pid}`;
+                    location.pathname=`/OI/problem/<%= prodata.pid %>`;
                 }
             );
         });
