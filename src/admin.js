@@ -89,6 +89,14 @@ router.get('/problem/:pid/statement/create',(req,res)=>{
                           },HTML));
     });
 });
+router.post('/problem/:pid/statement/create',(req,res)=>{
+    var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
+    if(prodata.statement[req.body.name])req.body.name+=' (1)';
+    prodata.statement[req.body.name]=req.body.file;
+    fs.writeFileSync(`data/${req.params.pid}/${req.body.file}`,req.body.code);
+    fs.writeFileSync(`data/${req.params.pid}/config.json`,JSON.stringify(prodata,null,"  "));
+    res.status(200).json({});
+});
 router.get('/problem/:pid/statement/:statementName/edit',(req,res)=>{
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     prodata.pid=req.params.pid;
@@ -100,6 +108,37 @@ router.get('/problem/:pid/statement/:statementName/edit',(req,res)=>{
                            isadmin: req.logined
                           },HTML));
     });
+});
+router.post('/problem/:pid/statement/:statementName/delete',(req,res)=>{
+    var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
+    {
+        var total=0;
+        for(var key in prodata.statement)total++;
+        if(total<2){
+            res.status(200).json({});
+            return;
+        }
+    }
+    var key=req.params.statementName;
+    if(!prodata.statement[key]){
+        res.status(200).json({});
+        return;
+    }
+    fs.unlinkSync(`data/${req.params.pid}/${prodata.statement[key]}`,err=>{});
+    delete prodata.statement[key];
+    fs.writeFileSync(`data/${req.params.pid}/config.json`,JSON.stringify(prodata,null,"  "));
+    res.status(200).json({});
+});
+router.post('/problem/:pid/statement/:statementName/edit',(req,res)=>{
+    var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
+    var key=req.params.statementName;
+    fs.unlinkSync(`data/${req.params.pid}/${prodata.statement[key]}`,err=>{});
+    delete prodata.statement[key];
+    if(prodata.statement[req.body.name])req.body.name+=' (1)';
+    prodata.statement[req.body.name]=req.body.file;
+    fs.writeFileSync(`data/${req.params.pid}/${req.body.file}`,req.body.newCode);
+    fs.writeFileSync(`data/${req.params.pid}/config.json`,JSON.stringify(prodata,null,"  "));
+    res.status(200).json({});
 });
 
 module.exports=router;

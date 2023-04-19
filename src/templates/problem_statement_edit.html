@@ -29,6 +29,15 @@
                 }
             );
         });
+        $("#statement-delete").click(()=>{
+            $.post(
+                "/admin/problem/<%= prodata.pid %>/statement/<%= statementName %>/delete",
+                {},
+                (data,status)=>{
+                    location.pathname=`/OI/problem/<%= prodata.pid %>`;
+                }
+            );
+        });
     });
 </script>
 
@@ -80,7 +89,14 @@
                 </p>
                 <pre id="code" class="ace_editor" style="min-height: 400px;">
 <textarea class="ace_text-input" id="sys"><%= code %></textarea></pre>
-                <p><button id="statement-edit" class="topan-button-emphasize topan-button-default">确认</button></p>
+                <p>
+                    <button id="statement-edit" class="topan-button-emphasize topan-button-default">确认</button>
+                    <% var total=0;
+                    for(var key in prodata.statement)total++;
+                    if(total>1){ %>
+                        <button id="statement-delete" class="topan-button-commonly topan-button-default">删除</button>
+                    <% } %>
+                </p>
             </div>
         </div>
     </div>
