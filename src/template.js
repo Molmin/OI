@@ -9,10 +9,10 @@ module.exports=(config,HTML)=>{
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width">
         <title id="title">${config.title} - ${Config.title}</title>
-        <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
-        <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
-        <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
-        <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <link rel="shortcut icon" type="image/x-icon" href="http://localhost:8599/file/TopanUI/favicon.ico">
+        <script src="http://localhost:8599/file/TopanUI/src/jquery.js"></script>
+        <link rel="stylesheet" href="http://localhost:8599/file/TopanUI/topan.css">
+        <script src="http://localhost:8599/file/TopanUI/topan.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
         ${config.header}
     </head>

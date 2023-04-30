@@ -13,7 +13,10 @@ var MarkdownIt=require('markdown-it')({
 MarkdownIt.use(require('markdown-it-katex'));
 
 router.get('/',(req,res)=>{
-    ejs.renderFile("./src/templates/problem_list.html",{isadmin: req.logined},(err,HTML)=>{
+    var problemList=fs.readFileSync('data/problem.json','utf8');
+    problemList=JSON.parse(problemList);
+    ejs.renderFile("./src/templates/problem_list.html",
+        {isadmin: req.logined, fs, problemList, Config},(err,HTML)=>{
         res.send(Template({title: `Problem List`,
                            header: ``,
                            preview: true,

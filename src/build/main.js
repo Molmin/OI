@@ -30,12 +30,17 @@ deleteDir("dist");
 fs.mkdirSync("dist");
 fs.mkdirSync("dist/problem");
 
-ejs.renderFile("./src/templates/problem_list.html",{isadmin: false},(err,HTML)=>{
-    fs.writeFileSync("dist/index.html",
-        Template({title: `Problem List`,
-                  header: ``},HTML)
-    );
-});
+var problemList=fs.readFileSync('data/problem.json','utf8');
+problemList=JSON.parse(problemList);
+
+{
+    ejs.renderFile("./src/templates/problem_list.html",{isadmin: false, problemList, fs},(err,HTML)=>{
+        fs.writeFileSync("dist/index.html",
+            Template({title: `Problem List`,
+                    header: ``},HTML)
+        );
+    });
+}
 
 ejs.renderFile(
     "./src/templates/about.html",
@@ -49,9 +54,6 @@ ejs.renderFile(
         );
     }
 );
-
-var problemList=fs.readFileSync('data/problem.json','utf8');
-problemList=JSON.parse(problemList);
 
 problemList.forEach(pid=>{
     var prodata=JSON.parse(fs.readFileSync(`data/${pid}/config.json`,'utf8'));
