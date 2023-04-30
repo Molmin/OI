@@ -25,7 +25,7 @@
                     implementation: Number($('#pro-difficulty-implementation').val())
                 },
                 judge: {
-                    time: Number($('#pro-judge-time').val()),
+                    time: $('#pro-judge-time').val(),
                     memory: $('#pro-judge-memory').val(),
                     type: $('#pro-judge-type').val()
                 },
@@ -35,7 +35,7 @@
             $.post(
                 "/admin/problem/0/edit",
                 {
-                    prodata:JSON.stringify(prodata),
+                    prodata: JSON.stringify(prodata),
                     statement: editor.getValue()
                 },
                 (data,status)=>{

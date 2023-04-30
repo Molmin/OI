@@ -7,6 +7,7 @@ const YAML=require('yamljs');
 var Config=YAML.load('./data/config.yaml');
 const Admin=require('./lib/admin.js');
 const URL=require('url');
+const deletedir=require('./lib/deletedir.js');
 
 router.all('*',(req,res,next)=>{
     if(req._parsedUrl.pathname.startsWith('/login')||Admin.checkloginByReq(req))next();
@@ -58,25 +59,50 @@ router.get('/create',(req,res)=>{
                           },HTML));
     });
 });
-router.post('/problem/:id/edit',(req,res)=>{
-    if(req.params.id=='0'){
-        var randomId="",charlist="abcdefghijklmnopqrstuvwxyz01234567890123456789";
+router.get('/problem/:pid/config',(req,res)=>{
+    var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
+    prodata.pid=req.params.pid;
+    ejs.renderFile("./src/templates/problem_config.html",
+        {isadmin: req.logined, Config, prodata},(err,HTML)=>{
+        res.send(Template({title: `修改配置 - ${prodata.title}`,
+                           header: ``,
+                           preview: true,
+                           isadmin: req.logined
+                          },HTML));
+    });
+});
+router.post('/problem/:pid/edit',(req,res)=>{
+    if(req.params.pid=='0'){
+        var pid="",charlist="abcdefghijklmnopqrstuvwxyz01234567890123456789";
         for(var i=0;i<6;i++)
-            randomId+=charlist[parseInt(Math.random()*charlist.length)];
-        req.params.id=randomId;
+            pid+=charlist[parseInt(Math.random()*charlist.length)];
         var problemList=fs.readFileSync('data/problem.json','utf8');
-        var tmp=JSON.parse(problemList);
-        tmp.push(randomId);
+        var tmp=JSON.parse(problemList); tmp.push(pid);
         problemList=JSON.stringify(tmp,null,"  ");
         fs.writeFileSync('data/problem.json',problemList);
-        fs.mkdirSync(`data/${randomId}`);
+        fs.mkdirSync(`data/${pid}`);
+        var problemConfig=JSON.parse(req.body.prodata);
+        problemConfig.statement={"简体中文":"statement_zh.md"};
+        fs.writeFileSync(`data/${pid}/config.json`,JSON.stringify(problemConfig,null,"  "));
+        fs.writeFileSync(`data/${pid}/statement_zh.md`,req.body.statement);
+        res.status(200).json({pid});
     }
-    var pid=req.params.id,problemConfig=JSON.parse(req.body.prodata);
-    problemConfig.statement={"简体中文":"statement_zh.md"};
-    fs.writeFileSync(`data/${pid}/config.json`,JSON.stringify(problemConfig,null,"  "));
-    fs.writeFileSync(`data/${pid}/statement_zh.md`,req.body.statement);
-    res.status(200).json({pid});
+    else{
+        var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
+        var problemConfig=JSON.parse(req.body.prodata);
+        prodata.title=problemConfig.title;
+        prodata.difficulty=problemConfig.difficulty;
+        prodata.judge=problemConfig.judge;
+        prodata.tags=problemConfig.tags;
+        prodata.source=problemConfig.source;
+        fs.writeFileSync(`data/${req.params.pid}/config.json`,JSON.stringify(prodata,null,"  "));
+        res.status(200).json({pid});
+    }
 });
+router.post('/problem/:pid/delete',(req,res)=>{
+
+});
+
 router.get('/problem/:pid/statement/create',(req,res)=>{
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     prodata.pid=req.params.pid;

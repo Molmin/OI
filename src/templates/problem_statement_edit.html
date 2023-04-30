@@ -73,6 +73,7 @@
             <div class="topan-section-shadow">
                 <h2><%= prodata.title %></h2>
                 <% if(isadmin){ %>
+                    <a href="/admin/problem/<%= prodata.pid %>/config">修改配置</a>
                     <a href="/<%= Config.on %>/problem/<%= prodata.pid %>/statements">题面列表</a>
                 <% } %>
             </div>
