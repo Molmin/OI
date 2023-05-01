@@ -56,7 +56,7 @@
             <br>
             <% if(prodata.source&&prodata.source.length>0){ %>
                 <blockquote class="topan-blockquote-tip">
-                    <p>本题来源于：<%= prodata.source %></p>
+                    <p>本题来源于：<%- MarkdownIt.renderInline(prodata.source) %></p>
                 </blockquote>
             <% } %>
             <% var total=0,Key;
