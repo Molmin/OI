@@ -48,7 +48,18 @@ router.get('/problem/:pid',(req,res)=>{
                           },HTML));
     });
 });
-
+router.get('/problem/:pid/solution',(req,res)=>{
+    var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
+    prodata.pid=req.params.pid;
+    ejs.renderFile("./src/templates/problem_solution.html",
+        {isadmin: req.logined, Config, prodata, MarkdownIt, fs},(err,HTML)=>{
+        res.send(Template({title: `题解与代码 - ${prodata.title}`,
+                           header: ``,
+                           preview: true,
+                           isadmin: req.logined
+                          },HTML));
+    });
+});
 router.get('/problem/:pid/statements',(req,res)=>{
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     prodata.pid=req.params.pid;
