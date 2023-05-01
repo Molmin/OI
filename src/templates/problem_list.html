@@ -93,13 +93,10 @@
     <div class="column-one-fifth">
         <div style="padding-left: 12px;">
             <div class="topan-section-shadow">
+                <% if(isadmin){ %>
+                    <a class="topan-menu-option" href="/admin/create"><i class="fa fa-solid fa-plus"></i>&nbsp;&nbsp;创建题目</a>
+                <% } %>
             </div>
-            <% if(isadmin){ %>
-                <br>
-                <a href="/admin/create">
-                    <button class="topan-button-emphasize topan-button-default">创建题目</button>
-                </a>
-            <% } %>
         </div>
     </div>
 </div>

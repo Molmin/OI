@@ -25,20 +25,25 @@
         <div style="padding-right: 0px;">
             <div class="topan-section-shadow">
                 <h2><%= prodata.title %></h2>
+                <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
                 <% if(isadmin){ %>
-                    <a href="/admin/problem/<%= prodata.pid %>/config">修改配置</a>
-                    <a href="/<%= Config.on %>/problem/<%= prodata.pid %>/statements">题面列表</a>
+                    <a class="topan-menu-option" href="/admin/problem/<%= prodata.pid %>/config"><i class="fa fa-solid fa-gear"></i>&nbsp;&nbsp;配置题目</a>
+                    <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>/statements"><i class="fa fa-solid fa-list"></i>&nbsp;&nbsp;题面列表</a>
+                    <a class="topan-menu-option" href="/admin/problem/<%= prodata.pid %>/statement/create"><i class="fa fa-solid fa-plus"></i>&nbsp;&nbsp;创建题面</a>
                 <% } %>
+                <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>/files"><i class="fa fa-regular fa-file-code"></i>&nbsp;&nbsp;文件</a>
             </div>
         </div>
     </div>
     <div class="column-four-fifth">
         <div style="padding-left: 20px;">
-            <div class="topan-section-shadow">
-                <p><a href="/admin/problem/<%= prodata.pid %>/statement/create">创建题面</a></p>
-            </div>
-            <% for(var key in prodata.statement){ %>
+            <% var flag=false;
+            for(var key in prodata.statement){
+                if(flag){ %>
                 <br>
+                <% }
+                flag=true; %>
                 <div class="topan-section-shadow">
                     <p><a href="/admin/problem/<%= prodata.pid %>/statement/<%= key %>/edit">编辑 <%= key %></a></p>
                     <%- MarkdownIt.render(fs.readFileSync(`data/${prodata.pid}/${prodata.statement[key]}`,'utf8')) %>

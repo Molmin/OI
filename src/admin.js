@@ -100,7 +100,14 @@ router.post('/problem/:pid/edit',(req,res)=>{
     }
 });
 router.post('/problem/:pid/delete',(req,res)=>{
-
+    deletedir(`data/${req.params.pid}`);
+    var problemList=fs.readFileSync('data/problem.json','utf8');
+    var tmp=JSON.parse(problemList);
+    var i=0; while(tmp[i]&&tmp[i]!=req.params.pid)i++;
+    tmp.splice(i,1);
+    problemList=JSON.stringify(tmp,null,"  ");
+    fs.writeFileSync('data/problem.json',problemList);
+    res.json({});
 });
 
 router.get('/problem/:pid/statement/create',(req,res)=>{
