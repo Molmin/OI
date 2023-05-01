@@ -17,7 +17,7 @@ router.get('/',(req,res)=>{
     problemList=JSON.parse(problemList);
     ejs.renderFile("./src/templates/problem_list.html",
         {isadmin: req.logined, fs, problemList, Config},(err,HTML)=>{
-        res.send(Template({title: `Problem List`,
+        res.send(Template({title: `题目列表`,
                            header: ``,
                            preview: true,
                            isadmin: req.logined
@@ -28,7 +28,7 @@ router.get('/about',(req,res)=>{
     ejs.renderFile("./src/templates/about.html",
         {html: MarkdownIt.render(fs.readFileSync('data/readme.md','utf8'))},
     (err,HTML)=>{
-        res.send(Template({title: `About`,
+        res.send(Template({title: `关于`,
                            header: ``,
                            preview: true,
                            isadmin: req.logined,

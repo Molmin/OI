@@ -13,6 +13,39 @@ router.all('*',(req,res,next)=>{
     if(req._parsedUrl.pathname.startsWith('/login')||Admin.checkloginByReq(req))next();
     else return res.redirect('/admin/login');
 });
+
+router.get('/',(req,res)=>{
+    ejs.renderFile("./src/templates/dashboard.html",(err,HTML)=>{
+        res.send(Template({title: `仪表盘`,
+                           header: ``,
+                           preview: true,
+                           onadmin: true,
+                           isadmin: req.logined
+                          },HTML));
+    });
+});
+router.post('/update/db',(req,res)=>{
+    require('gh-pages').publish('data',{
+        branch: 'data',
+        message: req.body.message
+    },err=>{
+        if(err)res.status(200).json({error: err});
+        else res.status(200).json({message: "同步成功。"});
+    });
+});
+router.post('/update/ghpage',(req,res)=>{
+    require('./build/main.js')();
+    setTimeout(()=>{
+        require('gh-pages').publish('dist',{
+            branch: 'gh-pages',
+            message: req.body.message
+        },err=>{
+            if(err)res.status(200).json({error: err});
+            else res.status(200).json({message: "同步成功。"});
+        });
+    },1000);
+});
+
 router.get('/login',(req,res)=>{
     if(req.logined){
         res.redirect("/");
@@ -51,7 +84,7 @@ router.get('/logout',(req,res)=>{
 
 router.get('/create',(req,res)=>{
     ejs.renderFile("./src/templates/problem_create.html",(err,HTML)=>{
-        res.send(Template({title: `Create`,
+        res.send(Template({title: `创建题目`,
                            header: ``,
                            preview: true,
                            onadmin: true,

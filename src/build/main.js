@@ -1,3 +1,5 @@
+module.exports=()=>{
+
 const fs=require('fs');
 const path=require('path');
 const ejs=require('ejs');
@@ -34,9 +36,10 @@ var problemList=fs.readFileSync('data/problem.json','utf8');
 problemList=JSON.parse(problemList);
 
 {
-    ejs.renderFile("./src/templates/problem_list.html",{isadmin: false, problemList, fs},(err,HTML)=>{
+    ejs.renderFile("./src/templates/problem_list.html",
+        {isadmin: false, problemList, fs, Config},(err,HTML)=>{
         fs.writeFileSync("dist/index.html",
-            Template({title: `Problem List`,
+            Template({title: `题目列表`,
                     header: ``},HTML)
         );
     });
@@ -47,7 +50,7 @@ ejs.renderFile(
     {html: MarkdownIt.render(fs.readFileSync('data/readme.md','utf8'))},
     (err,HTML)=>{
         fs.writeFileSync("dist/about.html",
-            Template({title: `About`,
+            Template({title: `关于`,
                       header: ``,
                       onabout: true
                      },HTML)
@@ -64,7 +67,13 @@ problemList.forEach(pid=>{
                       header: ``},HTML)
         );
     });
+    fs.mkdirSync(`dist/problem/${prodata.pid}`);
+    ejs.renderFile("./src/templates/problem_solution.html",{isadmin: false, Config, prodata, fs, MarkdownIt},(err,HTML)=>{
+        fs.writeFileSync(`dist/problem/${prodata.pid}/solution.html`,
+            Template({title: `题解与代码 - ${prodata.title}`,
+                      header: ``},HTML)
+        );
+    });
 });
 
-// const ghpages=require('gh-pages');
-// ghpages.publish('dist',function(err){});
+}
