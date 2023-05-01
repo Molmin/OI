@@ -1,5 +1,6 @@
 const express=require('express'),
       router=express.Router();
+const path=require('path');
 const ejs=require('ejs');
 const fs=require('fs');
 const Template=require('./template.js');
@@ -67,6 +68,18 @@ router.get('/problem/:pid/statements',(req,res)=>{
     ejs.renderFile("./src/templates/problem_statements_list.html",
         {isadmin: req.logined, Config, prodata, MarkdownIt, fs},(err,HTML)=>{
         res.send(Template({title: `题面列表 - ${prodata.title}`,
+                           header: ``,
+                           preview: true,
+                           isadmin: req.logined
+                          },HTML));
+    });
+});
+router.get('/problem/:pid/files',(req,res)=>{
+    var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
+    prodata.pid=req.params.pid;
+    ejs.renderFile("./src/templates/problem_files.html",
+        {isadmin: req.logined, Config, prodata, MarkdownIt, fs},(err,HTML)=>{
+        res.send(Template({title: `文件 - ${prodata.title}`,
                            header: ``,
                            preview: true,
                            isadmin: req.logined

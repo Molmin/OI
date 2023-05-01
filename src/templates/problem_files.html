@@ -1,0 +1,56 @@
+<style>
+    .row:after{
+        clear: both;
+    }
+    .row:before,.row:after{
+        content: " ";
+        display: table;
+    }
+    .row{
+        margin: 0 auto;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .column-one-fifth{
+        width: 20%;
+        float: left;
+    }
+    .column-two-fifth{
+        width: 40%;
+        float: left;
+    }
+</style>
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2><%= prodata.title %></h2>
+                <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                <% if(isadmin){ %>
+                    <a class="topan-menu-option" href="/admin/problem/<%= prodata.pid %>/config"><i class="fa fa-solid fa-gear"></i>&nbsp;&nbsp;配置题目</a>
+                    <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>/statements"><i class="fa fa-solid fa-list"></i>&nbsp;&nbsp;题面列表</a>
+                <% } %>
+                <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>/files"><i class="fa fa-regular fa-file-code"></i>&nbsp;&nbsp;文件</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-two-fifth">
+        <div style="padding-left: 20px;">
+            <div class="topan-section-shadow">
+                <table>
+                    <tr>
+                        <th>文件名</th>
+                        <th>文件大小</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="column-two-fifth">
+        <div style="padding-left: 20px;">
+            <div class="topan-section-shadow">
+            </div>
+        </div>
+    </div>
+</div>

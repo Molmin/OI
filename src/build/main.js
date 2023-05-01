@@ -32,6 +32,8 @@ var deleteDir=(url)=>{
 deleteDir("dist");
 fs.mkdirSync("dist");
 fs.mkdirSync("dist/problem");
+fs.mkdirSync("dist/pub");
+fs.copyFileSync("src/assets/public/FiraCode-Regular.ttf","dist/pub/FiraCode-Regular.ttf");
 
 var problemList=fs.readFileSync('data/problem.json','utf8');
 problemList=JSON.parse(problemList);
