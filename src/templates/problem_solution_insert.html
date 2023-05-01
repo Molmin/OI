@@ -1,0 +1,89 @@
+<script src="/file/ace/ace.js"></script>
+<script src="/file/ace/ext-language_tools.js"></script>
+<script>
+    $(document).ready(()=>{
+        editor = ace.edit("code");
+        theme = "clouds"
+        language = "markdown"
+        editor.setTheme("ace/theme/" + theme);
+        editor.session.setMode("ace/mode/" + language);
+        editor.setFontSize(18);
+        editor.setReadOnly(false); 
+        editor.setOption("wrap", "free")
+        ace.require("ace/ext/language_tools");
+        editor.setOptions({
+            enableBasicAutocompletion: true,
+            enableSnippets: true,
+            enableLiveAutocompletion: true
+        });
+        $("#confirm").click(()=>{
+            $.post(
+                "/admin/problem/<%= prodata.pid %>/solution/<%= paraId %>/insert",
+                {
+                    code: editor.getValue(),
+                    title: $('#paratitle').val(),
+                    filename: $('#filename').val()
+                },
+                (data,status)=>{
+                    location.pathname=`/OI/problem/<%= prodata.pid %>/solution`;
+                }
+            );
+        });
+    });
+</script>
+
+<style>
+    .row:after{
+        clear: both;
+    }
+    .row:before,.row:after{
+        content: " ";
+        display: table;
+    }
+    .row{
+        margin: 0 auto;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .column-one-fifth{
+        width: 20%;
+        float: left;
+    }
+    .column-four-fifth{
+        width: 80%;
+        float: left;
+    }
+    .solution-config>input{
+        width: 200px;
+    }
+</style>
+
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2><%= prodata.title %></h2>
+                <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                <a class="topan-menu-option" href="/admin/problem/<%= prodata.pid %>/config"><i class="fa fa-solid fa-gear"></i>&nbsp;&nbsp;配置题目</a>
+                <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>/statements"><i class="fa fa-solid fa-list"></i>&nbsp;&nbsp;题面列表</a>
+                <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>/files"><i class="fa fa-regular fa-file-code"></i>&nbsp;&nbsp;文件</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            <div class="topan-section-shadow">
+                <p class="solution-config">
+                    <input placeholder="标题" type="text" id="paratitle"></input>
+                    <input placeholder="文件名" type="text" id="filename"></input>
+                </p>
+    <pre id="code" class="ace_editor" style="min-height: 400px;">
+<textarea class="ace_text-input" id="sys">TODO
+
+时间复杂度 $\Theta(n)$。</textarea></pre>
+                <p><button id="confirm" class="topan-button-emphasize topan-button-default"><i class="fa fa-solid fa-check"></i>&nbsp;确认</button></p>
+            </div>
+        </div>
+    </div>
+</div>

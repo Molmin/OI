@@ -207,4 +207,51 @@ router.post('/problem/:pid/statement/:statementName/edit',(req,res)=>{
     res.status(200).json({});
 });
 
+router.post('/problem/:pid/solution/:para/delete',(req,res)=>{
+    var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
+    fs.unlinkSync(`data/${req.params.pid}/${prodata.solution[req.params.para].file}`);
+    prodata.solution.splice(req.params.para,1);
+    fs.writeFileSync(`data/${req.params.pid}/config.json`,JSON.stringify(prodata,null,"  "));
+    res.json({});
+});
+router.get('/problem/:pid/solution/:para/edit',(req,res)=>{
+    var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
+    prodata.pid=req.params.pid;
+    ejs.renderFile("./src/templates/problem_solution_edit.html",
+        {isadmin: req.logined, Config, fs, prodata, paraId: req.params.para},(err,HTML)=>{
+        res.send(Template({title: `编辑题解 - ${prodata.title}`,
+                           header: ``,
+                           preview: true,
+                           isadmin: req.logined
+                          },HTML));
+    });
+});
+router.post('/problem/:pid/solution/:para/edit',(req,res)=>{
+    var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
+    fs.unlinkSync(`data/${req.params.pid}/${prodata.solution[req.params.para].file}`);
+    fs.writeFileSync(`data/${req.params.pid}/${req.body.filename}`,req.body.code);
+    prodata.solution[req.params.para]={title: req.body.title, file: req.body.filename};
+    fs.writeFileSync(`data/${req.params.pid}/config.json`,JSON.stringify(prodata,null,"  "));
+    res.json({});
+});
+router.get('/problem/:pid/solution/:para/insert',(req,res)=>{
+    var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
+    prodata.pid=req.params.pid;
+    ejs.renderFile("./src/templates/problem_solution_insert.html",
+        {isadmin: req.logined, Config, prodata, paraId: req.params.para},(err,HTML)=>{
+        res.send(Template({title: `插入段 - ${prodata.title}`,
+                           header: ``,
+                           preview: true,
+                           isadmin: req.logined
+                          },HTML));
+    });
+});
+router.post('/problem/:pid/solution/:para/insert',(req,res)=>{
+    var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
+    fs.writeFileSync(`data/${req.params.pid}/${req.body.filename}`,req.body.code);
+    prodata.solution.splice(req.params.para,0,{title: req.body.title, file: req.body.filename});
+    fs.writeFileSync(`data/${req.params.pid}/config.json`,JSON.stringify(prodata,null,"  "));
+    res.json({});
+});
+
 module.exports=router;
