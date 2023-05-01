@@ -1,0 +1,310 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title id="title">题解与代码 - Two Paths - OI Problems</title>
+        <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
+        <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
+        <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
+        <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+        <style>
+            @font-face{
+                font-family: font-firacode;
+                src: url("/OI/pub/FiraCode-Regular.ttf");
+            }
+            pre{
+	            font-family: "font-firacode";
+            }
+        </style>
+        
+    </head>
+    <body>
+        <div class="topan-header">
+            <div class="topan-header-home">
+                <a href="/OI">
+                    <button class="topan-button-ordinary topan-button-commonly topan-button-header-round-left">
+                        <i class="fa fa-home"></i>
+                    </button>
+                </a>
+            </div>
+            <div class="topan-header-left">
+                <span class="topan-header-text">OI Problems&nbsp;</span>
+                <a href="/OI/about">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
+                        <i class="fa fa-solid fa-circle-info"></i>
+                        <span>&nbsp;关于</span>
+                    </span>
+                </a>
+                
+                
+            </div>
+            <div class="topan-header-right">
+            </div>
+        </div>
+        <div class="topan-outer">
+            <div class="topan-page">
+                <div class="topan-mainpage-auto">
+                    <br>
+                    <style>
+    .row:after{
+        clear: both;
+    }
+    .row:before,.row:after{
+        content: " ";
+        display: table;
+    }
+    .row{
+        margin: 0 auto;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .column-one-fifth{
+        width: 20%;
+        float: left;
+    }
+    .column-four-fifth{
+        width: 80%;
+        float: left;
+    }
+
+    .options{
+        font-size: 16px;
+        font-weight: normal;
+    }
+</style>
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2>Two Paths</h2>
+                <a class="topan-menu-option" href="/OI/problem/k0q0w0"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/k0q0w0/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/k0q0w0/files"><i class="fa fa-regular fa-file-code"></i>&nbsp;&nbsp;文件</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            
+                <div class="topan-section-shadow">
+                    <h2>
+                        分析
+                        
+                    </h2>
+                    <p>两条路径产生的奇点数为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">0</span></span></span></span> 或 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>2</mn></mrow><annotation encoding="application/x-tex">2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">2</span></span></span></span>，则两条路径产生的奇点数只能为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0</mn><mo separator="true">,</mo><mtext> </mtext><mn>2</mn></mrow><annotation encoding="application/x-tex">0,\ 2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.8388800000000001em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">0</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathrm">2</span></span></span></span> 或 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>4</mn></mrow><annotation encoding="application/x-tex">4</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">4</span></span></span></span>。</p>
+<p>此外，如果我们能找到一条路径覆盖图中每一条边仅一次，那么只需将这条路径从一个断点处断开即可。</p>
+
+                    
+                </div>
+            
+                <br>
+                
+                <div class="topan-section-shadow">
+                    <h2>
+                        分类讨论
+                        
+                    </h2>
+                    <p>对整个图的连通块数量与奇点数量分类讨论。</p>
+<ul>
+<li>
+<p>若整个图连通，</p>
+<ul>
+<li>
+<p>奇点数为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">0</span></span></span></span> 或 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>2</mn></mrow><annotation encoding="application/x-tex">2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">2</span></span></span></span>，则必能找到一条路径覆盖图中每一条边仅一次。此时只需路径长度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>≥</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">\geq 2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.78041em;vertical-align:-0.13597em;"></span><span class="base textstyle uncramped"><span class="mrel">≥</span><span class="mord mathrm">2</span></span></span></span>，就可以将其分为两条路径；</p>
+</li>
+<li>
+<p>奇点数为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>4</mn></mrow><annotation encoding="application/x-tex">4</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">4</span></span></span></span>，此时任取两个没有连边的奇点，将它们连上一条临时边。此时有 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>2</mn></mrow><annotation encoding="application/x-tex">2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">2</span></span></span></span> 个奇点，必能找到一条路径覆盖图中每一条边仅一次，由于临时边的端点都变成了偶点，故不可能成为这条路径的第一条边或最后一条边，也就可以从临时边处断开路径，得到答案。</p>
+</li>
+</ul>
+</li>
+<li>
+<p>若整个图分为了两个连通块，只要两个连通块奇点数均为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">0</span></span></span></span> 或 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>2</mn></mrow><annotation encoding="application/x-tex">2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">2</span></span></span></span>，就可以在两个连通块各找到一条路径，即为最终答案。</p>
+</li>
+<li>
+<p>若整个图分为了三个或更多的连通块，显然无解。</p>
+</li>
+</ul>
+<p>由于最后输出的是边的编号，输出时需要对任意相邻两个点找到边的编号。</p>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre><span class="hljs-comment">// 2022.06.01</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">error</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-comment">//由于此代码用到的地方较多，故封装成一个函数</span>
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;-1\n&quot;</span>); <span class="hljs-built_in">exit</span>(<span class="hljs-number">0</span>);
+}
+
+<span class="hljs-type">int</span> n=<span class="hljs-number">10000</span>,m;
+
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">Edge</span>{
+    <span class="hljs-type">int</span> to,nxt;
+}edge[<span class="hljs-number">20003</span>];
+<span class="hljs-type">int</span> head[<span class="hljs-number">10001</span>],cntEdge;
+<span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-type">void</span> <span class="hljs-title">addEdge</span><span class="hljs-params">(<span class="hljs-type">int</span> u,<span class="hljs-type">int</span> v)</span></span>{
+    edge[++cntEdge]={v,head[u]},head[u]=cntEdge;
+}
+
+<span class="hljs-type">int</span> deg[<span class="hljs-number">10001</span>]; <span class="hljs-comment">// 每个点的度</span>
+
+<span class="hljs-type">int</span> blockid[<span class="hljs-number">10001</span>],blockcnt,blockf[<span class="hljs-number">10001</span>];
+<span class="hljs-comment">/* blockid 表示点所在的连通块编号
+   blockcnt 表示连通块数目
+   blockf 表示点所在连通块中编号最小的点 */</span>
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">dfs_block</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> block)</span></span>{
+    blockid[id]=block;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=head[id];i;i=edge[i].nxt)
+        <span class="hljs-keyword">if</span>(blockid[edge[i].to]==<span class="hljs-number">0</span>&amp;&amp;deg[edge[i].to])
+            <span class="hljs-built_in">dfs_block</span>(edge[i].to,block);
+}
+
+<span class="hljs-type">bool</span> used[<span class="hljs-number">10001</span>]; <span class="hljs-comment">// 这个边输出答案时是否被使用过，可以避免重边情况</span>
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">findedge</span><span class="hljs-params">(<span class="hljs-type">int</span> u,<span class="hljs-type">int</span> v)</span></span>{
+    <span class="hljs-comment">// 找到 u 和 v 之间的边</span>
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=head[u];i;i=edge[i].nxt)
+        <span class="hljs-keyword">if</span>(edge[i].to==v&amp;&amp;!used[i+<span class="hljs-number">1</span>&gt;&gt;<span class="hljs-number">1</span>])<span class="hljs-keyword">return</span> i;
+    <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+}
+
+<span class="hljs-type">bool</span> vis[<span class="hljs-number">10002</span>];
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">dfs</span><span class="hljs-params">(<span class="hljs-type">int</span> id,vector&lt;<span class="hljs-type">int</span>&gt; &amp;tmp)</span></span>{
+    <span class="hljs-comment">// 找欧拉路径，答案存储在 tmp 里</span>
+    <span class="hljs-keyword">if</span>(deg[id]==<span class="hljs-number">0</span>){
+        <span class="hljs-comment">// 这个点已经没有出边</span>
+        tmp.<span class="hljs-built_in">push_back</span>(id); <span class="hljs-keyword">return</span>;
+    }
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=head[id];i;i=edge[i].nxt){
+        <span class="hljs-keyword">if</span>(vis[i+<span class="hljs-number">1</span>&gt;&gt;<span class="hljs-number">1</span>])<span class="hljs-keyword">continue</span>;
+        vis[i+<span class="hljs-number">1</span>&gt;&gt;<span class="hljs-number">1</span>]=<span class="hljs-literal">true</span>; <span class="hljs-comment">// 标记走过的边</span>
+        deg[edge[i].to]--,deg[id]--;
+        <span class="hljs-built_in">dfs</span>(edge[i].to,tmp);
+    }
+    tmp.<span class="hljs-built_in">push_back</span>(id);
+}
+
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">print</span><span class="hljs-params">(vector&lt;<span class="hljs-type">int</span>&gt; answer,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r)</span></span>{
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=l;i&lt;=r;i++){
+        <span class="hljs-type">int</span> tmp=<span class="hljs-built_in">findedge</span>(answer[i],answer[i+<span class="hljs-number">1</span>])+<span class="hljs-number">1</span>&gt;&gt;<span class="hljs-number">1</span>;
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d &quot;</span>,tmp),used[tmp]=<span class="hljs-literal">true</span>;
+    }
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\n&quot;</span>);
+}
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;m);
+    <span class="hljs-keyword">if</span>(m==<span class="hljs-number">1</span>)<span class="hljs-built_in">error</span>();
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=m;i++){
+        <span class="hljs-type">int</span> u,v; <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d&quot;</span>,&amp;u,&amp;v);
+        deg[u]++,deg[v]++;
+        <span class="hljs-built_in">addEdge</span>(u,v); <span class="hljs-built_in">addEdge</span>(v,u);
+    }
+    vector&lt;<span class="hljs-type">int</span>&gt;oddid;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++){
+        <span class="hljs-keyword">if</span>(deg[i]&amp;&amp;blockid[i]==<span class="hljs-number">0</span>)
+            blockf[blockcnt+<span class="hljs-number">1</span>]=i,
+            <span class="hljs-built_in">dfs_block</span>(i,++blockcnt);
+        <span class="hljs-keyword">if</span>(deg[i]&amp;<span class="hljs-number">1</span>)oddid.<span class="hljs-built_in">push_back</span>(i); <span class="hljs-comment">// 找到一个奇点</span>
+    }
+    <span class="hljs-keyword">if</span>(blockcnt&gt;<span class="hljs-number">2</span>)<span class="hljs-built_in">error</span>(); <span class="hljs-comment">// 连通块数量超过 2，无解</span>
+    <span class="hljs-keyword">if</span>(blockcnt==<span class="hljs-number">1</span>){
+        <span class="hljs-keyword">if</span>(oddid.<span class="hljs-built_in">size</span>()==<span class="hljs-number">4</span>){
+            <span class="hljs-type">bool</span> flag=<span class="hljs-literal">false</span>; <span class="hljs-type">int</span> t1=<span class="hljs-number">0</span>,t2=<span class="hljs-number">0</span>;
+            <span class="hljs-comment">// 找没有连边的两个奇点</span>
+            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;i&lt;<span class="hljs-number">4</span>&amp;&amp;!flag;i++)
+                <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=i+<span class="hljs-number">1</span>;j&lt;<span class="hljs-number">4</span>&amp;&amp;!flag;j++)
+                    <span class="hljs-keyword">if</span>(<span class="hljs-built_in">findedge</span>(oddid[i],oddid[j])==<span class="hljs-number">-1</span>){
+                        <span class="hljs-built_in">swap</span>(oddid[<span class="hljs-number">0</span>],oddid[i]);
+                        <span class="hljs-built_in">swap</span>(oddid[<span class="hljs-number">1</span>],oddid[j]);
+                        flag=<span class="hljs-literal">true</span>;
+                    }
+            <span class="hljs-comment">// 连边</span>
+            <span class="hljs-built_in">addEdge</span>(oddid[<span class="hljs-number">0</span>],oddid[<span class="hljs-number">1</span>]);
+            <span class="hljs-built_in">addEdge</span>(oddid[<span class="hljs-number">1</span>],oddid[<span class="hljs-number">0</span>]);
+            deg[oddid[<span class="hljs-number">0</span>]]++,deg[oddid[<span class="hljs-number">1</span>]]++;
+            vector&lt;<span class="hljs-type">int</span>&gt;tmp;
+            <span class="hljs-built_in">dfs</span>(oddid[<span class="hljs-number">2</span>],tmp);
+            <span class="hljs-type">int</span> t=<span class="hljs-number">0</span>;
+            <span class="hljs-comment">// 找到临时添加的边</span>
+            <span class="hljs-keyword">while</span>((tmp[t]!=oddid[<span class="hljs-number">0</span>]||tmp[t+<span class="hljs-number">1</span>]!=oddid[<span class="hljs-number">1</span>])&amp;&amp;
+                (tmp[t]!=oddid[<span class="hljs-number">1</span>]||tmp[t+<span class="hljs-number">1</span>]!=oddid[<span class="hljs-number">0</span>]))t++;
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d\n&quot;</span>,t);
+            <span class="hljs-built_in">print</span>(tmp,<span class="hljs-number">0</span>,t<span class="hljs-number">-1</span>);
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d\n&quot;</span>,m-t);
+            <span class="hljs-built_in">print</span>(tmp,t+<span class="hljs-number">1</span>,tmp.<span class="hljs-built_in">size</span>()<span class="hljs-number">-2</span>);
+        }
+        <span class="hljs-keyword">else</span>{
+            vector&lt;<span class="hljs-type">int</span>&gt;tmp;
+            <span class="hljs-comment">// 找一条路径遍历整个图</span>
+            <span class="hljs-keyword">if</span>(oddid.<span class="hljs-built_in">size</span>()==<span class="hljs-number">0</span>)
+                <span class="hljs-built_in">dfs</span>(blockf[<span class="hljs-number">1</span>],tmp);
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(oddid.<span class="hljs-built_in">size</span>()==<span class="hljs-number">2</span>)
+                <span class="hljs-built_in">dfs</span>(oddid[<span class="hljs-number">0</span>],tmp);
+            <span class="hljs-keyword">else</span> <span class="hljs-built_in">error</span>();
+            <span class="hljs-comment">// 断开第一条边输出</span>
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;1\n&quot;</span>);
+            <span class="hljs-built_in">print</span>(tmp,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>);
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d\n&quot;</span>,tmp.<span class="hljs-built_in">size</span>()<span class="hljs-number">-2</span>);
+            <span class="hljs-built_in">print</span>(tmp,<span class="hljs-number">1</span>,tmp.<span class="hljs-built_in">size</span>()<span class="hljs-number">-2</span>);
+        }
+    }
+    <span class="hljs-keyword">if</span>(blockcnt==<span class="hljs-number">2</span>){
+        <span class="hljs-comment">// 有两个连通块时，分别找路径</span>
+        vector&lt;<span class="hljs-type">int</span>&gt;odd1,odd2;
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i:oddid)
+            <span class="hljs-keyword">if</span>(blockid[i]==<span class="hljs-number">1</span>)odd1.<span class="hljs-built_in">push_back</span>(i);
+            <span class="hljs-keyword">else</span> odd2.<span class="hljs-built_in">push_back</span>(i);
+        <span class="hljs-keyword">if</span>(odd1.<span class="hljs-built_in">size</span>()!=<span class="hljs-number">0</span>&amp;&amp;odd1.<span class="hljs-built_in">size</span>()!=<span class="hljs-number">2</span>)<span class="hljs-built_in">error</span>();
+        <span class="hljs-keyword">if</span>(odd2.<span class="hljs-built_in">size</span>()!=<span class="hljs-number">0</span>&amp;&amp;odd2.<span class="hljs-built_in">size</span>()!=<span class="hljs-number">2</span>)<span class="hljs-built_in">error</span>();
+        vector&lt;<span class="hljs-type">int</span>&gt;ans1,ans2;
+        <span class="hljs-keyword">if</span>(odd1.<span class="hljs-built_in">size</span>()==<span class="hljs-number">0</span>){
+            <span class="hljs-type">int</span> t=<span class="hljs-number">1</span>;
+            <span class="hljs-keyword">while</span>(blockid[t]!=<span class="hljs-number">1</span>)t++; 
+            <span class="hljs-built_in">dfs</span>(t,ans1);
+        }
+        <span class="hljs-keyword">else</span> <span class="hljs-built_in">dfs</span>(odd1[<span class="hljs-number">0</span>],ans1);
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d\n&quot;</span>,ans1.<span class="hljs-built_in">size</span>()<span class="hljs-number">-1</span>);
+        <span class="hljs-built_in">print</span>(ans1,<span class="hljs-number">0</span>,ans1.<span class="hljs-built_in">size</span>()<span class="hljs-number">-2</span>);
+        <span class="hljs-keyword">if</span>(odd2.<span class="hljs-built_in">size</span>()==<span class="hljs-number">0</span>){
+            <span class="hljs-type">int</span> t2=<span class="hljs-number">1</span>;
+            <span class="hljs-keyword">while</span>(blockid[t2]!=<span class="hljs-number">2</span>)t2++; 
+            <span class="hljs-built_in">dfs</span>(t2,ans2);
+        }
+        <span class="hljs-keyword">else</span> <span class="hljs-built_in">dfs</span>(odd2[<span class="hljs-number">0</span>],ans2);
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d\n&quot;</span>,ans2.<span class="hljs-built_in">size</span>()<span class="hljs-number">-1</span>);
+        <span class="hljs-built_in">print</span>(ans2,<span class="hljs-number">0</span>,ans2.<span class="hljs-built_in">size</span>()<span class="hljs-number">-2</span>);
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+} </pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
+        </div>
+    </div>
+</div>
+                    <br>
+                </div>
+                <footer class="topan-footer">
+                    <p></p>
+                    <p style="text-align: center; color: #555; font-size: 12px;">
+                        Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
+                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>
+    
