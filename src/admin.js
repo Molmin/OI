@@ -116,6 +116,7 @@ router.post('/problem/:pid/edit',(req,res)=>{
         fs.mkdirSync(`data/${pid}`);
         var problemConfig=JSON.parse(req.body.prodata);
         problemConfig.statement={"简体中文":"statement_zh.md"};
+        problemConfig.solution=new Array();
         fs.writeFileSync(`data/${pid}/config.json`,JSON.stringify(problemConfig,null,"  "));
         fs.writeFileSync(`data/${pid}/statement_zh.md`,req.body.statement);
         res.status(200).json({pid});

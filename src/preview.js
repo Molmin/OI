@@ -7,6 +7,7 @@ const Template=require('./template.js');
 const YAML=require('yamljs');
 var Config=YAML.load('./data/config.yaml');
 const highlightjs=require('highlight.js');
+const fileSize=require('./lib/filesize.js');
 
 var MarkdownIt=require('markdown-it')({
     html: true,
@@ -78,7 +79,7 @@ router.get('/problem/:pid/files',(req,res)=>{
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     prodata.pid=req.params.pid;
     ejs.renderFile("./src/templates/problem_files.html",
-        {isadmin: req.logined, Config, prodata, MarkdownIt, fs},(err,HTML)=>{
+        {isadmin: req.logined, fileSize, Config, prodata, fs},(err,HTML)=>{
         res.send(Template({title: `文件 - ${prodata.title}`,
                            header: ``,
                            preview: true,

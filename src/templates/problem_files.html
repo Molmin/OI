@@ -19,6 +19,16 @@
         width: 40%;
         float: left;
     }
+
+    table{
+        width: 100%;
+    }
+    th:nth-child(1),td:nth-child(1){
+        text-align: left;
+    }
+    th:nth-child(2),td:nth-child(2){
+        text-align: right;
+    }
 </style>
 <div class="row">
     <div class="column-one-fifth">
@@ -43,6 +53,13 @@
                         <th>文件名</th>
                         <th>文件大小</th>
                     </tr>
+                    <% var filelist=fs.readdirSync(`data/${prodata.pid}`);
+                    filelist.forEach(filename=>{ %>
+                        <tr>
+                            <td><%= filename %></td>
+                            <td><%= fileSize(fs.statSync(`data/${prodata.pid}/${filename}`).size) %></td>
+                        </tr>
+                    <% }); %>
                 </table>
             </div>
         </div>
