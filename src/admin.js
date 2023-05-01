@@ -246,6 +246,18 @@ router.get('/problem/:pid/solution/:para/editcode',(req,res)=>{
                           },HTML));
     });
 });
+router.post('/problem/:pid/solution/:para/editcode',(req,res)=>{
+    var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
+    if(prodata.solution[req.params.para].code)
+        fs.unlinkSync(`data/${req.params.pid}/${prodata.solution[req.params.para].code}`),
+        delete prodata.solution[req.params.para].code;
+    if(req.body.code.length>0){
+        prodata.solution[req.params.para].code=req.body.filename;
+        fs.writeFileSync(`data/${req.params.pid}/${req.body.filename}`,req.body.code);
+    }
+    fs.writeFileSync(`data/${req.params.pid}/config.json`,JSON.stringify(prodata,null,"  "));
+    res.json({});
+});
 router.get('/problem/:pid/solution/:para/insert',(req,res)=>{
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     prodata.pid=req.params.pid;

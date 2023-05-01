@@ -4,7 +4,7 @@
     $(document).ready(()=>{
         editor = ace.edit("code");
         theme = "clouds"
-        language = "markdown"
+        language = "c_cpp"
         editor.setTheme("ace/theme/" + theme);
         editor.session.setMode("ace/mode/" + language);
         editor.setFontSize(18);
@@ -18,10 +18,9 @@
         });
         $("#confirm").click(()=>{
             $.post(
-                "/admin/problem/<%= prodata.pid %>/solution/<%= paraId %>/edit",
+                "/admin/problem/<%= prodata.pid %>/solution/<%= paraId %>/editcode",
                 {
                     code: editor.getValue(),
-                    title: $('#soltitle').val(),
                     filename: $('#filename').val()
                 },
                 (data,status)=>{
@@ -75,11 +74,10 @@
         <div style="padding-left: 20px;">
             <div class="topan-section-shadow">
                 <p class="solution-config">
-                    <input placeholder="标题" type="text" id="soltitle" value="<%= prodata.solution[paraId].title %>"></input>
-                    <input placeholder="文件名" type="text" id="filename" value="<%= prodata.solution[paraId].file %>"></input>
+                    <input placeholder="文件名" type="text" id="filename" value="<%= prodata.solution[paraId].code %>"></input>
                 </p>
     <pre id="code" class="ace_editor" style="min-height: 400px;">
-<textarea class="ace_text-input" id="sys"><%= fs.readFileSync(`data/${prodata.pid}/${prodata.solution[paraId].file}`,'utf8') %></textarea></pre>
+<textarea class="ace_text-input" id="sys"><%= prodata.solution[paraId].code?fs.readFileSync(`data/${prodata.pid}/${prodata.solution[paraId].code}`,'utf8'):"" %></textarea></pre>
                 <p>
                     <button id="confirm" class="topan-button-emphasize topan-button-default"><i class="fa fa-solid fa-check"></i>&nbsp;确认</button>
                     <button id="delete" class="topan-button-commonly topan-button-default"><i class="fa fa-solid fa-trash"></i>&nbsp;删除</button>
