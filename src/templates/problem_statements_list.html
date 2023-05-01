@@ -45,7 +45,7 @@
                 <% }
                 flag=true; %>
                 <div class="topan-section-shadow">
-                    <p><a href="/admin/problem/<%= prodata.pid %>/statement/<%= key %>/edit">编辑 <%= key %></a></p>
+                    <p><a href="/admin/problem/<%= prodata.pid %>/statement/<%= key %>/edit"><i class="fa fa-solid fa-edit"></i>&nbsp;编辑 <%= key %></a></p>
                     <%- MarkdownIt.render(fs.readFileSync(`data/${prodata.pid}/${prodata.statement[key]}`,'utf8')) %>
                 </div>
             <% } %>
