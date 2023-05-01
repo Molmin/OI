@@ -4,6 +4,7 @@ const fs=require('fs');
 const path=require('path');
 const ejs=require('ejs');
 const Template=require('./../template.js');
+const highlightjs=require('highlight.js');
 
 var MarkdownIt=require('markdown-it')({
     html: true,
@@ -68,7 +69,8 @@ problemList.forEach(pid=>{
         );
     });
     fs.mkdirSync(`dist/problem/${prodata.pid}`);
-    ejs.renderFile("./src/templates/problem_solution.html",{isadmin: false, Config, prodata, fs, MarkdownIt},(err,HTML)=>{
+    ejs.renderFile("./src/templates/problem_solution.html",
+        {isadmin: false, Config, prodata, fs, MarkdownIt, highlightjs},(err,HTML)=>{
         fs.writeFileSync(`dist/problem/${prodata.pid}/solution.html`,
             Template({title: `题解与代码 - ${prodata.title}`,
                       header: ``},HTML)

@@ -52,8 +52,29 @@
                 <% }
                 flag=true; %>
                 <div class="topan-section-shadow">
-                    <h2><%= sol.title %><% if(isadmin){ %>&nbsp;&nbsp;<a class="options" href="/admin/problem/<%= prodata.pid %>/solution/<%= index %>/edit"><i class="fa fa-solid fa-edit"></i>&nbsp;编辑</a>&nbsp;&nbsp;<a class="options" href="/admin/problem/<%= prodata.pid %>/solution/<%= index %>/insert"><i class="fa fa-solid fa-plus"></i>&nbsp;在该段前插入段</a><% } %></h2>
+                    <h2>
+                        <%= sol.title %>
+                        <% if(isadmin){ %>
+                            &nbsp;<a class="options" href="/admin/problem/<%= prodata.pid %>/solution/<%= index %>/edit">
+                                <i class="fa fa-solid fa-edit"></i>&nbsp;编辑
+                            </a>
+                            &nbsp;<a class="options" href="/admin/problem/<%= prodata.pid %>/solution/<%= index %>/editcode">
+                                <i class="fa fa-solid fa-code"></i>&nbsp;附加代码
+                            </a>
+                            &nbsp;<a class="options" href="/admin/problem/<%= prodata.pid %>/solution/<%= index %>/insert">
+                                <i class="fa fa-solid fa-plus"></i>&nbsp;在该段前插入段
+                            </a>
+                        <% } %>
+                    </h2>
                     <%- MarkdownIt.render(fs.readFileSync(`data/${prodata.pid}/${sol.file}`,'utf8')) %>
+                    <% if(sol.code){ %>
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre><%- highlightjs.highlight(fs.readFileSync(`data/${prodata.pid}/${sol.code}`,'utf8'),{language:'cpp'}).value %></pre>
+                            </dl>
+                        </div>
+                    <% } %>
                 </div>
             <% }); %>
         </div>

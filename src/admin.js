@@ -234,6 +234,18 @@ router.post('/problem/:pid/solution/:para/edit',(req,res)=>{
     fs.writeFileSync(`data/${req.params.pid}/config.json`,JSON.stringify(prodata,null,"  "));
     res.json({});
 });
+router.get('/problem/:pid/solution/:para/editcode',(req,res)=>{
+    var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
+    prodata.pid=req.params.pid;
+    ejs.renderFile("./src/templates/problem_solution_editcode.html",
+        {isadmin: req.logined, Config, fs, prodata, paraId: req.params.para},(err,HTML)=>{
+        res.send(Template({title: `编辑附加代码 - ${prodata.title}`,
+                           header: ``,
+                           preview: true,
+                           isadmin: req.logined
+                          },HTML));
+    });
+});
 router.get('/problem/:pid/solution/:para/insert',(req,res)=>{
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     prodata.pid=req.params.pid;
