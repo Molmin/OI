@@ -1,0 +1,221 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title id="title">题解与代码 - 三角形（triangle） - OI Problems</title>
+        <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
+        <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
+        <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
+        <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+        <style>
+            @font-face{
+                font-family: font-firacode;
+                src: url("/OI/pub/FiraCode-Regular.ttf");
+            }
+            pre{
+	            font-family: "font-firacode";
+            }
+        </style>
+        
+    </head>
+    <body>
+        <div class="topan-header">
+            <div class="topan-header-home">
+                <a href="/OI">
+                    <button class="topan-button-ordinary topan-button-commonly topan-button-header-round-left">
+                        <i class="fa fa-home"></i>
+                    </button>
+                </a>
+            </div>
+            <div class="topan-header-left">
+                <span class="topan-header-text">OI Problems&nbsp;</span>
+                <a href="/OI/about">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
+                        <i class="fa fa-solid fa-circle-info"></i>
+                        <span>&nbsp;关于</span>
+                    </span>
+                </a>
+                
+                
+            </div>
+            <div class="topan-header-right">
+            </div>
+        </div>
+        <div class="topan-outer">
+            <div class="topan-page">
+                <div class="topan-mainpage-auto">
+                    <br>
+                    <style>
+    .row:after{
+        clear: both;
+    }
+    .row:before,.row:after{
+        content: " ";
+        display: table;
+    }
+    .row{
+        margin: 0 auto;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .column-one-fifth{
+        width: 20%;
+        float: left;
+    }
+    .column-four-fifth{
+        width: 80%;
+        float: left;
+    }
+
+    .options{
+        font-size: 16px;
+        font-weight: normal;
+    }
+</style>
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2>三角形（triangle）</h2>
+                <a class="topan-menu-option" href="/OI/problem/mbh8u2"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/mbh8u2/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/mbh8u2/files"><i class="fa fa-regular fa-file-code"></i>&nbsp;&nbsp;文件</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            
+                <div class="topan-section-shadow">
+                    <h2>
+                        二维凸包
+                        
+                    </h2>
+                    <p>容易想到红色点组成三角形是紧密连通的，故整个红色点组成三角形覆盖区域即为红色点的凸包。</p>
+<p>接着二分找出待判断的点所在的 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">x</span></span></span></span> 坐标区间，在判断其 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>y</mi></mrow><annotation encoding="application/x-tex">y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03588em;">y</span></span></span></span> 坐标即可。</p>
+<p>注意区分上凸包和下凸包；注意 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">x</span></span></span></span> 坐标不在凸包中点的 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">x</span></span></span></span> 范围内的情况。</p>
+<p>时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>n</mi><mi>log</mi><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n\log n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mord mathit">n</span><span class="mclose">)</span></span></span></span>。</p>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre><span class="hljs-comment">// 2022.07.03</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">point</span>{
+    <span class="hljs-type">double</span> x,y;
+    <span class="hljs-type">bool</span> <span class="hljs-keyword">operator</span>&lt;(point tmp)<span class="hljs-type">const</span>{
+        <span class="hljs-keyword">return</span> x==tmp.x?y&lt;tmp.y:x&lt;tmp.x;
+    }
+}a[<span class="hljs-number">100001</span>];
+<span class="hljs-function"><span class="hljs-type">double</span> <span class="hljs-title">dis</span><span class="hljs-params">(point x,point y)</span></span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">sqrt</span>((x.x-y.x)*(x.x-y.x)+(x.y-y.y)*(x.y-y.y));
+}
+<span class="hljs-function"><span class="hljs-type">double</span> <span class="hljs-title">slope</span><span class="hljs-params">(point x,point y)</span></span>{
+    <span class="hljs-keyword">return</span> (y.y-x.y)/(y.x-x.x);
+}
+
+<span class="hljs-type">int</span> n,m;
+
+vector&lt;point&gt; ans1,ans2;
+
+<span class="hljs-function">pair&lt;point,point&gt; <span class="hljs-title">find1</span><span class="hljs-params">(point t)</span></span>{
+    <span class="hljs-type">int</span> l=<span class="hljs-number">0</span>,r=ans1.<span class="hljs-built_in">size</span>()<span class="hljs-number">-2</span>;
+    <span class="hljs-keyword">while</span>(l&lt;r){
+        <span class="hljs-type">int</span> mid=l+r+<span class="hljs-number">1</span>&gt;&gt;<span class="hljs-number">1</span>;
+        <span class="hljs-keyword">if</span>(t.x&lt;ans1[mid].x)r=mid<span class="hljs-number">-1</span>;
+        <span class="hljs-keyword">else</span> l=mid;
+    }
+    <span class="hljs-keyword">return</span>{ans1[l],ans1[l+<span class="hljs-number">1</span>]};
+}
+
+<span class="hljs-function">pair&lt;point,point&gt; <span class="hljs-title">find2</span><span class="hljs-params">(point t)</span></span>{
+    <span class="hljs-type">int</span> l=<span class="hljs-number">0</span>,r=ans2.<span class="hljs-built_in">size</span>()<span class="hljs-number">-2</span>;
+    <span class="hljs-keyword">while</span>(l&lt;r){
+        <span class="hljs-type">int</span> mid=l+r+<span class="hljs-number">1</span>&gt;&gt;<span class="hljs-number">1</span>;
+        <span class="hljs-keyword">if</span>(t.x&lt;ans2[mid].x)r=mid<span class="hljs-number">-1</span>;
+        <span class="hljs-keyword">else</span> l=mid;
+    }
+    <span class="hljs-keyword">return</span>{ans2[l],ans2[l+<span class="hljs-number">1</span>]};
+}
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">freopen</span>(<span class="hljs-string">&quot;triangle.in&quot;</span>,<span class="hljs-string">&quot;r&quot;</span>,stdin);
+    <span class="hljs-built_in">freopen</span>(<span class="hljs-string">&quot;triangle.out&quot;</span>,<span class="hljs-string">&quot;w&quot;</span>,stdout);
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;n);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%lf%lf&quot;</span>,&amp;a[i].x,&amp;a[i].y);
+    <span class="hljs-built_in">sort</span>(a+<span class="hljs-number">1</span>,a+<span class="hljs-number">1</span>+n);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++){
+        <span class="hljs-type">double</span> y=<span class="hljs-number">1</span>,y_=<span class="hljs-number">2</span>;
+        <span class="hljs-keyword">while</span>(y&lt;=y_&amp;&amp;ans1.<span class="hljs-built_in">size</span>()&gt;=<span class="hljs-number">2</span>){
+            point p1=ans1[ans1.<span class="hljs-built_in">size</span>()<span class="hljs-number">-2</span>],
+                  p2=ans1[ans1.<span class="hljs-built_in">size</span>()<span class="hljs-number">-1</span>];
+            y=<span class="hljs-built_in">slope</span>(p1,p2),
+            y_=<span class="hljs-built_in">slope</span>(p1,a[i]);
+            <span class="hljs-keyword">if</span>(y&lt;=y_)ans1.<span class="hljs-built_in">pop_back</span>();
+        }
+        ans1.<span class="hljs-built_in">push_back</span>(a[i]);
+    }
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++){
+        <span class="hljs-type">double</span> y=<span class="hljs-number">2</span>,y_=<span class="hljs-number">1</span>;
+        <span class="hljs-keyword">while</span>(y&gt;=y_&amp;&amp;ans2.<span class="hljs-built_in">size</span>()&gt;=<span class="hljs-number">2</span>){
+            point p1=ans2[ans2.<span class="hljs-built_in">size</span>()<span class="hljs-number">-2</span>],
+                  p2=ans2[ans2.<span class="hljs-built_in">size</span>()<span class="hljs-number">-1</span>];
+            y=<span class="hljs-built_in">slope</span>(p1,p2),
+            y_=<span class="hljs-built_in">slope</span>(p1,a[i]);
+            <span class="hljs-keyword">if</span>(y&gt;=y_)ans2.<span class="hljs-built_in">pop_back</span>();
+        }
+        ans2.<span class="hljs-built_in">push_back</span>(a[i]);
+    }
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;m);
+    <span class="hljs-type">int</span> tot=<span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=m;i++){
+        point tmp;
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%lf%lf&quot;</span>,&amp;tmp.x,&amp;tmp.y);
+        point p1=ans1[<span class="hljs-number">0</span>],p2=ans1[ans1.<span class="hljs-built_in">size</span>()<span class="hljs-number">-1</span>];
+        <span class="hljs-keyword">if</span>(tmp.x&lt;p1.x||tmp.x&gt;p2.x)<span class="hljs-keyword">continue</span>;
+        <span class="hljs-type">double</span> k=<span class="hljs-built_in">slope</span>(p1,tmp),k1=<span class="hljs-built_in">slope</span>(p1,p2);
+        <span class="hljs-keyword">if</span>(k==k1){tot++;<span class="hljs-keyword">continue</span>;}
+        pair&lt;point,point&gt; ret;
+        <span class="hljs-keyword">if</span>(k&lt;k1)ret=<span class="hljs-built_in">find2</span>(tmp);
+        <span class="hljs-keyword">else</span> ret=<span class="hljs-built_in">find1</span>(tmp);
+        <span class="hljs-type">double</span> k2=<span class="hljs-built_in">slope</span>(ret.first,tmp),
+               k3=<span class="hljs-built_in">slope</span>(ret.first,ret.second);
+        <span class="hljs-keyword">if</span>(k2==k3||<span class="hljs-built_in">int</span>(k&lt;k1)+<span class="hljs-built_in">int</span>(k2&lt;k3)==<span class="hljs-number">1</span>)tot++;
+    }
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d\n&quot;</span>,tot);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
+        </div>
+    </div>
+</div>
+                    <br>
+                </div>
+                <footer class="topan-footer">
+                    <p></p>
+                    <p style="text-align: center; color: #555; font-size: 12px;">
+                        Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
+                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>
+    
