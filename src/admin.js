@@ -211,6 +211,8 @@ router.post('/problem/:pid/statement/:statementName/edit',(req,res)=>{
 router.post('/problem/:pid/solution/:para/delete',(req,res)=>{
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     fs.unlinkSync(`data/${req.params.pid}/${prodata.solution[req.params.para].file}`);
+    if(prodata.solution[req.params.para].code)
+        fs.unlinkSync(`data/${req.params.pid}/${prodata.solution[req.params.para].code}`);
     prodata.solution.splice(req.params.para,1);
     fs.writeFileSync(`data/${req.params.pid}/config.json`,JSON.stringify(prodata,null,"  "));
     res.json({});

@@ -66,7 +66,7 @@
                             </a>
                         <% } %>
                     </h2>
-                    <%- MarkdownIt.render(fs.readFileSync(`data/${prodata.pid}/${sol.file}`,'utf8')) %>
+                    <%- MarkdownIt.render(fs.readFileSync(`data/${prodata.pid}/${sol.file}`,'utf8').split('(file://').join(`(./file/`)) %>
                     <% if(sol.code){ %>
                         <div class="topan-fold">
                             <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>

@@ -23,13 +23,21 @@
     table{
         width: 100%;
     }
-    th:nth-child(1),td:nth-child(1){
-        text-align: left;
+    th:nth-child(1){
+        width: 48px;
     }
     th:nth-child(2),td:nth-child(2){
+        text-align: left;
+    }
+    th:nth-child(3),td:nth-child(3){
         text-align: right;
     }
 </style>
+
+<script>
+    
+</script>
+
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">
@@ -50,12 +58,17 @@
             <div class="topan-section-shadow">
                 <table>
                     <tr>
+                        <th>操作</th>
                         <th>文件名</th>
                         <th>文件大小</th>
                     </tr>
                     <% var filelist=fs.readdirSync(`data/${prodata.pid}`);
-                    filelist.forEach(filename=>{ %>
+                    filelist.forEach((filename,index)=>{ %>
                         <tr>
+                            <td>
+                                <input id="check-<%= index %>" type="checkbox">
+                                <a href="/<%= Config.on %>/problem/<%= prodata.pid %>/file/<%= filename %>"><i class="fa fa-solid fa-cloud-arrow-down"></i></a>
+                            </td>
                             <td><%= filename %></td>
                             <td><%= fileSize(fs.statSync(`data/${prodata.pid}/${filename}`).size) %></td>
                         </tr>
@@ -67,6 +80,19 @@
     <div class="column-two-fifth">
         <div style="padding-left: 20px;">
             <div class="topan-section-shadow">
+                <h3>上传文件</h3>
+                <p><input id="file" type="file"></p>
+                <p>
+                    <button id="file-upload" class="topan-button-emphasize topan-button-default">确认上传</button>
+                    <button id="file-upload-unzip" class="topan-button-commonly topan-button-default">解压后上传</button>
+                </p>
+                <h3>操作</h3>
+                <p>
+                    <button id="file-delete" class="topan-button-emphasize topan-button-default">删除</button>
+                    <button id="file-tag-testdata" class="topan-button-commonly topan-button-default">标记为测试数据</button>
+                    <button id="file-tag-user" class="topan-button-commonly topan-button-default">标记为选手文件</button>
+                    <button id="file-tag-remove" class="topan-button-commonly topan-button-default">移除标记</button>
+                </p>
             </div>
         </div>
     </div>

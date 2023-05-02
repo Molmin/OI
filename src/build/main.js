@@ -11,6 +11,8 @@ var MarkdownIt=require('markdown-it')({
     linkify: true
 });
 MarkdownIt.use(require('markdown-it-katex'));
+MarkdownIt.use(require('markdown-it-imsize'));
+MarkdownIt.use(require('markdown-it-footnote'));
 
 const YAML=require('yamljs');
 var Config=YAML.load('./data/config.yaml');
@@ -64,7 +66,8 @@ ejs.renderFile(
 problemList.forEach(pid=>{
     var prodata=JSON.parse(fs.readFileSync(`data/${pid}/config.json`,'utf8'));
     prodata.pid=pid;
-    ejs.renderFile("./src/templates/problem_detail.html",{isadmin: false, Config, prodata, fs, MarkdownIt},(err,HTML)=>{
+    ejs.renderFile("./src/templates/problem_detail.html",
+        {isadmin: false, Config, prodata, fs, MarkdownIt},(err,HTML)=>{
         fs.writeFileSync(`dist/problem/${prodata.pid}.html`,
             Template({title: `#${prodata.pid}. ${prodata.title}`,
                       header: ``},HTML)
@@ -78,6 +81,10 @@ problemList.forEach(pid=>{
                       header: ``},HTML)
         );
     });
+    fs.mkdirSync(`dist/problem/${prodata.pid}/file`);
+    var filelist=fs.readdirSync(`data/${prodata.pid}`);
+    filelist.forEach(filename=>fs.copyFileSync(`data/${prodata.pid}/${filename}`,
+        `dist/problem/${prodata.pid}/file/${filename}`));
 });
 
 }

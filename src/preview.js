@@ -14,6 +14,8 @@ var MarkdownIt=require('markdown-it')({
     linkify: true
 });
 MarkdownIt.use(require('markdown-it-katex'));
+MarkdownIt.use(require('markdown-it-imsize'));
+MarkdownIt.use(require('markdown-it-footnote'));
 
 router.get('/',(req,res)=>{
     var problemList=fs.readFileSync('data/problem.json','utf8');
@@ -86,6 +88,11 @@ router.get('/problem/:pid/files',(req,res)=>{
                            isadmin: req.logined
                           },HTML));
     });
+});
+router.get('/problem/:pid/file/:filename',(req,res)=>{
+    if(fs.existsSync(`data/${req.params.pid}/${req.params.filename}`))
+        res.sendFile(`data/${req.params.pid}/${req.params.filename}`,{root:process.cwd()},err=>{});
+    else res.sendStatus(404);
 });
 
 module.exports=router;

@@ -63,7 +63,7 @@
             for(var key in prodata.statement)total++,Key=key;
             if(total==1){
                 var mdcode=fs.readFileSync(`data/${prodata.pid}/${prodata.statement[Key]}`,'utf8');
-                var html=MarkdownIt.render(mdcode); %>
+                var html=MarkdownIt.render(mdcode.split('(file://').join(`(./${prodata.pid}/file/`)); %>
                 <div class="topan-section-shadow">
                     <%- html %>
                 </div>
@@ -80,7 +80,7 @@
                     <% var flag2=true;
                     for(var key in prodata.statement){
                         var mdcode=fs.readFileSync(`data/${prodata.pid}/${prodata.statement[key]}`,'utf8');
-                        var html=MarkdownIt.render(mdcode); %>
+                        var html=MarkdownIt.render(mdcode.split('(file://').join(`(./${prodata.pid}/file/`)); %>
                         <div<%- flag2?` class="topan-tab-showed"`:`` %>>
                             <div class="topan-section-shadow">
                                 <%- html %>
