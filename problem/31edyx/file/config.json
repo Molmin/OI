@@ -1,0 +1,25 @@
+{
+  "title": "On Sum of Fractions",
+  "difficulty": {
+    "algorithm": 3,
+    "thinking": 4,
+    "implementation": 3
+  },
+  "judge": {
+    "time": "2 s",
+    "memory": "256 MiB",
+    "type": "default"
+  },
+  "tags": "数学,数学/素数,数学/代数",
+  "source": "[Codeforces Round 232 (Div. 1) Problem B](https://codeforces.com/contest/396/problem/B)",
+  "statement": {
+    "简体中文": "statement_zh.md"
+  },
+  "solution": [
+    {
+      "title": "数学推导",
+      "file": "solution.md",
+      "code": "code.cpp"
+    }
+  ]
+}
