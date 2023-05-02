@@ -35,7 +35,32 @@
 </style>
 
 <script>
-    
+    $(document).ready(()=>{
+        $('#file-upload').click(()=>{
+            if(!$("#headimage-input").val()){
+                alert("Please upload pictures first.");
+                return;
+            }
+            var uploadfile=$("#headimage-input")[0].files[0];
+            if(uploadfile.size>=5*1024*1024){
+                alert("Picture size must be less than 5 MiB.");
+                return;
+            }
+            var formdata=new FormData();
+            formdata.append("headimage_upload",uploadfile);
+            $.ajax({
+                url: "/i/changeheadimage",
+                type: 'POST',
+                data: formdata,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function(data){
+                    alert(data.message);
+                }
+            });
+        });
+    });
 </script>
 
 <div class="row">
@@ -80,6 +105,8 @@
     <div class="column-two-fifth">
         <div style="padding-left: 20px;">
             <div class="topan-section-shadow">
+                <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>/file/userfile.zip"><i class="fa fa-solid fa-cloud-arrow-down"></i>&nbsp;&nbsp;下载选手文件（共个文件，<%=  %>）</a>
+                <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>/file/userfile.zip"><i class="fa fa-solid fa-cloud-arrow-down"></i>&nbsp;&nbsp;下载测试数据（共个文件，）</a>
                 <h3>上传文件</h3>
                 <p><input id="file" type="file"></p>
                 <p>
