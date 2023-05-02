@@ -34,6 +34,8 @@
     }
     #difficulties>th{
         max-width: 20px;
+        font-size: 80%;
+        font-weight: normal;
     }
     td:nth-child(2),#title{
         text-align: left;
@@ -75,7 +77,7 @@
                             <td><a href="/<%= Config.on %>/problem/<%= pid %>"><%= detail.title %></a></td>
                             <td>
                                 <% detail.tags.split(',').forEach(tag=>{ %>
-                                    <span class="tag"><%= tag %></span>
+                                    <span class="tag"><%= tag.split('/')[tag.split('/').length-1] %></span>
                                 <% }) %>
                             </td>
                             <td><%= detail.difficulty.algorithm+detail.difficulty.thinking+detail.difficulty.implementation %></td>
