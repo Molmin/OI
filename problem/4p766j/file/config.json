@@ -30,7 +30,8 @@
     },
     {
       "title": "构造",
-      "file": "solution3.md"
+      "file": "solution3.md",
+      "code": "code.cpp"
     }
   ],
   "submit": [],
