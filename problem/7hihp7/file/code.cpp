@@ -6,6 +6,7 @@ inline int Gcd(int x,int y){
     if(y==0)return x;
     else return Gcd(y,x%y);
 }
+
 int n,s[100001];
 struct node{
     int gcd,minval,mintot;
@@ -38,6 +39,7 @@ node query(int id,int L,int R,int l,int r){
     if(l>mid&&r>mid)return query((id<<1)+1,mid+1,R,l,r);
     return query(id<<1,L,mid,l,mid)+query((id<<1)+1,mid+1,R,mid+1,r);
 }
+
 int main(){
     scanf("%d",&n);
     for(int i=1;i<=n;i++)
