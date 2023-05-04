@@ -4,7 +4,7 @@
     $(document).ready(()=>{
         editor = ace.edit("code");
         theme = "clouds"
-        language = "markdown"
+        language = "c_cpp"
         editor.setTheme("ace/theme/" + theme);
         editor.session.setMode("ace/mode/" + language);
         editor.setFontSize(18);
@@ -16,16 +16,15 @@
             enableSnippets: true,
             enableLiveAutocompletion: true
         });
-        $("#statement-create").click(()=>{
+        $("#confirm").click(()=>{
             $.post(
-                "/admin/problem/<%= prodata.pid %>/statement/create",
+                "/admin/problem/<%= prodata.pid %>/solution/<%= paraId %>/editcode",
                 {
                     code: editor.getValue(),
-                    file: $('#statement-file').val(),
-                    name: $('#statement-name').val()
+                    filename: $('#filename').val()
                 },
                 (data,status)=>{
-                    location.pathname=`/OI/problem/<%= prodata.pid %>`;
+                    location.pathname=`/OI/problem/<%= prodata.pid %>/solution`;
                 }
             );
         });
@@ -53,7 +52,7 @@
         width: 80%;
         float: left;
     }
-    .statement-config>input{
+    .solution-config>input{
         width: 200px;
     }
 </style>
@@ -74,41 +73,14 @@
     <div class="column-four-fifth">
         <div style="padding-left: 20px;">
             <div class="topan-section-shadow">
-                <p class="statement-config">
-                    <input placeholder="名称" type="text" id="statement-name"></input>
-                    <input placeholder="文件名" type="text" id="statement-file"></input>
+                <p class="solution-config">
+                    <input placeholder="文件名" type="text" id="filename" value="<%= prodata.solution[paraId].code %>"></input>
                 </p>
     <pre id="code" class="ace_editor" style="min-height: 400px;">
-<textarea class="ace_text-input" id="sys">## 题目描述
-
-TODO
-
-## 输入格式
-
-TODO
-
-## 输出格式
-
-TODO
-
-## 样例 1
-
-```input1
-TODO
-```
-
-```output1
-TODO
-```
-
-## 样例 1 解释
-
-TODO
-
-## 数据规模
-
-TODO</textarea></pre>
-                <p><button id="statement-create" class="topan-button-emphasize topan-button-default"><i class="fa fa-solid fa-check"></i>&nbsp;确认</button></p>
+<textarea class="ace_text-input" id="sys"><%= prodata.solution[paraId].code?fs.readFileSync(`data/${prodata.pid}/${prodata.solution[paraId].code}`,'utf8'):"" %></textarea></pre>
+                <p>
+                    <button id="confirm" class="topan-button-emphasize topan-button-default"><i class="fa fa-solid fa-check"></i>&nbsp;确认</button>
+                </p>
             </div>
         </div>
     </div>

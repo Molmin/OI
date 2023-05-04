@@ -34,6 +34,7 @@ app.get("/",(req,res)=>{
     res.redirect(`/${Config.on}`);
 });
 app.use("/file",express.static(path.join(__dirname,'src/assets')));
+app.use(`/${Config.on}/pub`,express.static(path.join(__dirname,'src/assets/public')));
 app.use(`/${Config.on}`,require('./src/preview.js'));
 app.use(`/admin`,require('./src/admin.js'));
 

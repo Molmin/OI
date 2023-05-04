@@ -1,0 +1,101 @@
+<script>
+    $(document).ready(()=>{
+        $("#confirm").click(()=>{
+            var prodata={
+                title: $('#pro-title').val(),
+                difficulty: {
+                    algorithm: Number($('#pro-difficulty-algorithm').val()),
+                    thinking: Number($('#pro-difficulty-thinking').val()),
+                    implementation: Number($('#pro-difficulty-implementation').val())
+                },
+                judge: {
+                    time: $('#pro-judge-time').val(),
+                    memory: $('#pro-judge-memory').val(),
+                    type: $('#pro-judge-type').val()
+                },
+                tags: $('#pro-tags').val(),
+                source: $('#pro-source').val()
+            };
+            $.post(
+                "/admin/problem/<%= prodata.pid %>/edit",
+                {prodata: JSON.stringify(prodata)},
+                (data,status)=>{
+                    location.pathname=`/OI/problem/<%= prodata.pid %>`;
+                }
+            );
+        });
+        $("#delete").click(()=>{
+            $.post(
+                "/admin/problem/<%= prodata.pid %>/delete",
+                {},
+                (data,status)=>{
+                    location.pathname=`/OI`;
+                }
+            );
+        });
+    });
+</script>
+
+<style>
+    .row:after{
+        clear: both;
+    }
+    .row:before,.row:after{
+        content: " ";
+        display: table;
+    }
+    .row{
+        margin: 0 auto;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .column-one-fifth{
+        width: 20%;
+        float: left;
+    }
+    .column-four-fifth{
+        width: 80%;
+        float: left;
+    }
+    .pro-config>input{
+        width: 100px;
+    }
+</style>
+
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2><%= prodata.title %></h2>
+                <% if(isadmin){ %>
+                    <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                    <a class="topan-menu-option" href="/admin/problem/<%= prodata.pid %>/config"><i class="fa fa-solid fa-gear"></i>&nbsp;&nbsp;配置题目</a>
+                    <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>/statements"><i class="fa fa-solid fa-list"></i>&nbsp;&nbsp;题面列表</a>
+                    <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                    <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>/files"><i class="fa fa-regular fa-file-code"></i>&nbsp;&nbsp;文件</a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            <div class="topan-section-shadow">
+                <p><input placeholder="题目标题" type="text" id="pro-title" value="<%= prodata.title %>"></input></p>
+                <p class="pro-config">
+                    <input placeholder="算法难度" type="text" id="pro-difficulty-algorithm" value="<%= prodata.difficulty.algorithm %>"></input>
+                    <input placeholder="思维难度" type="text" id="pro-difficulty-thinking" value="<%= prodata.difficulty.thinking %>"></input>
+                    <input placeholder="实现难度" type="text" id="pro-difficulty-implementation" value="<%= prodata.difficulty.implementation %>"></input>
+                    <input placeholder="时间限制" type="text" id="pro-judge-time" value="<%= prodata.judge.time %>"></input>
+                    <input placeholder="空间限制" type="text" id="pro-judge-memory" value="<%= prodata.judge.memory %>"></input>
+                    <input placeholder="评测类型" type="text" id="pro-judge-type" value="<%= prodata.judge.type %>"></input>
+                </p>
+                <p><input placeholder="标签（用中文或英文逗号隔开）" type="text" id="pro-tags" value="<%= prodata.tags %>"></input></p>
+                <p><input placeholder="来源" type="text" id="pro-source" value="<%= prodata.source %>"></input></p>
+                <p>
+                    <button id="confirm" class="topan-button-emphasize topan-button-default"><i class="fa fa-solid fa-check"></i>&nbsp;确认</button>
+                    <button id="delete" class="topan-button-commonly topan-button-default"><i class="fa fa-solid fa-trash"></i>&nbsp;删除</button>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

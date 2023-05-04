@@ -16,16 +16,25 @@
             enableSnippets: true,
             enableLiveAutocompletion: true
         });
-        $("#statement-create").click(()=>{
+        $("#confirm").click(()=>{
             $.post(
-                "/admin/problem/<%= prodata.pid %>/statement/create",
+                "/admin/problem/<%= prodata.pid %>/solution/<%= paraId %>/edit",
                 {
                     code: editor.getValue(),
-                    file: $('#statement-file').val(),
-                    name: $('#statement-name').val()
+                    title: $('#soltitle').val(),
+                    filename: $('#filename').val()
                 },
                 (data,status)=>{
-                    location.pathname=`/OI/problem/<%= prodata.pid %>`;
+                    location.pathname=`/OI/problem/<%= prodata.pid %>/solution`;
+                }
+            );
+        });
+        $("#delete").click(()=>{
+            $.post(
+                "/admin/problem/<%= prodata.pid %>/solution/<%= paraId %>/delete",
+                {},
+                (data,status)=>{
+                    location.pathname=`/OI/problem/<%= prodata.pid %>/solution`;
                 }
             );
         });
@@ -53,7 +62,7 @@
         width: 80%;
         float: left;
     }
-    .statement-config>input{
+    .solution-config>input{
         width: 200px;
     }
 </style>
@@ -74,41 +83,16 @@
     <div class="column-four-fifth">
         <div style="padding-left: 20px;">
             <div class="topan-section-shadow">
-                <p class="statement-config">
-                    <input placeholder="名称" type="text" id="statement-name"></input>
-                    <input placeholder="文件名" type="text" id="statement-file"></input>
+                <p class="solution-config">
+                    <input placeholder="标题" type="text" id="soltitle" value="<%= prodata.solution[paraId].title %>"></input>
+                    <input placeholder="文件名" type="text" id="filename" value="<%= prodata.solution[paraId].file %>"></input>
                 </p>
     <pre id="code" class="ace_editor" style="min-height: 400px;">
-<textarea class="ace_text-input" id="sys">## 题目描述
-
-TODO
-
-## 输入格式
-
-TODO
-
-## 输出格式
-
-TODO
-
-## 样例 1
-
-```input1
-TODO
-```
-
-```output1
-TODO
-```
-
-## 样例 1 解释
-
-TODO
-
-## 数据规模
-
-TODO</textarea></pre>
-                <p><button id="statement-create" class="topan-button-emphasize topan-button-default"><i class="fa fa-solid fa-check"></i>&nbsp;确认</button></p>
+<textarea class="ace_text-input" id="sys"><%= fs.readFileSync(`data/${prodata.pid}/${prodata.solution[paraId].file}`,'utf8') %></textarea></pre>
+                <p>
+                    <button id="confirm" class="topan-button-emphasize topan-button-default"><i class="fa fa-solid fa-check"></i>&nbsp;确认</button>
+                    <button id="delete" class="topan-button-commonly topan-button-default"><i class="fa fa-solid fa-trash"></i>&nbsp;删除</button>
+                </p>
             </div>
         </div>
     </div>
