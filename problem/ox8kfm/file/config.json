@@ -1,0 +1,34 @@
+{
+  "title": "矩阵乘法",
+  "difficulty": {
+    "algorithm": 0,
+    "thinking": 0,
+    "implementation": 0
+  },
+  "judge": {
+    "time": "1.5 s",
+    "memory": "125 MiB",
+    "type": "default"
+  },
+  "tags": "杂项/整体二分,数据结构,数据结构/树状数组,数据结构/树状数组/二维树状数组",
+  "source": "国家集训队",
+  "statement": {
+    "简体中文": "statement_zh.md"
+  },
+  "solution": [
+    {
+      "title": "整体二分模板",
+      "file": "sol1.md",
+      "code": "code1.cpp"
+    },
+    {
+      "title": "法一：整体二分 & 二维树状数组",
+      "file": "sol2.md",
+      "code": "code2.cpp"
+    },
+    {
+      "title": "法二：二维莫队",
+      "file": "sol3.md"
+    }
+  ]
+}
