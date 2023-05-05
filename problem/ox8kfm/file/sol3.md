@@ -1,3 +1,1 @@
-TODO
-
-时间复杂度 $\Theta(n)$。
+https://www.luogu.com.cn/blog/520--3ptswww/p1527-guo-jia-ji-xun-dui-ju-zhen-sheng-fa-ti-xie
