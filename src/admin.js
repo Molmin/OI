@@ -25,22 +25,26 @@ router.get('/',(req,res)=>{
     });
 });
 router.post('/update/db',(req,res)=>{
+    require('child_process').spawnSync('rm',['-rf','node_modules/gh-pages/.cache']);
+    require('child_process').spawnSync('rm',['-rf','node_modules/.cache/gh-pages']);
     require('gh-pages').publish('data',{
         branch: 'data',
         message: req.body.message
     },err=>{
-        if(err)res.status(200).json({error: err});
+        if(err)res.status(200).json({error: err.message});
         else res.status(200).json({message: "同步成功。"});
     });
 });
 router.post('/update/ghpage',(req,res)=>{
     require('./build/main.js')();
     setTimeout(()=>{
+        require('child_process').spawnSync('rm',['-rf','node_modules/gh-pages/.cache']);
+        require('child_process').spawnSync('rm',['-rf','node_modules/.cache/gh-pages']);
         require('gh-pages').publish('dist',{
             branch: 'gh-pages',
             message: req.body.message
         },err=>{
-            if(err)res.status(200).json({error: err});
+            if(err)res.status(200).json({error: err.message});
             else res.status(200).json({message: "同步成功。"});
         });
     },1000);
@@ -233,7 +237,8 @@ router.post('/problem/:pid/solution/:para/edit',(req,res)=>{
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     fs.unlinkSync(`data/${req.params.pid}/${prodata.solution[req.params.para].file}`);
     fs.writeFileSync(`data/${req.params.pid}/${req.body.filename}`,req.body.code);
-    prodata.solution[req.params.para]={title: req.body.title, file: req.body.filename};
+    prodata.solution[req.params.para].title=req.body.title;
+    prodata.solution[req.params.para].file=req.body.filename;
     fs.writeFileSync(`data/${req.params.pid}/config.json`,JSON.stringify(prodata,null,"  "));
     res.json({});
 });
