@@ -278,11 +278,152 @@
                 
                 <div class="topan-section-shadow">
                     <h2>
-                        法三：二维莫队
+                        法三：二维莫队 &amp; 离散化
                         
                     </h2>
-                    <p><a href="https://www.luogu.com.cn/blog/520--3ptswww/p1527-guo-jia-ji-xun-dui-ju-zhen-sheng-fa-ti-xie">https://www.luogu.com.cn/blog/520--3ptswww/p1527-guo-jia-ji-xun-dui-ju-zhen-sheng-fa-ti-xie</a></p>
+                    <p>考虑先离散化，再使用二维莫队。</p>
+<h3>奇偶排序优化</h3>
+<p>莫队中奇偶排序是一种常用的优化方法。</p>
+<p>指针经常在移动到边界之后，又因为另一个指针的移动要移动很长的距离，所以可以使用奇偶排序的方法。</p>
+<pre><code class="language-cpp">struct Question{
+    int x1,y1,x2,y2,k,qid;
+    bool operator&lt;(Question tmp)const{
+        if(blockId[x1]!=blockId[tmp.x1])return blockId[x1]&lt;blockId[tmp.x1];
+        if(blockId[y1]!=blockId[tmp.y1])return blockId[x1]&amp;1?y1&lt;tmp.y1:y1&gt;tmp.y1;
+        if(blockId[y2]!=blockId[tmp.y2])return blockId[y1]&amp;1?y2&lt;tmp.y2:y2&gt;tmp.y2;
+        else return blockId[y2]&amp;1?x2&lt;tmp.x2:x2&gt;tmp.x2;
+    }
+};
+</code></pre>
 
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre><span class="hljs-comment">// 2023.05.12</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+<span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-type">void</span> <span class="hljs-title">read</span><span class="hljs-params">(<span class="hljs-type">int</span> &amp;a)</span></span>{
+    a=<span class="hljs-number">0</span>; <span class="hljs-type">char</span> c;
+    <span class="hljs-keyword">while</span>((c=<span class="hljs-built_in">getchar</span>())&lt;<span class="hljs-number">48</span>);
+    <span class="hljs-keyword">do</span> a=(a&lt;&lt;<span class="hljs-number">3</span>)+(a&lt;&lt;<span class="hljs-number">1</span>)+(c^<span class="hljs-number">48</span>);
+    <span class="hljs-keyword">while</span>((c=<span class="hljs-built_in">getchar</span>())&gt;<span class="hljs-number">47</span>);
+}
+<span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-type">void</span> <span class="hljs-title">write</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span></span>{
+    <span class="hljs-keyword">if</span>(x&gt;<span class="hljs-number">9</span>)<span class="hljs-built_in">write</span>(x/<span class="hljs-number">10</span>);
+    <span class="hljs-built_in">putchar</span>(x%<span class="hljs-number">10</span>+<span class="hljs-string">&#x27;0&#x27;</span>);
+}
+
+<span class="hljs-type">int</span> n,q,a[<span class="hljs-number">501</span>][<span class="hljs-number">501</span>],ans[<span class="hljs-number">60001</span>];
+<span class="hljs-type">int</span> disc[<span class="hljs-number">250001</span>],cntdisc; <span class="hljs-comment">// 离散化用</span>
+<span class="hljs-type">int</span> nn;
+
+<span class="hljs-type">int</span> blockId[<span class="hljs-number">501</span>],blocklen; <span class="hljs-comment">// 分块</span>
+<span class="hljs-type">int</span> rangeblockId[<span class="hljs-number">250001</span>],rangeblocklen; <span class="hljs-comment">// 值域分块</span>
+<span class="hljs-type">int</span> counts[<span class="hljs-number">250001</span>],countsum[<span class="hljs-number">501</span>]; <span class="hljs-comment">// 该值次数及值域块总和</span>
+
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">Position</span>{
+    <span class="hljs-type">int</span> x,y;
+};
+vector&lt;Position&gt; pos[<span class="hljs-number">250001</span>];
+
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">Question</span>{
+    <span class="hljs-type">int</span> x1,y1,x2,y2,k,qid;
+    <span class="hljs-type">bool</span> <span class="hljs-keyword">operator</span>&lt;(Question tmp)<span class="hljs-type">const</span>{
+        <span class="hljs-keyword">if</span>(blockId[x1]!=blockId[tmp.x1])<span class="hljs-keyword">return</span> blockId[x1]&lt;blockId[tmp.x1];
+        <span class="hljs-keyword">if</span>(blockId[y1]!=blockId[tmp.y1])<span class="hljs-keyword">return</span> blockId[x1]&amp;<span class="hljs-number">1</span>?y1&lt;tmp.y1:y1&gt;tmp.y1;
+        <span class="hljs-keyword">if</span>(blockId[y2]!=blockId[tmp.y2])<span class="hljs-keyword">return</span> blockId[y1]&amp;<span class="hljs-number">1</span>?y2&lt;tmp.y2:y2&gt;tmp.y2;
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> blockId[y2]&amp;<span class="hljs-number">1</span>?x2&lt;tmp.x2:x2&gt;tmp.x2;
+    }
+}Q[<span class="hljs-number">60001</span>];
+<span class="hljs-type">int</span> Qcnt;
+
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">mo_algo</span><span class="hljs-params">()</span></span>{
+    blocklen=<span class="hljs-number">11</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;++i)
+        blockId[i]=(i<span class="hljs-number">-1</span>)/blocklen+<span class="hljs-number">1</span>;
+    rangeblocklen=n+<span class="hljs-number">1</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=nn;++i)
+        rangeblockId[i]=(i<span class="hljs-number">-1</span>)/rangeblocklen+<span class="hljs-number">1</span>;
+    counts[a[<span class="hljs-number">1</span>][<span class="hljs-number">1</span>]]=countsum[rangeblockId[a[<span class="hljs-number">1</span>][<span class="hljs-number">1</span>]]]=<span class="hljs-number">1</span>;
+    <span class="hljs-built_in">sort</span>(Q+<span class="hljs-number">1</span>,Q+<span class="hljs-number">1</span>+Qcnt);
+
+    <span class="hljs-type">int</span> L=<span class="hljs-number">1</span>,R=<span class="hljs-number">1</span>,D=<span class="hljs-number">1</span>,U=<span class="hljs-number">1</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=q;++i){
+        <span class="hljs-keyword">while</span>(R&lt;Q[i].y2){
+            ++R;
+            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=U;i&lt;=D;++i)
+                ++counts[a[i][R]],++countsum[rangeblockId[a[i][R]]];
+        }
+        <span class="hljs-keyword">while</span>(L&gt;Q[i].y1){
+            --L;
+            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=U;i&lt;=D;++i)
+                ++counts[a[i][L]],++countsum[rangeblockId[a[i][L]]];
+        }
+        <span class="hljs-keyword">while</span>(D&lt;Q[i].x2){
+            ++D;
+            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=L;i&lt;=R;++i)
+                ++counts[a[D][i]],++countsum[rangeblockId[a[D][i]]];
+        }
+        <span class="hljs-keyword">while</span>(U&gt;Q[i].x1){
+            --U;
+            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=L;i&lt;=R;++i)
+                ++counts[a[U][i]],++countsum[rangeblockId[a[U][i]]];
+        }
+        <span class="hljs-keyword">while</span>(R&gt;Q[i].y2){
+            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=U;i&lt;=D;++i)
+                --counts[a[i][R]],--countsum[rangeblockId[a[i][R]]];
+            --R;
+        }
+        <span class="hljs-keyword">while</span>(L&lt;Q[i].y1){
+            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=U;i&lt;=D;++i)
+                --counts[a[i][L]],--countsum[rangeblockId[a[i][L]]];
+            ++L;
+        }
+        <span class="hljs-keyword">while</span>(D&gt;Q[i].x2){
+            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=L;i&lt;=R;++i)
+                --counts[a[D][i]],--countsum[rangeblockId[a[D][i]]];
+            --D;
+        }
+        <span class="hljs-keyword">while</span>(U&lt;Q[i].x1){
+            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=L;i&lt;=R;++i)
+                --counts[a[U][i]],--countsum[rangeblockId[a[U][i]]];
+            ++U;
+        }
+        <span class="hljs-type">int</span> res=<span class="hljs-number">1</span>,cnt=<span class="hljs-number">0</span>;
+        <span class="hljs-keyword">while</span>(cnt+countsum[res]&lt;Q[i].k&amp;&amp;res&lt;=rangeblockId[nn])cnt+=countsum[res],++res;
+        res=(res<span class="hljs-number">-1</span>)*rangeblocklen+<span class="hljs-number">1</span>;
+        <span class="hljs-keyword">while</span>(cnt+counts[res]&lt;Q[i].k&amp;&amp;res&lt;=nn)cnt+=counts[res],++res;
+        ans[Q[i].qid]=disc[res];
+    }
+}
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">read</span>(n);<span class="hljs-built_in">read</span>(q);nn=n*n;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;++i)
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">1</span>;j&lt;=n;++j){
+            <span class="hljs-type">int</span> x; <span class="hljs-built_in">read</span>(x);
+            a[i][j]=disc[++cntdisc]=x;
+        }
+    <span class="hljs-built_in">sort</span>(disc+<span class="hljs-number">1</span>,disc+<span class="hljs-number">1</span>+cntdisc);
+    cntdisc=<span class="hljs-built_in">unique</span>(disc+<span class="hljs-number">1</span>,disc+cntdisc+<span class="hljs-number">1</span>)-disc<span class="hljs-number">-1</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;++i)
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">1</span>;j&lt;=n;++j)
+            a[i][j]=<span class="hljs-built_in">lower_bound</span>(disc+<span class="hljs-number">1</span>,disc+<span class="hljs-number">1</span>+cntdisc,a[i][j])-disc;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=q;++i){
+        <span class="hljs-type">int</span> x1,y1,x2,y2,k;
+        <span class="hljs-built_in">read</span>(x1);<span class="hljs-built_in">read</span>(y1);<span class="hljs-built_in">read</span>(x2);<span class="hljs-built_in">read</span>(y2);<span class="hljs-built_in">read</span>(k);
+        Q[++Qcnt]={x1,y1,x2,y2,k,i};
+    }
+
+    <span class="hljs-built_in">mo_algo</span>();
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=q;++i)
+        <span class="hljs-built_in">write</span>(ans[i]),<span class="hljs-built_in">puts</span>(<span class="hljs-string">&quot;&quot;</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</pre>
+                            </dl>
+                        </div>
                     
                 </div>
             

@@ -31,8 +31,9 @@
       "file": "sol4.md"
     },
     {
-      "title": "法三：二维莫队",
-      "file": "sol3.md"
+      "title": "法三：二维莫队 & 离散化",
+      "file": "sol3.md",
+      "code": "code4.cpp"
     }
   ]
 }
