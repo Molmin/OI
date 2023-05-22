@@ -8,6 +8,7 @@ var Config=YAML.load('./data/config.yaml');
 const Admin=require('./lib/admin.js');
 const URL=require('url');
 const deletedir=require('./lib/deletedir.js');
+const logger=require('./lib/logger.js');
 
 router.all('*',(req,res,next)=>{
     if(req._parsedUrl.pathname.startsWith('/login')||Admin.checkloginByReq(req))next();
@@ -15,7 +16,7 @@ router.all('*',(req,res,next)=>{
 });
 
 router.get('/',(req,res)=>{
-    ejs.renderFile("./src/templates/dashboard.html",(err,HTML)=>{
+    ejs.renderFile("./src/templates/dashboard.html",{logs: logger.list()},(err,HTML)=>{
         res.send(Template({title: `仪表盘`,
                            header: ``,
                            preview: true,
@@ -32,7 +33,10 @@ router.post('/update/db',(req,res)=>{
         message: req.body.message
     },err=>{
         if(err)res.status(200).json({error: err.message});
-        else res.status(200).json({message: "同步成功。"});
+        else{
+            res.status(200).json({message: "同步成功。"});
+            logger.log(req,`updated database to github`);
+        }
     });
 });
 router.post('/update/ghpage',(req,res)=>{
@@ -45,7 +49,10 @@ router.post('/update/ghpage',(req,res)=>{
             message: req.body.message
         },err=>{
             if(err)res.status(200).json({error: err.message});
-            else res.status(200).json({message: "同步成功。"});
+            else{
+                res.status(200).json({message: "同步成功。"});
+                logger.log(req,`updated github page`);
+            }
         });
     },1000);
 });
@@ -123,6 +130,7 @@ router.post('/problem/:pid/edit',(req,res)=>{
         problemConfig.solution=new Array();
         fs.writeFileSync(`data/${pid}/config.json`,JSON.stringify(problemConfig,null,"  "));
         fs.writeFileSync(`data/${pid}/statement_zh.md`,req.body.statement);
+        logger.log(req,`created a problem (${pid})`);
         res.status(200).json({pid});
     }
     else{
@@ -134,6 +142,7 @@ router.post('/problem/:pid/edit',(req,res)=>{
         prodata.tags=problemConfig.tags;
         prodata.source=problemConfig.source;
         fs.writeFileSync(`data/${req.params.pid}/config.json`,JSON.stringify(prodata,null,"  "));
+        logger.log(req,`edited a problem (${req.params.pid})`);
         res.status(200).json({pid});
     }
 });
@@ -145,6 +154,7 @@ router.post('/problem/:pid/delete',(req,res)=>{
     tmp.splice(i,1);
     problemList=JSON.stringify(tmp,null,"  ");
     fs.writeFileSync('data/problem.json',problemList);
+    logger.log(req,`deleted a problem (${req.params.pid})`);
     res.json({});
 });
 
@@ -166,6 +176,7 @@ router.post('/problem/:pid/statement/create',(req,res)=>{
     prodata.statement[req.body.name]=req.body.file;
     fs.writeFileSync(`data/${req.params.pid}/${req.body.file}`,req.body.code);
     fs.writeFileSync(`data/${req.params.pid}/config.json`,JSON.stringify(prodata,null,"  "));
+    logger.log(req,`created a statement (${req.params.pid}/${req.body.file})`);
     res.status(200).json({});
 });
 router.get('/problem/:pid/statement/:statementName/edit',(req,res)=>{
@@ -198,6 +209,7 @@ router.post('/problem/:pid/statement/:statementName/delete',(req,res)=>{
     fs.unlinkSync(`data/${req.params.pid}/${prodata.statement[key]}`,err=>{});
     delete prodata.statement[key];
     fs.writeFileSync(`data/${req.params.pid}/config.json`,JSON.stringify(prodata,null,"  "));
+    logger.log(req,`deleted a statement (${req.params.pid}/${prodata.statement[key]})`);
     res.status(200).json({});
 });
 router.post('/problem/:pid/statement/:statementName/edit',(req,res)=>{
@@ -209,6 +221,7 @@ router.post('/problem/:pid/statement/:statementName/edit',(req,res)=>{
     prodata.statement[req.body.name]=req.body.file;
     fs.writeFileSync(`data/${req.params.pid}/${req.body.file}`,req.body.newCode);
     fs.writeFileSync(`data/${req.params.pid}/config.json`,JSON.stringify(prodata,null,"  "));
+    logger.log(req,`edited a statement (${req.params.pid}/${prodata.statement[key]})`);
     res.status(200).json({});
 });
 
@@ -219,6 +232,7 @@ router.post('/problem/:pid/solution/:para/delete',(req,res)=>{
         fs.unlinkSync(`data/${req.params.pid}/${prodata.solution[req.params.para].code}`);
     prodata.solution.splice(req.params.para,1);
     fs.writeFileSync(`data/${req.params.pid}/config.json`,JSON.stringify(prodata,null,"  "));
+    logger.log(req,`deleted a section of solutions (${req.params.pid}/${prodata.solution[req.params.para].file})`);
     res.json({});
 });
 router.get('/problem/:pid/solution/:para/edit',(req,res)=>{
@@ -240,6 +254,7 @@ router.post('/problem/:pid/solution/:para/edit',(req,res)=>{
     prodata.solution[req.params.para].title=req.body.title;
     prodata.solution[req.params.para].file=req.body.filename;
     fs.writeFileSync(`data/${req.params.pid}/config.json`,JSON.stringify(prodata,null,"  "));
+    logger.log(req,`edited a section of solutions (${req.params.pid}/${prodata.solution[req.params.para].file})`);
     res.json({});
 });
 router.get('/problem/:pid/solution/:para/editcode',(req,res)=>{
@@ -264,6 +279,7 @@ router.post('/problem/:pid/solution/:para/editcode',(req,res)=>{
         fs.writeFileSync(`data/${req.params.pid}/${req.body.filename}`,req.body.code);
     }
     fs.writeFileSync(`data/${req.params.pid}/config.json`,JSON.stringify(prodata,null,"  "));
+    logger.log(req,`edited a code of solutions (${req.params.pid}/${prodata.solution[req.params.para].file},${req.params.pid}/${prodata.solution[req.params.para].code})`);
     res.json({});
 });
 router.get('/problem/:pid/solution/:para/insert',(req,res)=>{
@@ -283,6 +299,7 @@ router.post('/problem/:pid/solution/:para/insert',(req,res)=>{
     fs.writeFileSync(`data/${req.params.pid}/${req.body.filename}`,req.body.code);
     prodata.solution.splice(req.params.para,0,{title: req.body.title, file: req.body.filename});
     fs.writeFileSync(`data/${req.params.pid}/config.json`,JSON.stringify(prodata,null,"  "));
+    logger.log(req,`inserted a section of solutions (${req.params.pid}/${req.body.filename})`);
     res.json({});
 });
 

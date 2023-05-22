@@ -14,8 +14,9 @@ var Config=YAML.load('./data/config.yaml');
 const Admin=require('./src/lib/admin.js');
 
 var password=parseInt(Math.random()*1000000);
+if(Config.password)password=Config.password;
+else console.log(`Password is: ${password}`);
 fs.writeFileSync("password",`${password}`,(err)=>{});
-console.log(`Password is: ${password}`);
 
 app.all('*',(req,res,next)=>{
     if(Admin.checkloginByReq(req))

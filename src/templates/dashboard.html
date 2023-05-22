@@ -11,8 +11,12 @@
         margin-left: auto;
         margin-right: auto;
     }
-    .column-one-second{
-        width: 50%;
+    .column-two-fifth{
+        width: 40%;
+        float: left;
+    }
+    .column-three-fifth{
+        width: 60%;
         float: left;
     }
 
@@ -55,8 +59,20 @@
 </script>
 
 <div class="row">
-    <div class="column-one-second">
+    <div class="column-two-fifth">
         <div style="padding-right: 10px;">
+            <div class="topan-section-shadow">
+                <h2>更新 GitHub 页面</h2>
+                <p>更新 GitHub Page 上显示的内容。</p>
+                <input id="update-ghpage-message" type="text" placeholder="Commit Message" value="Update GitHub Page">
+                <p>
+                    <button id="update-ghpage" class="topan-button-emphasize topan-button-default">立即更新</button>
+                    &nbsp;&nbsp;
+                    <span id="update-ghpage-error"></span>
+                    <span id="update-ghpage-success"></span>
+                </p>
+            </div>
+            <br>
             <div class="topan-section-shadow">
                 <h2>更新数据库</h2>
                 <p>将当前数据上传到 GitHub。</p>
@@ -76,18 +92,11 @@
             </div>
         </div>
     </div>
-    <div class="column-one-second">
+    <div class="column-three-fifth">
         <div style="padding-left: 10px;">
             <div class="topan-section-shadow">
-                <h2>更新 GitHub 页面</h2>
-                <p>更新 GitHub Page 上显示的内容。</p>
-                <input id="update-ghpage-message" type="text" placeholder="Commit Message" value="Update GitHub Page">
-                <p>
-                    <button id="update-ghpage" class="topan-button-emphasize topan-button-default">立即更新</button>
-                    &nbsp;&nbsp;
-                    <span id="update-ghpage-error"></span>
-                    <span id="update-ghpage-success"></span>
-                </p>
+                <h2>服务器日志</h2>
+                <pre><%= logs %></pre>
             </div>
         </div>
     </div>
