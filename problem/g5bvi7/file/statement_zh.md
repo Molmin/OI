@@ -1,3 +1,5 @@
+> **本题可以加强到 $r,\ s,\ p\leq 10^7$，题解中将介绍该做法。**
+
 Hasan loves playing games and has recently discovered a game called TopScore. In this soccer-like game there are $ p $ players doing penalty shoot-outs. Winner is the one who scores the most. In case of ties, one of the top-scorers will be declared as the winner randomly with equal probability.
 
 They have just finished the game and now are waiting for the result. But there's a tiny problem! The judges have lost the paper of scores! Fortunately they have calculated sum of the scores before they get lost and also for some of the players they have remembered a lower bound on how much they scored. However, the information about the bounds is private, so Hasan only got to know his bound.
