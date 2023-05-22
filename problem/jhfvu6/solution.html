@@ -93,6 +93,74 @@
     <div class="column-four-fifth">
         <div style="padding-left: 20px;">
             
+                <div class="topan-section-shadow">
+                    <h2>
+                        Solution-1
+                        
+                    </h2>
+                    <p>考虑计算每条边对答案的贡献。</p>
+<p>但如果直接建网格图，是没法直接 dp 的，难以解决，所以考虑转化为树上问题。</p>
+<p>因为只有横边和竖边两种，并且统计方式类似，所以考虑将他们分开计数。</p>
+<p>对于竖边，每一行的连续块对竖直距离的贡献是一样的，所以可以所成一点，大小为其包含的个数。</p>
+<p>类似的建图后，我们发现形成了一棵树，至于为什么，可以考虑按行分割，行之间的点是没有连边的，并且有竖直的边当且仅当这一列两行间是连通的，若存在环一定会有白色被包围的现象。</p>
+<p>接下来直接树形 dp，记录子树大小，对于每条边计算贡献即可。</p>
+<p>复杂度为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mclose">)</span></span></span></span>。</p>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">solve</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-built_in">memset</span>(bel, <span class="hljs-number">0</span>, <span class="hljs-built_in">sizeof</span>(bel));
+    <span class="hljs-built_in">memset</span>(sz, <span class="hljs-number">0</span>, <span class="hljs-built_in">sizeof</span>(sz));
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>; i &lt;= tot; ++i) S[i].<span class="hljs-built_in">clear</span>();
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>; i &lt;= tot; ++i) seg[i].first = seg[i].second = xb[i] = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>; i &lt;= tot; ++i) ed[i].<span class="hljs-built_in">clear</span>();
+    <span class="hljs-built_in">sort</span>(p + <span class="hljs-number">1</span>, p + n + <span class="hljs-number">1</span>, cmp);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>; i &lt;= n; ++i) {
+        chk[<span class="hljs-built_in">f</span>(p[i].x, p[i].y)] = i;
+    }
+    tot = <span class="hljs-number">1</span>;
+    bel[<span class="hljs-number">1</span>] = <span class="hljs-number">1</span>;
+    S[<span class="hljs-number">1</span>].<span class="hljs-built_in">push_back</span>(<span class="hljs-number">1</span>);
+    xb[<span class="hljs-number">1</span>] = p[<span class="hljs-number">1</span>].x;
+    seg[<span class="hljs-number">1</span>].first = seg[<span class="hljs-number">1</span>].second = p[<span class="hljs-number">1</span>].y;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">2</span>; i &lt;= n; ++i) {
+        <span class="hljs-keyword">if</span>(p[i].x == p[i - <span class="hljs-number">1</span>].x) {
+            <span class="hljs-keyword">if</span>(p[i].y &gt; p[i - <span class="hljs-number">1</span>].y + <span class="hljs-number">1</span>) {
+                bel[i] = ++tot;
+                S[tot].<span class="hljs-built_in">push_back</span>(i);
+                seg[tot].first = seg[tot].second = p[i].y;
+                xb[tot] = p[i].x;
+            } <span class="hljs-keyword">else</span> {
+                seg[tot].second = p[i].y;
+                bel[i] = tot;
+                S[tot].<span class="hljs-built_in">push_back</span>(i);
+            }
+        } <span class="hljs-keyword">else</span> {
+            ++tot;
+            bel[i] = tot;
+            S[tot].<span class="hljs-built_in">push_back</span>(i);
+            seg[tot].first = seg[tot].second = p[i].y;
+            xb[tot] = p[i].x;
+        }
+    }
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>; i &lt;= tot; ++i) {
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> tmp = seg[i].first; tmp &lt;= seg[i].second; ++tmp) {
+            <span class="hljs-keyword">if</span>(bel[chk[<span class="hljs-built_in">f</span>(xb[i] + <span class="hljs-number">1</span>, tmp)]] != <span class="hljs-number">0</span>) {
+                ed[i].<span class="hljs-built_in">push_back</span>(bel[chk[<span class="hljs-built_in">f</span>(xb[i] + <span class="hljs-number">1</span>, tmp)]]);
+                ed[bel[chk[<span class="hljs-built_in">f</span>(xb[i] + <span class="hljs-number">1</span>, tmp)]]].<span class="hljs-built_in">push_back</span>(i);
+                tmp = seg[bel[chk[<span class="hljs-built_in">f</span>(xb[i] + <span class="hljs-number">1</span>, tmp)]]].second;
+            }
+        }
+    }
+    <span class="hljs-built_in">dfs</span>(<span class="hljs-number">1</span>, <span class="hljs-number">0</span>);
+}</pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
         </div>
     </div>
 </div>
