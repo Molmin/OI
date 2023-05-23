@@ -5,6 +5,7 @@ const path=require('path');
 const ejs=require('ejs');
 const Template=require('./../template.js');
 const highlightjs=require('highlight.js');
+const Tag=require('./../lib/tag.js');
 
 var MarkdownIt=require('markdown-it')({
     html: true,
@@ -42,7 +43,7 @@ problemList=JSON.parse(problemList);
 
 {
     ejs.renderFile("./src/templates/problem_list.html",
-        {isadmin: false, problemList, fs, Config},(err,HTML)=>{
+        {isadmin: false, problemList, fs, Config, Tag},(err,HTML)=>{
         fs.writeFileSync("dist/index.html",
             Template({title: `题目列表`,
                     header: ``},HTML)
@@ -67,7 +68,7 @@ problemList.forEach(pid=>{
     var prodata=JSON.parse(fs.readFileSync(`data/${pid}/config.json`,'utf8'));
     prodata.pid=pid;
     ejs.renderFile("./src/templates/problem_detail.html",
-        {isadmin: false, Config, prodata, fs, MarkdownIt},(err,HTML)=>{
+        {isadmin: false, Config, prodata, fs, MarkdownIt, Tag},(err,HTML)=>{
         fs.writeFileSync(`dist/problem/${prodata.pid}.html`,
             Template({title: `#${prodata.pid}. ${prodata.title}`,
                       header: ``},HTML)
