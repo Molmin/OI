@@ -234,13 +234,14 @@ router.post('/problem/:pid/statement/:statementName/edit',(req,res)=>{
 });
 
 router.post('/problem/:pid/solution/:para/delete',(req,res)=>{
-    var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
+    var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8')),
+        tmp=prodata.solution[req.params.para];
     fs.unlinkSync(`data/${req.params.pid}/${prodata.solution[req.params.para].file}`);
     if(prodata.solution[req.params.para].code)
         fs.unlinkSync(`data/${req.params.pid}/${prodata.solution[req.params.para].code}`);
     prodata.solution.splice(req.params.para,1);
     fs.writeFileSync(`data/${req.params.pid}/config.json`,JSON.stringify(prodata,null,"  "));
-    logger.log(req,`deleted a section of solutions (${req.params.pid}/${prodata.solution[req.params.para].file})`);
+    logger.log(req,`deleted a section of solutions (${req.params.pid}/${tmp.file}${tmp.code?`,${tmp/code}`:''})`);
     res.json({});
 });
 router.get('/problem/:pid/solution/:para/edit',(req,res)=>{
@@ -279,7 +280,8 @@ router.get('/problem/:pid/solution/:para/editcode',(req,res)=>{
     });
 });
 router.post('/problem/:pid/solution/:para/editcode',(req,res)=>{
-    var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
+    var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8')),
+        tmp=prodata.solution[req.params.para];
     if(prodata.solution[req.params.para].code)
         fs.unlinkSync(`data/${req.params.pid}/${prodata.solution[req.params.para].code}`),
         delete prodata.solution[req.params.para].code;
@@ -288,7 +290,7 @@ router.post('/problem/:pid/solution/:para/editcode',(req,res)=>{
         fs.writeFileSync(`data/${req.params.pid}/${req.body.filename}`,req.body.code);
     }
     fs.writeFileSync(`data/${req.params.pid}/config.json`,JSON.stringify(prodata,null,"  "));
-    logger.log(req,`edited a code of solutions (${req.params.pid}/${prodata.solution[req.params.para].file},${req.params.pid}/${prodata.solution[req.params.para].code})`);
+    logger.log(req,`edited a code of solutions (${req.params.pid}/${tmp.file},/${tmp.code})`);
     res.json({});
 });
 router.get('/problem/:pid/solution/:para/insert',(req,res)=>{
