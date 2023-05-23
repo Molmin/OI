@@ -74,6 +74,14 @@
     .messages-display{
         color: #888;
     }
+    .tag{
+        padding: 2px 8px;
+        border-radius: 3px;
+        color: white;
+        background: #14558f;
+        display: inline-block;
+        line-height: 17.25px;
+    }
 </style>
 <div class="row">
     <div class="column-one-fifth">
@@ -90,16 +98,17 @@
             <div class="topan-section-shadow">
                 <h2>#g5bvi7. The Top Scorer</h2>
                 <p class="messages-display">
+                    <strong><i class="fa fa-solid fa-clock"></i> 时间限制：</strong>3 s
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <strong><i class="fa fa-solid fa-database"></i> 空间限制：</strong>256 MiB
+                    
+                </p>
+                <p class="messages-display">
                     <strong>算法难度等级：</strong>0
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <strong>思维难度等级：</strong>0
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <strong>实现难度等级：</strong>0
-                </p>
-                <p class="messages-display">
-                    <strong><i class="fa fa-solid fa-clock"></i> 时间限制：</strong>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <strong><i class="fa fa-solid fa-database"></i> 空间限制：</strong>
                 </p>
             </div>
             <br>
@@ -113,9 +122,9 @@
                     <blockquote>
 <p><strong>本题可以加强到 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>r</mi><mo separator="true">,</mo><mtext> </mtext><mi>s</mi><mo separator="true">,</mo><mtext> </mtext><mi>p</mi><mo>≤</mo><mn>1</mn><msup><mn>0</mn><mn>7</mn></msup></mrow><annotation encoding="application/x-tex">r,\ s,\ p\leq 10^7</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:1.008548em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit">s</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit">p</span><span class="mrel">≤</span><span class="mord mathrm">1</span><span class="mord"><span class="mord mathrm">0</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">7</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span>，题解中将介绍该做法。</strong></p>
 </blockquote>
-<p>Hasan loves playing games and has recently discovered a game called TopScore. In this soccer-like game there are $ p $ players doing penalty shoot-outs. Winner is the one who scores the most. In case of ties, one of the top-scorers will be declared as the winner randomly with equal probability.</p>
+<p>Hasan loves playing games and has recently discovered a game called TopScore. In this soccer-like game there are <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit">p</span></span></span></span> players doing penalty shoot-outs. Winner is the one who scores the most. In case of ties, one of the top-scorers will be declared as the winner randomly with equal probability.</p>
 <p>They have just finished the game and now are waiting for the result. But there's a tiny problem! The judges have lost the paper of scores! Fortunately they have calculated sum of the scores before they get lost and also for some of the players they have remembered a lower bound on how much they scored. However, the information about the bounds is private, so Hasan only got to know his bound.</p>
-<p>According to the available data, he knows that his score is at least $ r $ and sum of the scores is $ s $ .</p>
+<p>According to the available data, he knows that his score is at least $ r $ and sum of the scores is <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi></mrow><annotation encoding="application/x-tex">s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">s</span></span></span></span>.</p>
 <p>Thus the final state of the game can be represented in form of sequence of $ p $ integers $ a_1, a_2, \dots, a_p $ ( $ 0 \le a_i $ ) — player's scores. Hasan is player number $ 1 $ , so $ a_1 \ge r $ . Also $ a_1 + a_2 + \dots + a_p = s $ . Two states are considered different if there exists some position $ i $ such that the value of $ a_i $ differs in these states.</p>
 <p>Once again, Hasan doesn't know the exact scores (he doesn't know his exact score as well). So he considers each of the final states to be equally probable to achieve.</p>
 <p>Help Hasan find the probability of him winning.</p>

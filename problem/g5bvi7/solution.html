@@ -95,6 +95,82 @@
             
                 <div class="topan-section-shadow">
                     <h2>
+                        Code2
+                        
+                    </h2>
+                    
+                        <blockquote class="topan-blockquote-tip">
+                            <p>本文作者是 <a href="https://www.luogu.com.cn/user/482642">hank0402</a>，遵循 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh">CC BY-SA 4.0</a> 协议。</p>
+                        </blockquote>
+                    
+                    <p>时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mclose">)</span></span></span></span>。</p>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> int long long</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> PII pair<span class="hljs-string">&lt;int, int&gt;</span></span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> mkp make_pair</span>
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> INF INT_MAX</span>
+<span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T&gt; <span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-type">void</span> <span class="hljs-title">rd</span><span class="hljs-params">(T &amp;x)</span></span>{
+	x = <span class="hljs-number">0</span>; <span class="hljs-type">bool</span> f = <span class="hljs-literal">true</span>; <span class="hljs-type">char</span> ch = <span class="hljs-built_in">getchar</span>();
+	<span class="hljs-keyword">while</span>(ch &lt; <span class="hljs-string">&#x27;0&#x27;</span> || ch &gt; <span class="hljs-string">&#x27;9&#x27;</span>){ <span class="hljs-keyword">if</span>(ch == <span class="hljs-string">&#x27;-&#x27;</span>) f = <span class="hljs-literal">false</span>; ch = <span class="hljs-built_in">getchar</span>();}
+	<span class="hljs-keyword">while</span>(ch &gt;= <span class="hljs-string">&#x27;0&#x27;</span> &amp;&amp; ch &lt;= <span class="hljs-string">&#x27;9&#x27;</span>){ x = (x &lt;&lt; <span class="hljs-number">1</span>) + (x &lt;&lt; <span class="hljs-number">3</span>) + (ch ^ <span class="hljs-string">&#x27;0&#x27;</span>); ch = <span class="hljs-built_in">getchar</span>();}
+	<span class="hljs-keyword">if</span>(!f) x = -x;
+}
+<span class="hljs-keyword">template</span> &lt;<span class="hljs-keyword">typename</span> T, <span class="hljs-keyword">typename</span> ...Args&gt; <span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-type">void</span> <span class="hljs-title">rd</span><span class="hljs-params">(T &amp;x, Args &amp;...args)</span></span>{ <span class="hljs-built_in">rd</span>(x); <span class="hljs-built_in">rd</span>(args...);}
+<span class="hljs-type">const</span> <span class="hljs-type">int</span> N = <span class="hljs-number">2e7</span> + <span class="hljs-number">100</span>;
+<span class="hljs-type">const</span> <span class="hljs-type">int</span> mod = <span class="hljs-number">998244353</span>;
+<span class="hljs-type">int</span> p, r, s, inv[N], fac[N];
+<span class="hljs-type">int</span> ans;
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">qpow</span><span class="hljs-params">(<span class="hljs-type">int</span> a, <span class="hljs-type">int</span> b)</span> </span>{
+    <span class="hljs-type">int</span> res = <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">while</span>(b) {
+        <span class="hljs-keyword">if</span>(b &amp; <span class="hljs-number">1</span>) res = res * a % mod;
+        a = a * a % mod;
+        b &gt;&gt;= <span class="hljs-number">1</span>;
+    }
+    <span class="hljs-keyword">return</span> res;
+}
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">init</span><span class="hljs-params">()</span> </span>{
+    fac[<span class="hljs-number">0</span>] = <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>; i &lt;= <span class="hljs-number">20000000</span>; ++i) fac[i] = fac[i - <span class="hljs-number">1</span>] * i % mod;
+    inv[<span class="hljs-number">20000000</span>] = <span class="hljs-built_in">qpow</span>(fac[<span class="hljs-number">20000000</span>], mod - <span class="hljs-number">2</span>);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">19999999</span>; i &gt;= <span class="hljs-number">0</span>; --i) inv[i] = inv[i + <span class="hljs-number">1</span>] * (i + <span class="hljs-number">1</span>) % mod;
+}
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">C</span><span class="hljs-params">(<span class="hljs-type">int</span> a, <span class="hljs-type">int</span> b)</span> </span>{
+    <span class="hljs-keyword">if</span>(a &lt; b) <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">return</span> fac[a] * inv[a - b] % mod * inv[b] % mod;
+} 
+<span class="hljs-function"><span class="hljs-type">signed</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>{
+    <span class="hljs-comment">// freopen(&quot;probability.in&quot;, &quot;r&quot;, stdin);</span>
+    <span class="hljs-comment">// freopen(&quot;probability.out&quot;, &quot;w&quot;, stdout);</span>
+    <span class="hljs-built_in">init</span>();
+	<span class="hljs-built_in">rd</span>(p, s, r);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i = <span class="hljs-number">1</span>; i * r &lt;= s &amp;&amp; i &lt;= p; ++i) {
+        <span class="hljs-keyword">if</span>(i &amp; <span class="hljs-number">1</span>) {
+            ans = (<span class="hljs-built_in">C</span>(p, i) * <span class="hljs-built_in">C</span>(s - i * r + p - <span class="hljs-number">1</span>, p - <span class="hljs-number">1</span>) % mod + ans) % mod;
+        } <span class="hljs-keyword">else</span> {
+            ans = (ans - <span class="hljs-built_in">C</span>(p, i) * <span class="hljs-built_in">C</span>(s - i * r + p - <span class="hljs-number">1</span>, p - <span class="hljs-number">1</span>) % mod + mod) % mod;
+        }
+    }
+    ans = ans * <span class="hljs-built_in">qpow</span>(p, mod - <span class="hljs-number">2</span>) % mod;
+    ans = ans * <span class="hljs-built_in">qpow</span>(<span class="hljs-built_in">C</span>(s - r + p - <span class="hljs-number">1</span>, p - <span class="hljs-number">1</span>), mod - <span class="hljs-number">2</span>) % mod;
+    cout &lt;&lt; ans &lt;&lt; endl;
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
+                <br>
+                
+                <div class="topan-section-shadow">
+                    <h2>
                         题解
                         
                     </h2>

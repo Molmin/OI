@@ -6,9 +6,9 @@
     "implementation": 0
   },
   "judge": {
-    "time": "",
-    "memory": "",
-    "type": ""
+    "time": "3 s",
+    "memory": "256 MiB",
+    "type": "default"
   },
   "tags": "",
   "source": "[Educational Codeforces Round 57 (Rated for Div. 2) Problem E](https://codeforces.com/contest/1096/problem/E)",
@@ -16,6 +16,12 @@
     "简体中文": "statement_zh.md"
   },
   "solution": [
+    {
+      "title": "Code2",
+      "file": "code2.md",
+      "author": "[hank0402](https://www.luogu.com.cn/user/482642)",
+      "code": "code2.cpp"
+    },
     {
       "title": "题解",
       "file": "sol.md",

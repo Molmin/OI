@@ -1,10 +1,10 @@
 > **本题可以加强到 $r,\ s,\ p\leq 10^7$，题解中将介绍该做法。**
 
-Hasan loves playing games and has recently discovered a game called TopScore. In this soccer-like game there are $ p $ players doing penalty shoot-outs. Winner is the one who scores the most. In case of ties, one of the top-scorers will be declared as the winner randomly with equal probability.
+Hasan loves playing games and has recently discovered a game called TopScore. In this soccer-like game there are $p$ players doing penalty shoot-outs. Winner is the one who scores the most. In case of ties, one of the top-scorers will be declared as the winner randomly with equal probability.
 
 They have just finished the game and now are waiting for the result. But there's a tiny problem! The judges have lost the paper of scores! Fortunately they have calculated sum of the scores before they get lost and also for some of the players they have remembered a lower bound on how much they scored. However, the information about the bounds is private, so Hasan only got to know his bound.
 
-According to the available data, he knows that his score is at least $ r $ and sum of the scores is $ s $ .
+According to the available data, he knows that his score is at least $ r $ and sum of the scores is $s$.
 
 Thus the final state of the game can be represented in form of sequence of $ p $ integers $ a_1, a_2, \dots, a_p $ ( $ 0 \le a_i $ ) — player's scores. Hasan is player number $ 1 $ , so $ a_1 \ge r $ . Also $ a_1 + a_2 + \dots + a_p = s $ . Two states are considered different if there exists some position $ i $ such that the value of $ a_i $ differs in these states.
 
