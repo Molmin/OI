@@ -10,7 +10,7 @@
     "memory": "32 MiB",
     "type": "default"
   },
-  "tags": "杂项/离散化,数据结构,数据结构/线段树,来源/COCI,时间/2013",
+  "tags": "杂项/离散化,数据结构,数据结构/线段树,数据结构/单调栈,数据结构/并查集,来源/COCI,时间/2013,缺题解,缺代码",
   "source": "[COCI2013-2014](https://hsin.hr/coci/archive/2013_2014/) [CONTEST #6](https://hsin.hr/coci/archive/2013_2014/contest6_tasks.pdf) Problem 4",
   "statement": {
     "简体中文": "statement_zh.md"

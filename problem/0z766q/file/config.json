@@ -10,7 +10,7 @@
     "memory": "128 MiB",
     "type": "default"
   },
-  "tags": "动态规划,动态规划/普通动态规划,数据结构,数据结构/单调栈,数据结构/并查集,杂项/悬线法,缺题解",
+  "tags": "动态规划,动态规划/普通动态规划,杂项/悬线法,缺题解",
   "source": "[洛谷 P4147](https://www.luogu.com.cn/problem/P4147)",
   "statement": {
     "简体中文": "statement_zh.md"
