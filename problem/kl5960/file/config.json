@@ -13,8 +13,8 @@
   "tags": "数学,数学/代数,数学/操作",
   "source": "[DMOPC '22 Contest 2 第五题](https://dmoj.ca/problem/dmopc22c2p5)",
   "statement": {
-    "English": "statement_en.md",
-    "简体中文": "statement_zh.md"
+    "简体中文": "statement_zh.md",
+    "English": "statement_en.md"
   },
   "solution": [
     {

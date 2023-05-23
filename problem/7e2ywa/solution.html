@@ -93,6 +93,108 @@
     <div class="column-four-fifth">
         <div style="padding-left: 20px;">
             
+                <div class="topan-section-shadow">
+                    <h2>
+                        离散化 &amp; 线段树
+                        
+                    </h2>
+                    
+                    <p>显然的，每一个圆都会对答案产生贡献，所以答案至少为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">1</span></span></span></span>。此时答案为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">n+1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord mathit">n</span><span class="mbin">+</span><span class="mord mathrm">1</span></span></span></span>。而可能会遇到这种情况：</p>
+<p><img src="./file/pic1.svg" alt="" width="120" height="120"></p>
+<p>这时上下分离，对答案又贡献了 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">1</span></span></span></span>，所以我们只需要考虑如何计算这样的贡献。</p>
+<p>注意到一个圆被分割成上下两半，当且仅当该圆截 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">x</span></span></span></span> 轴得线段已经被其他圆占领。</p>
+<p>考虑维护一棵线段树，记录一段区间是否被占领即可。</p>
+<p>时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>n</mi><mi>log</mi><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n\log n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mord mathit">n</span><span class="mclose">)</span></span></span></span>。</p>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre><span class="hljs-comment">// 2023.5.23</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+
+<span class="hljs-type">int</span> n;
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">circle</span>{
+    <span class="hljs-type">int</span> x,r;
+    <span class="hljs-type">bool</span> <span class="hljs-keyword">operator</span>&lt;(circle tmp)<span class="hljs-type">const</span>{
+        <span class="hljs-keyword">return</span> r&lt;tmp.r;
+    }
+}c[<span class="hljs-number">300001</span>];
+
+<span class="hljs-type">int</span> disc[<span class="hljs-number">600001</span>],cntdisc;
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">finddisc</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span></span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-built_in">lower_bound</span>(disc+<span class="hljs-number">1</span>,disc+<span class="hljs-number">1</span>+cntdisc,x)-disc<span class="hljs-number">-1</span>;
+}
+
+<span class="hljs-keyword">namespace</span> SegmentTree{
+    <span class="hljs-keyword">struct</span> <span class="hljs-title class_">Node</span>{
+        <span class="hljs-type">int</span> l,r; <span class="hljs-type">bool</span> tag;
+    }a[<span class="hljs-number">900001</span>];
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">pushup</span><span class="hljs-params">(<span class="hljs-type">int</span> id)</span></span>{
+        a[id].tag=a[id&lt;&lt;<span class="hljs-number">1</span>].tag &amp; a[(id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>].tag;
+    }
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">pushdown</span><span class="hljs-params">(<span class="hljs-type">int</span> id)</span></span>{
+        a[id&lt;&lt;<span class="hljs-number">1</span>].tag|=a[id].tag;
+        a[(id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>].tag|=a[id].tag;
+    }
+
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">build</span><span class="hljs-params">(<span class="hljs-type">int</span> id, <span class="hljs-type">int</span> l, <span class="hljs-type">int</span> r)</span></span>{
+        a[id].l=l,a[id].r=r;
+        <span class="hljs-keyword">if</span>(l==r)<span class="hljs-keyword">return</span>;
+        <span class="hljs-type">int</span> mid=l+r&gt;&gt;<span class="hljs-number">1</span>;
+        <span class="hljs-built_in">build</span>(id&lt;&lt;<span class="hljs-number">1</span>,l,mid);
+        <span class="hljs-built_in">build</span>((id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r);
+    }
+    <span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">query</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r)</span></span>{
+        <span class="hljs-built_in">pushdown</span>(id); 
+        <span class="hljs-keyword">if</span>(l&lt;=a[id].l&amp;&amp;a[id].r&lt;=r)
+            <span class="hljs-keyword">return</span> a[id].tag;
+        <span class="hljs-type">int</span> mid=a[id].l+a[id].r&gt;&gt;<span class="hljs-number">1</span>,res=<span class="hljs-number">1</span>;
+        <span class="hljs-keyword">if</span>(l&lt;=mid)res&amp;=<span class="hljs-built_in">query</span>(id&lt;&lt;<span class="hljs-number">1</span>,l,r);
+        <span class="hljs-keyword">if</span>(r&gt;mid) res&amp;=<span class="hljs-built_in">query</span>((id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>,l,r);
+        <span class="hljs-keyword">return</span> res;
+    }
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">add</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r)</span></span>{
+        <span class="hljs-built_in">pushdown</span>(id);
+        <span class="hljs-keyword">if</span>(l&lt;=a[id].l&amp;&amp;a[id].r&lt;=r){
+            a[id].tag=<span class="hljs-literal">true</span>; <span class="hljs-keyword">return</span>;
+        } 
+        <span class="hljs-type">int</span> mid=a[id].l+a[id].r&gt;&gt;<span class="hljs-number">1</span>;
+        <span class="hljs-keyword">if</span>(l&lt;=mid)<span class="hljs-built_in">add</span>(id&lt;&lt;<span class="hljs-number">1</span>,l,r);
+        <span class="hljs-keyword">if</span>(r&gt;mid) <span class="hljs-built_in">add</span>((id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>,l,r);
+        <span class="hljs-built_in">pushup</span>(id); 
+    }
+}
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;n);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++){
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d&quot;</span>,&amp;c[i].x,&amp;c[i].r);
+        disc[++cntdisc]=c[i].x-c[i].r;
+        disc[++cntdisc]=c[i].x+c[i].r;
+    }
+    <span class="hljs-built_in">sort</span>(disc+<span class="hljs-number">1</span>,disc+<span class="hljs-number">1</span>+cntdisc);
+    cntdisc=<span class="hljs-built_in">unique</span>(disc+<span class="hljs-number">1</span>,disc+cntdisc+<span class="hljs-number">1</span>)-disc<span class="hljs-number">-1</span>;
+    <span class="hljs-built_in">sort</span>(c+<span class="hljs-number">1</span>,c+<span class="hljs-number">1</span>+n);
+
+    SegmentTree::<span class="hljs-built_in">build</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,cntdisc);
+    <span class="hljs-type">int</span> answer=n+<span class="hljs-number">1</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++){
+        <span class="hljs-type">int</span> l=<span class="hljs-built_in">finddisc</span>(c[i].x-c[i].r),
+            r=<span class="hljs-built_in">finddisc</span>(c[i].x+c[i].r);
+        answer+=SegmentTree::<span class="hljs-built_in">query</span>(<span class="hljs-number">1</span>,l+<span class="hljs-number">1</span>,r),
+        SegmentTree::<span class="hljs-built_in">add</span>(<span class="hljs-number">1</span>,l+<span class="hljs-number">1</span>,r);
+    }
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d\n&quot;</span>,answer);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
         </div>
     </div>
 </div>
