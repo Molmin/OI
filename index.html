@@ -50,7 +50,275 @@
             <div class="topan-page">
                 <div class="topan-mainpage-auto">
                     <br>
-                    undefined
+                    <style>
+    .row:after{
+        clear: both;
+    }
+    .row:before,.row:after{
+        content: " ";
+        display: table;
+    }
+    .row{
+        margin: 0 auto;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .column-one-fifth{
+        width: 20%;
+        float: left;
+    }
+    .column-four-fifth{
+        width: 80%;
+        float: left;
+    }
+
+    table{
+        min-width: 100%;
+    }
+    table tr:nth-child(even){
+        background: var(--topan-colors-main-modify1);
+    }
+    table tr:nth-child(odd){
+        background: white;
+    }
+    #pids{
+        max-width: 5px;
+    }
+    #difficulties>th{
+        max-width: 20px;
+        font-size: 80%;
+        font-weight: normal;
+    }
+    td:nth-child(2),#title{
+        text-align: left;
+    }
+    td:nth-child(3),#tags{
+        text-align: right;
+    }
+</style>
+<style>
+    .tag{
+        padding: 2px 8px;
+        border-radius: 3px;
+        color: white;
+        background: #14558f;
+        display: inline-block;
+        line-height: 17.25px;
+    }
+    .tag-alg{
+        background: #14558f;
+    }
+    .tag-time{
+        background: #1c830e;
+    }
+    .tag-src{
+        background: #b88b0f;
+    }
+    .tag-special{
+        background: #6926c0;
+    }
+</style>
+
+<div class="row">
+    <div class="column-four-fifth">
+        <div style="padding-right: 12px;">
+            <div class="topan-section-shadow">
+                <table>
+                    <tr>
+                        <th rowspan="2" id="pids">题目编号</th>
+                        <th rowspan="2" id="title">标题</th>
+                        <th rowspan="2" id="tags">标签</th>
+                        <th colspan="4">难度</th>
+                    </tr>
+                    <tr id="difficulties">
+                        <th>总计</th>
+                        <th>算法</th>
+                        <th>思维</th>
+                        <th>实现</th>
+                    </tr>
+                    
+                        <tr>
+                            <td>4p766j</td>
+                            <td><a href="/OI/problem/4p766j">三角形 Triangles</a></td>
+                            <td>
+                                <span class="tag tag-alg">数学</span>&nbsp;<span class="tag tag-alg">构造</span>&nbsp;<span class="tag tag-alg">计算几何</span>&nbsp;<span class="tag tag-time">2022</span>&nbsp;
+                            </td>
+                            <td>15</td>
+                            <td>3</td>
+                            <td>8</td>
+                            <td>4</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>ak50b4</td>
+                            <td><a href="/OI/problem/ak50b4">矩阵（matrix）</a></td>
+                            <td>
+                                <span class="tag tag-alg">数学</span>&nbsp;<span class="tag tag-alg">矩阵</span>&nbsp;<span class="tag tag-alg">矩阵乘法</span>&nbsp;
+                            </td>
+                            <td>14</td>
+                            <td>4</td>
+                            <td>5</td>
+                            <td>5</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>kl5960</td>
+                            <td><a href="/OI/problem/kl5960">Beautiful Bins</a></td>
+                            <td>
+                                <span class="tag tag-alg">数学</span>&nbsp;<span class="tag tag-alg">代数</span>&nbsp;<span class="tag tag-alg">操作</span>&nbsp;
+                            </td>
+                            <td>17</td>
+                            <td>3</td>
+                            <td>10</td>
+                            <td>4</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>31edyx</td>
+                            <td><a href="/OI/problem/31edyx">On Sum of Fractions</a></td>
+                            <td>
+                                <span class="tag tag-alg">数学</span>&nbsp;<span class="tag tag-alg">素数</span>&nbsp;<span class="tag tag-alg">代数</span>&nbsp;<span class="tag tag-src">CodeForces</span>&nbsp;
+                            </td>
+                            <td>10</td>
+                            <td>3</td>
+                            <td>4</td>
+                            <td>3</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>k0q0w0</td>
+                            <td><a href="/OI/problem/k0q0w0">Two Paths</a></td>
+                            <td>
+                                <span class="tag tag-alg">图论</span>&nbsp;<span class="tag tag-alg">欧拉路</span>&nbsp;<span class="tag tag-src">CodeForces</span>&nbsp;
+                            </td>
+                            <td>16</td>
+                            <td>5</td>
+                            <td>6</td>
+                            <td>5</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>atk3ax</td>
+                            <td><a href="/OI/problem/atk3ax">Xor-Paths</a></td>
+                            <td>
+                                <span class="tag tag-alg">搜索</span>&nbsp;<span class="tag tag-alg">双向搜索</span>&nbsp;<span class="tag tag-alg">暴力</span>&nbsp;<span class="tag tag-alg">位运算</span>&nbsp;<span class="tag tag-src">CodeForces</span>&nbsp;
+                            </td>
+                            <td>15</td>
+                            <td>5</td>
+                            <td>5</td>
+                            <td>5</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>mbh8u2</td>
+                            <td><a href="/OI/problem/mbh8u2">三角形（triangle）</a></td>
+                            <td>
+                                <span class="tag tag-alg">数学</span>&nbsp;<span class="tag tag-alg">计算几何</span>&nbsp;<span class="tag tag-alg">凸包</span>&nbsp;<span class="tag tag-alg">模板</span>&nbsp;
+                            </td>
+                            <td>13</td>
+                            <td>6</td>
+                            <td>2</td>
+                            <td>5</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>7hihp7</td>
+                            <td><a href="/OI/problem/7hihp7">Ant colony</a></td>
+                            <td>
+                                <span class="tag tag-alg">数据结构</span>&nbsp;<span class="tag tag-alg">线段树</span>&nbsp;<span class="tag tag-alg">数学</span>&nbsp;<span class="tag tag-alg">最大公约数</span>&nbsp;<span class="tag tag-src">CodeForces</span>&nbsp;
+                            </td>
+                            <td>14</td>
+                            <td>4</td>
+                            <td>6</td>
+                            <td>4</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>z08r55</td>
+                            <td><a href="/OI/problem/z08r55">却也想要伪装（pretend）</a></td>
+                            <td>
+                                <span class="tag tag-alg">数学</span>&nbsp;<span class="tag tag-alg">组合数学</span>&nbsp;<span class="tag tag-alg">容斥原理</span>&nbsp;<span class="tag tag-alg">组合计数</span>&nbsp;
+                            </td>
+                            <td>16</td>
+                            <td>4</td>
+                            <td>7</td>
+                            <td>5</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>ox8kfm</td>
+                            <td><a href="/OI/problem/ox8kfm">矩阵乘法</a></td>
+                            <td>
+                                <span class="tag tag-alg">整体二分</span>&nbsp;<span class="tag tag-alg">数据结构</span>&nbsp;<span class="tag tag-alg">树状数组</span>&nbsp;<span class="tag tag-alg">二维树状数组</span>&nbsp;<span class="tag tag-alg">扫描线</span>&nbsp;<span class="tag tag-alg">离散化</span>&nbsp;<span class="tag tag-alg">莫队</span>&nbsp;<span class="tag tag-alg">二维莫队</span>&nbsp;
+                            </td>
+                            <td>15</td>
+                            <td>6</td>
+                            <td>4</td>
+                            <td>5</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>iq01gb</td>
+                            <td><a href="/OI/problem/iq01gb">矩形计算</a></td>
+                            <td>
+                                <span class="tag tag-alg">离散化</span>&nbsp;<span class="tag tag-alg">莫队</span>&nbsp;<span class="tag tag-alg">二维莫队</span>&nbsp;<span class="tag tag-src">BZOJ</span>&nbsp;
+                            </td>
+                            <td>13</td>
+                            <td>6</td>
+                            <td>2</td>
+                            <td>5</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>g5bvi7</td>
+                            <td><a href="/OI/problem/g5bvi7">The Top Scorer</a></td>
+                            <td>
+                                <span class="tag tag-alg">数学</span>&nbsp;<span class="tag tag-alg">组合数学</span>&nbsp;<span class="tag tag-alg">容斥原理</span>&nbsp;<span class="tag tag-alg">组合计数</span>&nbsp;<span class="tag tag-alg">概率</span>&nbsp;<span class="tag tag-src">CodeForces</span>&nbsp;<span class="tag tag-special">缺中文题面</span>&nbsp;<span class="tag tag-special">缺题解</span>&nbsp;
+                            </td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>jhfvu6</td>
+                            <td><a href="/OI/problem/jhfvu6">理想城</a></td>
+                            <td>
+                                <span class="tag tag-alg">动态规划</span>&nbsp;<span class="tag tag-alg">树形动态规划</span>&nbsp;<span class="tag tag-src">IOI</span>&nbsp;<span class="tag tag-time">2012</span>&nbsp;
+                            </td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                    
+                        <tr>
+                            <td>7e2ywa</td>
+                            <td><a href="/OI/problem/7e2ywa">KRUŽNICE</a></td>
+                            <td>
+                                <span class="tag tag-alg">离散化</span>&nbsp;<span class="tag tag-alg">数据结构</span>&nbsp;<span class="tag tag-alg">线段树</span>&nbsp;<span class="tag tag-src">COCI</span>&nbsp;<span class="tag tag-time">2013</span>&nbsp;
+                            </td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                            <td>0</td>
+                        </tr>
+                    
+                    <tr>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="column-one-fifth">
+        <div style="padding-left: 12px;">
+            <div class="topan-section-shadow">
+                
+            </div>
+        </div>
+    </div>
+</div>
                     <br>
                 </div>
                 <footer class="topan-footer">
