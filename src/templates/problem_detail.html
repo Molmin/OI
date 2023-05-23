@@ -22,15 +22,9 @@
     .messages-display{
         color: #888;
     }
-    .tag{
-        padding: 2px 8px;
-        border-radius: 3px;
-        color: white;
-        background: #14558f;
-        display: inline-block;
-        line-height: 17.25px;
-    }
 </style>
+<%- include('./tag.html') %>
+
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">
@@ -53,11 +47,9 @@
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <strong><i class="fa fa-solid fa-database"></i> 空间限制：</strong><%= prodata.judge.memory %>
                     <% if(prodata.tags){ %>
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
-                    <% prodata.tags.split(',').forEach(tag=>{ %>
-                        <span class="tag"><%= tag.split('/')[tag.split('/').length-1] %></span>
-                    <% }) %>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
+                        <% prodata.tags.split(',').forEach(tag=>{ %><%- Tag(tag) %>&nbsp;<% }) %>
                     <% } %>
                 </p>
                 <p class="messages-display">

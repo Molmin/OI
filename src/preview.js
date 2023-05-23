@@ -8,6 +8,7 @@ const YAML=require('yamljs');
 var Config=YAML.load('./data/config.yaml');
 const highlightjs=require('highlight.js');
 const fileSize=require('./lib/filesize.js');
+const Tag=require('./lib/tag.js');
 
 var MarkdownIt=require('markdown-it')({
     html: true,
@@ -21,7 +22,7 @@ router.get('/',(req,res)=>{
     var problemList=fs.readFileSync('data/problem.json','utf8');
     problemList=JSON.parse(problemList);
     ejs.renderFile("./src/templates/problem_list.html",
-        {isadmin: req.logined, fs, problemList, Config},(err,HTML)=>{
+        {isadmin: req.logined, fs, problemList, Config, Tag},(err,HTML)=>{
         res.send(Template({title: `题目列表`,
                            header: ``,
                            preview: true,
@@ -45,7 +46,8 @@ router.get('/about',(req,res)=>{
 router.get('/problem/:pid',(req,res)=>{
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     prodata.pid=req.params.pid;
-    ejs.renderFile("./src/templates/problem_detail.html",{isadmin: req.logined, Config, prodata, fs, MarkdownIt},(err,HTML)=>{
+    ejs.renderFile("./src/templates/problem_detail.html",
+    {isadmin: req.logined, Config, prodata, fs, MarkdownIt, Tag},(err,HTML)=>{
         res.send(Template({title: `#${prodata.pid}. ${prodata.title}`,
                            header: ``,
                            preview: true,

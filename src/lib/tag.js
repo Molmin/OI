@@ -1,0 +1,8 @@
+module.exports=(tag)=>{
+    var tagname=tag.split('/')[tag.split('/').length-1];
+    var tagtype='alg';
+    if(tag.split('/')[0]=='时间')tagtype='time';
+    if(tag.split('/')[0]=='来源')tagtype='src';
+    if(['缺题解','缺代码','缺中文题面'].includes(tag.split('/')[0]))tagtype='special';
+    return `<span class="tag tag-${tagtype}">${tagname}</span>`;
+}

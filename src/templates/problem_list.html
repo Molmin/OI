@@ -43,16 +43,9 @@
     td:nth-child(3),#tags{
         text-align: right;
     }
-
-    .tag{
-        padding: 2px 8px;
-        border-radius: 3px;
-        color: white;
-        background: #14558f;
-        display: inline-block;
-        line-height: 17.25px;
-    }
 </style>
+<%- include('./tag.html') %>
+
 <div class="row">
     <div class="column-four-fifth">
         <div style="padding-right: 12px;">
@@ -76,9 +69,7 @@
                             <td><%= pid %></td>
                             <td><a href="/<%= Config.on %>/problem/<%= pid %>"><%= detail.title %></a></td>
                             <td>
-                                <% detail.tags.split(',').forEach(tag=>{ %>
-                                    <span class="tag"><%= tag.split('/')[tag.split('/').length-1] %></span>
-                                <% }) %>
+                                <% detail.tags.split(',').forEach(tag=>{ %><%- Tag(tag) %>&nbsp;<% }) %>
                             </td>
                             <td><%= detail.difficulty.algorithm+detail.difficulty.thinking+detail.difficulty.implementation %></td>
                             <td><%= detail.difficulty.algorithm %></td>
