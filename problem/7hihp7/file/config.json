@@ -10,7 +10,7 @@
     "memory": "256 MiB",
     "type": "default"
   },
-  "tags": "数据结构,数据结构/线段树,数学,数学/最大公约数",
+  "tags": "数据结构,数据结构/线段树,数学,数学/最大公约数,来源/CodeForces",
   "source": "[Codeforces Round 271 (Div. 2) Problem F](https://codeforces.com/contest/474/problem/F)",
   "statement": {
     "简体中文": "statement_zh.md"
