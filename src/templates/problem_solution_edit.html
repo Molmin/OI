@@ -22,7 +22,8 @@
                 {
                     code: editor.getValue(),
                     title: $('#soltitle').val(),
-                    filename: $('#filename').val()
+                    filename: $('#filename').val(),
+                    author: $('#author').val()
                 },
                 (data,status)=>{
                     location.pathname=`/OI/problem/<%= prodata.pid %>/solution`;
@@ -86,6 +87,7 @@
                 <p class="solution-config">
                     <input placeholder="标题" type="text" id="soltitle" value="<%= prodata.solution[paraId].title %>"></input>
                     <input placeholder="文件名" type="text" id="filename" value="<%= prodata.solution[paraId].file %>"></input>
+                    <input placeholder="作者" type="text" id="author" value="<%= prodata.solution[paraId].author?prodata.solution[paraId].author:'' %>"></input>
                 </p>
     <pre id="code" class="ace_editor" style="min-height: 400px;">
 <textarea class="ace_text-input" id="sys"><%= fs.readFileSync(`data/${prodata.pid}/${prodata.solution[paraId].file}`,'utf8') %></textarea></pre>

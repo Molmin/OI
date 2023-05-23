@@ -22,6 +22,3 @@ module.exports={
     checkloginByReq,
     checkloginByPassword
 };
-
-//localStorage.cp6_player_id='f6d7c421-bf86-455d-9453-18fa63f68638'
-// window.localStorage.setItem("cp6_player_id","551ee072-105e-49e5-b438-316f912993c2");

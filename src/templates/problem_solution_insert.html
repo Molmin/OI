@@ -22,7 +22,8 @@
                 {
                     code: editor.getValue(),
                     title: $('#paratitle').val(),
-                    filename: $('#filename').val()
+                    filename: $('#filename').val(),
+                    author: $('#author').val()
                 },
                 (data,status)=>{
                     location.pathname=`/OI/problem/<%= prodata.pid %>/solution`;
@@ -77,6 +78,7 @@
                 <p class="solution-config">
                     <input placeholder="标题" type="text" id="paratitle"></input>
                     <input placeholder="文件名" type="text" id="filename"></input>
+                    <input placeholder="作者" type="text" id="author"></input>
                 </p>
     <pre id="code" class="ace_editor" style="min-height: 400px;">
 <textarea class="ace_text-input" id="sys">TODO

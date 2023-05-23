@@ -30,9 +30,13 @@ router.post('/update/db',(req,res)=>{
     require('child_process').spawnSync('rm',['-rf','node_modules/.cache/gh-pages']);
     require('gh-pages').publish('data',{
         branch: 'data',
-        message: req.body.message
+        message: req.body.message,
+        repo: 'git@github.com:Molmin/OI-data.git'
     },err=>{
-        if(err)res.status(200).json({error: err.message});
+        if(err){
+            res.status(200).json({error: err.message});
+            logger.log(req,`failed to update database to github: ${err}`);
+        }
         else{
             res.status(200).json({message: "同步成功。"});
             logger.log(req,`updated database to github`);
@@ -46,9 +50,13 @@ router.post('/update/ghpage',(req,res)=>{
         require('child_process').spawnSync('rm',['-rf','node_modules/.cache/gh-pages']);
         require('gh-pages').publish('dist',{
             branch: 'gh-pages',
-            message: req.body.message
+            message: req.body.message,
+            repo: 'git@github.com:Molmin/OI.git'
         },err=>{
-            if(err)res.status(200).json({error: err.message});
+            if(err){
+                res.status(200).json({error: err.message});
+                logger.log(req,`failed to update github page: ${err}`);
+            }
             else{
                 res.status(200).json({message: "同步成功。"});
                 logger.log(req,`updated github page`);
@@ -253,6 +261,7 @@ router.post('/problem/:pid/solution/:para/edit',(req,res)=>{
     fs.writeFileSync(`data/${req.params.pid}/${req.body.filename}`,req.body.code);
     prodata.solution[req.params.para].title=req.body.title;
     prodata.solution[req.params.para].file=req.body.filename;
+    prodata.solution[req.params.para].author=req.body.author;
     fs.writeFileSync(`data/${req.params.pid}/config.json`,JSON.stringify(prodata,null,"  "));
     logger.log(req,`edited a section of solutions (${req.params.pid}/${prodata.solution[req.params.para].file})`);
     res.json({});
@@ -297,7 +306,8 @@ router.get('/problem/:pid/solution/:para/insert',(req,res)=>{
 router.post('/problem/:pid/solution/:para/insert',(req,res)=>{
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     fs.writeFileSync(`data/${req.params.pid}/${req.body.filename}`,req.body.code);
-    prodata.solution.splice(req.params.para,0,{title: req.body.title, file: req.body.filename});
+    prodata.solution.splice(req.params.para,0,{title: req.body.title,
+        file: req.body.filename, author: req.body.author});
     fs.writeFileSync(`data/${req.params.pid}/config.json`,JSON.stringify(prodata,null,"  "));
     logger.log(req,`inserted a section of solutions (${req.params.pid}/${req.body.filename})`);
     res.json({});

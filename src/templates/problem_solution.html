@@ -66,6 +66,11 @@
                             </a>
                         <% } %>
                     </h2>
+                    <% if(sol.author){ %>
+                        <blockquote class="topan-blockquote-tip">
+                            <p>本文作者是 <%- MarkdownIt.renderInline(sol.author) %>，遵循 <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh">CC BY-SA 4.0</a> 协议。</p>
+                        </blockquote>
+                    <% } %>
                     <%- MarkdownIt.render(fs.readFileSync(`data/${prodata.pid}/${sol.file}`,'utf8').split('(file://').join(`(./file/`)) %>
                     <% if(sol.code){ %>
                         <div class="topan-fold">
