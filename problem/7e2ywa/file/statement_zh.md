@@ -53,7 +53,7 @@
 
 该样例对应下图：
 
-![](https://cdn.luogu.com.cn/upload/image_hosting/38z2b5fh.png)
+![](file://pic1.webp)
 
 ## 数据范围
 

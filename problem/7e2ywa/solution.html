@@ -95,14 +95,26 @@
             
                 <div class="topan-section-shadow">
                     <h2>
-                        离散化 &amp; 线段树
+                        总体思路
                         
                     </h2>
                     
                     <p>显然的，每一个圆都会对答案产生贡献，所以答案至少为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">1</span></span></span></span>。此时答案为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">n+1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord mathit">n</span><span class="mbin">+</span><span class="mord mathrm">1</span></span></span></span>。而可能会遇到这种情况：</p>
 <p><img src="./file/pic1.svg" alt="" width="120" height="120"></p>
 <p>这时上下分离，对答案又贡献了 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">1</span></span></span></span>，所以我们只需要考虑如何计算这样的贡献。</p>
-<p>注意到一个圆被分割成上下两半，当且仅当该圆截 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">x</span></span></span></span> 轴得线段已经被其他圆占领。</p>
+
+                    
+                </div>
+            
+                <br>
+                
+                <div class="topan-section-shadow">
+                    <h2>
+                        法一：线段树
+                        
+                    </h2>
+                    
+                    <p>注意到一个圆被分割成上下两半，当且仅当该圆截 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">x</span></span></span></span> 轴得线段已经被其他圆占领。</p>
 <p>考虑维护一棵线段树，记录一段区间是否被占领即可。</p>
 <p>时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>n</mi><mi>log</mi><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n\log n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mord mathit">n</span><span class="mclose">)</span></span></span></span>。</p>
 
@@ -192,6 +204,34 @@
 }</pre>
                             </dl>
                         </div>
+                    
+                </div>
+            
+                <br>
+                
+                <div class="topan-section-shadow">
+                    <h2>
+                        法二：单调栈
+                        
+                    </h2>
+                    
+                    <p>TODO</p>
+<p>时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mclose">)</span></span></span></span>。</p>
+
+                    
+                </div>
+            
+                <br>
+                
+                <div class="topan-section-shadow">
+                    <h2>
+                        法三：并查集
+                        
+                    </h2>
+                    
+                    <p>TODO</p>
+<p>时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mclose">)</span></span></span></span>。</p>
+
                     
                 </div>
             

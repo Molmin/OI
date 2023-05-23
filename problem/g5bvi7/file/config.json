@@ -13,7 +13,8 @@
   "tags": "数学,数学/组合数学,数学/组合数学/容斥原理,数学/组合数学/组合计数,数学/概率,来源/CodeForces,缺中文题面,缺题解",
   "source": "[Educational Codeforces Round 57 (Rated for Div. 2) Problem E](https://codeforces.com/contest/1096/problem/E)",
   "statement": {
-    "English": "statement_zh.md"
+    "简体中文": "statement_zh.md",
+    "English": "statement_en.md"
   },
   "solution": [
     {

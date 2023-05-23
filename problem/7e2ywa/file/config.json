@@ -17,10 +17,25 @@
   },
   "solution": [
     {
-      "title": "离散化 & 线段树",
+      "title": "总体思路",
+      "file": "sol.md",
+      "author": ""
+    },
+    {
+      "title": "法一：线段树",
       "file": "sol1.md",
       "author": "",
       "code": "code.cpp"
+    },
+    {
+      "title": "法二：单调栈",
+      "file": "sol2.md",
+      "author": ""
+    },
+    {
+      "title": "法三：并查集",
+      "file": "sol3.md",
+      "author": ""
     }
   ]
 }
