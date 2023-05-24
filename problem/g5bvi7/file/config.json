@@ -1,9 +1,9 @@
 {
   "title": "The Top Scorer",
   "difficulty": {
-    "algorithm": 0,
-    "thinking": 0,
-    "implementation": 0
+    "algorithm": 4,
+    "thinking": 4,
+    "implementation": 3
   },
   "judge": {
     "time": "3 s",
