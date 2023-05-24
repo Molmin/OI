@@ -30,7 +30,8 @@
     {
       "title": "法二：单调栈",
       "file": "sol2.md",
-      "author": ""
+      "author": "[hank0402](https://www.luogu.com.cn/user/482642)",
+      "code": "ddzstd.cpp"
     },
     {
       "title": "法三：并查集",
