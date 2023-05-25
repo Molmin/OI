@@ -41,7 +41,7 @@
 
 下图中，左图是初始读入的树，右图是操作后的树。
 
-![](https://cdn.luogu.com.cn/upload/image_hosting/r84e2l05.png)
+![](file://pic1.webp)
 
 ## 数据范围
 

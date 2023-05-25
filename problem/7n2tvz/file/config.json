@@ -10,7 +10,7 @@
     "memory": "125 MiB",
     "type": "default"
   },
-  "tags": "数据结构,数据结构/线段树,来源/NOI,时间/2007,缺题解",
+  "tags": "数据结构,数据结构/线段树,来源/NOI,时间/2007",
   "source": "NOI 2007",
   "statement": {
     "简体中文": "statement_zh.md"
