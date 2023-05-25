@@ -100,7 +100,8 @@
                     </h2>
                     
                     <p>考虑后四种询问。</p>
-<p>把整个项链当成一条链来做，在其上建线段树，维护不同颜色的段数。合并时还需要用到区间两端的颜色，所以对每个区间还需要维护区间两端颜色</p>
+<p>把整个项链当成一条链来做，在其上建线段树，维护不同颜色的段数。合并时还需要用到区间两端的颜色，所以对每个区间还需要维护区间两端颜色。</p>
+<p>对于整个项链的查询，只需当成区间 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>[</mo><mn>1</mn><mo separator="true">,</mo><mi>n</mi><mo>]</mo></mrow><annotation encoding="application/x-tex">[1,n]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">[</span><span class="mord mathrm">1</span><span class="mpunct">,</span><span class="mord mathit">n</span><span class="mclose">]</span></span></span></span> 来做，在特判两端是否为同种颜色即可。</p>
 
                     
                 </div>
@@ -109,12 +110,33 @@
                 
                 <div class="topan-section-shadow">
                     <h2>
-                        线段树实现
+                        旋转与翻转
                         
                     </h2>
                     
                     <p>TODO</p>
 <p>时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mclose">)</span></span></span></span>。</p>
+
+                    
+                </div>
+            
+                <br>
+                
+                <div class="topan-section-shadow">
+                    <h2>
+                        代码实现
+                        
+                    </h2>
+                    
+                    <p><strong>本题细节较多，码量较大。</strong> 实现细节：</p>
+<ul>
+<li>
+<p>查询区间颜色段数量时，需要注意输入的区间两端是按<strong>顺时针方向</strong>的，而不是从编号小的到编号大的。若编号大的在前，只需将区间拆为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>[</mo><mi>l</mi><mo separator="true">,</mo><mi>n</mi><mo>]</mo></mrow><annotation encoding="application/x-tex">[l,n]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">[</span><span class="mord mathit" style="margin-right:0.01968em;">l</span><span class="mpunct">,</span><span class="mord mathit">n</span><span class="mclose">]</span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>[</mo><mn>1</mn><mo separator="true">,</mo><mi>r</mi><mo>]</mo></mrow><annotation encoding="application/x-tex">[1,r]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">[</span><span class="mord mathrm">1</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="mclose">]</span></span></span></span> 两个部分计算，再合并即可。</p>
+</li>
+<li>
+<p>查询整个项链的颜色段数量时，要注意整个项链为同一种颜色的情况。（只需计算后答案与 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">1</span></span></span></span> 取 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>max</mi></mrow><annotation encoding="application/x-tex">\max</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mop">max</span></span></span></span> 即可。）</p>
+</li>
+</ul>
 
                     
                         <div class="topan-fold">

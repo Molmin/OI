@@ -22,8 +22,13 @@
       "author": ""
     },
     {
-      "title": "线段树实现",
+      "title": "旋转与翻转",
       "file": "sol2.md",
+      "author": ""
+    },
+    {
+      "title": "代码实现",
+      "file": "sol3.md",
       "author": "",
       "code": "code.cpp"
     }
