@@ -19,18 +19,20 @@
     {
       "title": "简化版",
       "file": "sol1.md",
-      "author": ""
+      "author": "",
+      "code": "code_segmentTree.cpp"
     },
     {
       "title": "旋转与翻转",
       "file": "sol2.md",
-      "author": ""
+      "author": "",
+      "code": "code_convert.cpp"
     },
     {
       "title": "代码实现",
       "file": "sol3.md",
       "author": "",
-      "code": "code.cpp"
+      "code": "code_fullversion.cpp"
     }
   ]
 }

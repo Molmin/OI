@@ -104,6 +104,68 @@
 <p>对于整个项链的查询，只需当成区间 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>[</mo><mn>1</mn><mo separator="true">,</mo><mi>n</mi><mo>]</mo></mrow><annotation encoding="application/x-tex">[1,n]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">[</span><span class="mord mathrm">1</span><span class="mpunct">,</span><span class="mord mathit">n</span><span class="mclose">]</span></span></span></span> 来做，在特判两端是否为同种颜色即可。</p>
 
                     
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre><span class="hljs-keyword">namespace</span> SegmentTree{
+    <span class="hljs-keyword">struct</span> <span class="hljs-title class_">Node</span>{
+        <span class="hljs-type">int</span> left,right,cnt; <span class="hljs-comment">// 最左/右的颜色 / 不同颜色数量</span>
+        <span class="hljs-type">int</span> tag;
+    }a[<span class="hljs-number">1000001</span>];
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">pushup</span><span class="hljs-params">(<span class="hljs-type">int</span> id)</span></span>{
+        <span class="hljs-type">int</span> l=id&lt;&lt;<span class="hljs-number">1</span>,r=(id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>;
+        a[id].left=a[l].left,
+        a[id].right=a[r].right;
+        a[id].cnt=a[l].cnt+a[r].cnt;
+        <span class="hljs-keyword">if</span>(a[l].right==a[r].left)a[id].cnt--;
+    }
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">pushdown</span><span class="hljs-params">(<span class="hljs-type">int</span> id)</span></span>{
+        <span class="hljs-type">int</span> l=id&lt;&lt;<span class="hljs-number">1</span>,r=(id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>;
+        <span class="hljs-keyword">if</span>(a[id].tag==<span class="hljs-number">0</span>)<span class="hljs-keyword">return</span>;
+        a[l].left=a[l].right=a[l].tag=a[id].tag;
+        a[r].left=a[r].right=a[r].tag=a[id].tag;
+        a[l].cnt=a[r].cnt=<span class="hljs-number">1</span>,a[id].tag=<span class="hljs-number">0</span>;
+    }
+
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">build</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r)</span></span>{
+        <span class="hljs-keyword">if</span>(l==r){
+            a[id].left=a[id].right=x[l],a[id].cnt=<span class="hljs-number">1</span>;
+            <span class="hljs-keyword">return</span>;
+        }
+        <span class="hljs-type">int</span> mid=l+r&gt;&gt;<span class="hljs-number">1</span>;
+        <span class="hljs-built_in">build</span>(id&lt;&lt;<span class="hljs-number">1</span>,l,mid);
+        <span class="hljs-built_in">build</span>((id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r);
+        <span class="hljs-built_in">pushup</span>(id);
+    }
+    <span class="hljs-function">Node <span class="hljs-title">query</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r,<span class="hljs-type">int</span> L,<span class="hljs-type">int</span> R)</span></span>{
+        <span class="hljs-keyword">if</span>(L&lt;=l&amp;&amp;r&lt;=R)<span class="hljs-keyword">return</span> a[id];
+        <span class="hljs-type">int</span> mid=l+r&gt;&gt;<span class="hljs-number">1</span>;
+        <span class="hljs-built_in">pushdown</span>(id);
+        Node lNode={<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>},rNode={<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>};
+        <span class="hljs-keyword">if</span>(L&lt;=mid)lNode=<span class="hljs-built_in">query</span>(id&lt;&lt;<span class="hljs-number">1</span>,l,mid,L,R);
+        <span class="hljs-keyword">if</span>(R&gt;mid) rNode=<span class="hljs-built_in">query</span>((id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r,L,R);
+        <span class="hljs-keyword">return</span> {
+            lNode.left==<span class="hljs-number">0</span>?rNode.left:lNode.left,
+            rNode.right==<span class="hljs-number">0</span>?lNode.right:rNode.right,
+            lNode.cnt+rNode.cnt-(lNode.right==rNode.left?<span class="hljs-number">1</span>:<span class="hljs-number">0</span>),
+            <span class="hljs-number">0</span>
+        };
+    }
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">update</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r,<span class="hljs-type">int</span> L,<span class="hljs-type">int</span> R,<span class="hljs-type">int</span> color)</span></span>{
+        <span class="hljs-keyword">if</span>(L&lt;=l&amp;&amp;r&lt;=R){
+            a[id].left=a[id].right=a[id].tag=color,a[id].cnt=<span class="hljs-number">1</span>;
+            <span class="hljs-keyword">return</span>;
+        }
+        <span class="hljs-type">int</span> mid=l+r&gt;&gt;<span class="hljs-number">1</span>;
+        <span class="hljs-built_in">pushdown</span>(id);
+        <span class="hljs-keyword">if</span>(L&lt;=mid)<span class="hljs-built_in">update</span>(id&lt;&lt;<span class="hljs-number">1</span>,l,mid,L,R,color);
+        <span class="hljs-keyword">if</span>(R&gt;mid) <span class="hljs-built_in">update</span>((id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r,L,R,color);
+        <span class="hljs-built_in">pushup</span>(id);
+    }
+}</pre>
+                            </dl>
+                        </div>
+                    
                 </div>
             
                 <br>
@@ -114,9 +176,22 @@
                         
                     </h2>
                     
-                    <p>TODO</p>
-<p>时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mclose">)</span></span></span></span>。</p>
+                    <p>下面考虑旋转和对称怎么做。</p>
+<p>容易想到只需考虑将询问反向旋转即可。用 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mi>l</mi><mi>i</mi><mi>p</mi><mi>p</mi><mi>e</mi><mi>d</mi></mrow><annotation encoding="application/x-tex">flipped</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.10764em;">f</span><span class="mord mathit" style="margin-right:0.01968em;">l</span><span class="mord mathit">i</span><span class="mord mathit">p</span><span class="mord mathit">p</span><span class="mord mathit">e</span><span class="mord mathit">d</span></span></span></span> 表示是否翻转过，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>r</mi><mi>o</mi><mi>t</mi><mi>a</mi><mi>t</mi><mi>e</mi><mi>d</mi></mrow><annotation encoding="application/x-tex">rotated</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.69444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="mord mathit">o</span><span class="mord mathit">t</span><span class="mord mathit">a</span><span class="mord mathit">t</span><span class="mord mathit">e</span><span class="mord mathit">d</span></span></span></span> 表示旋转的个数。只需对于输入的每个位置都反向转换即可。</p>
+<p>时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mo>(</mo><mi>N</mi><mo>+</mo><mi>Q</mi><mo>)</mo><mi>log</mi><mi>N</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta((N+Q)\log N)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mopen">(</span><span class="mord mathit" style="margin-right:0.10903em;">N</span><span class="mbin">+</span><span class="mord mathit">Q</span><span class="mclose">)</span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mord mathit" style="margin-right:0.10903em;">N</span><span class="mclose">)</span></span></span></span>。</p>
 
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre><span class="hljs-type">bool</span> flipped; <span class="hljs-type">int</span> rotated;
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">convert</span><span class="hljs-params">(<span class="hljs-type">int</span> &amp;x)</span></span>{
+    <span class="hljs-keyword">if</span>(flipped)x=rotated+<span class="hljs-number">2</span>-x;
+    <span class="hljs-keyword">else</span> x-=rotated;
+    x=(x+n+n<span class="hljs-number">-1</span>)%n+<span class="hljs-number">1</span>;
+}</pre>
+                            </dl>
+                        </div>
                     
                 </div>
             
