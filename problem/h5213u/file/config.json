@@ -10,10 +10,17 @@
     "memory": "128 MiB",
     "type": "default"
   },
-  "tags": "来源/POI,时间/2011,缺题解,缺代码",
+  "tags": "来源/POI,时间/2011,缺题解",
   "source": "POI 2011 ROT - Tree Rotations",
   "statement": {
     "简体中文": "statement_zh.md"
   },
-  "solution": []
+  "solution": [
+    {
+      "title": "题解",
+      "file": "sol.md",
+      "author": "",
+      "code": "code.cpp"
+    }
+  ]
 }
