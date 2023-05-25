@@ -102,27 +102,40 @@
 </style>
 <style>
     .tag{
-        padding: 2px 8px;
+        padding: 2px 6px;
         border-radius: 3px;
+        font-size: 90%;
         color: white;
-        background: #14558f;
+        background: var(--tag-color);
         display: inline-block;
         line-height: 17.25px;
     }
+    .tag:hover{
+        color: white !important;
+        background: var(--tag-color-hover);
+    }
+    .tag:hover::after{
+        width: 0 !important;
+    }
     .tag-alg{
-        background: #14558f;
+        --tag-color: #14558f;
+        --tag-color-hover: #4a7aa3;
     }
     .tag-time{
-        background: #1c830e;
+        --tag-color: #1c830e;
+        --tag-color-hover: #499e3e;
     }
     .tag-src{
-        background: #b88b0f;
+        --tag-color: #b88b0f;
+        --tag-color-hover: #b99738;
     }
     .tag-special{
-        background: #6926c0;
+        --tag-color: #6926c0;
+        --tag-color-hover: #7c47c2;
     }
     .tag-place{
-        background: #c33e85;
+        --tag-color: #c33e85;
+        --tag-color-hover: #c86198;
     }
 </style>
 
@@ -148,7 +161,7 @@
                             <td>4p766j</td>
                             <td><a href="/OI/problem/4p766j">三角形 Triangles</a></td>
                             <td>
-                                <span class="tag tag-alg">数学</span>&nbsp;<span class="tag tag-alg">构造</span>&nbsp;<span class="tag tag-alg">计算几何</span>&nbsp;<span class="tag tag-time">2022</span>&nbsp;
+                                &nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpiJdfQ==" class="tag tag-alg">数学</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi/mnoTpgKAiXX0=" class="tag tag-alg">构造</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi/orqHnrpflh6DkvZUiXX0=" class="tag tag-alg">计算几何</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaXtumXtC8yMDIyIl19" class="tag tag-time">2022</a>
                             </td>
                             <td>15</td>
                             <td>3</td>
@@ -160,7 +173,7 @@
                             <td>ak50b4</td>
                             <td><a href="/OI/problem/ak50b4">矩阵（matrix）</a></td>
                             <td>
-                                <span class="tag tag-alg">数学</span>&nbsp;<span class="tag tag-alg">矩阵</span>&nbsp;<span class="tag tag-alg">矩阵乘法</span>&nbsp;
+                                &nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpiJdfQ==" class="tag tag-alg">数学</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi/nn6npmLUiXX0=" class="tag tag-alg">矩阵</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi/nn6npmLUv55+p6Zi15LmY5rOVIl19" class="tag tag-alg">矩阵乘法</a>
                             </td>
                             <td>14</td>
                             <td>4</td>
@@ -172,7 +185,7 @@
                             <td>kl5960</td>
                             <td><a href="/OI/problem/kl5960">Beautiful Bins</a></td>
                             <td>
-                                <span class="tag tag-alg">数学</span>&nbsp;<span class="tag tag-alg">代数</span>&nbsp;<span class="tag tag-alg">操作问题</span>&nbsp;<span class="tag tag-special">缺题解</span>&nbsp;
+                                &nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpiJdfQ==" class="tag tag-alg">数学</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi/ku6PmlbAiXX0=" class="tag tag-alg">代数</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi/mk43kvZzpl67popgiXX0=" class="tag tag-alg">操作问题</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIue8uumimOinoyJdfQ==" class="tag tag-special">缺题解</a>
                             </td>
                             <td>17</td>
                             <td>3</td>
@@ -184,7 +197,7 @@
                             <td>31edyx</td>
                             <td><a href="/OI/problem/31edyx">On Sum of Fractions</a></td>
                             <td>
-                                <span class="tag tag-alg">数学</span>&nbsp;<span class="tag tag-alg">素数</span>&nbsp;<span class="tag tag-alg">代数</span>&nbsp;<span class="tag tag-src">CodeForces</span>&nbsp;
+                                &nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpiJdfQ==" class="tag tag-alg">数学</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi/ntKDmlbAiXX0=" class="tag tag-alg">素数</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi/ku6PmlbAiXX0=" class="tag tag-alg">代数</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadpea6kC9Db2RlRm9yY2VzIl19" class="tag tag-src">CodeForces</a>
                             </td>
                             <td>10</td>
                             <td>3</td>
@@ -196,7 +209,7 @@
                             <td>k0q0w0</td>
                             <td><a href="/OI/problem/k0q0w0">Two Paths</a></td>
                             <td>
-                                <span class="tag tag-alg">图论</span>&nbsp;<span class="tag tag-alg">欧拉路</span>&nbsp;<span class="tag tag-src">CodeForces</span>&nbsp;
+                                &nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuWbvuiuuiJdfQ==" class="tag tag-alg">图论</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuWbvuiuui/mrKfmi4not68iXX0=" class="tag tag-alg">欧拉路</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadpea6kC9Db2RlRm9yY2VzIl19" class="tag tag-src">CodeForces</a>
                             </td>
                             <td>16</td>
                             <td>5</td>
@@ -208,7 +221,7 @@
                             <td>atk3ax</td>
                             <td><a href="/OI/problem/atk3ax">Xor-Paths</a></td>
                             <td>
-                                <span class="tag tag-alg">搜索</span>&nbsp;<span class="tag tag-alg">双向搜索</span>&nbsp;<span class="tag tag-alg">暴力</span>&nbsp;<span class="tag tag-alg">位运算</span>&nbsp;<span class="tag tag-src">CodeForces</span>&nbsp;
+                                &nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaQnOe0oiJdfQ==" class="tag tag-alg">搜索</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaQnOe0oi/lj4zlkJHmkJzntKIiXX0=" class="tag tag-alg">双向搜索</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuWfuuehgOeul+azlS/mmrTlipsiXX0=" class="tag tag-alg">暴力</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuWfuuehgOeul+azlS/kvY3ov5DnrpciXX0=" class="tag tag-alg">位运算</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadpea6kC9Db2RlRm9yY2VzIl19" class="tag tag-src">CodeForces</a>
                             </td>
                             <td>15</td>
                             <td>5</td>
@@ -220,7 +233,7 @@
                             <td>mbh8u2</td>
                             <td><a href="/OI/problem/mbh8u2">三角形（triangle）</a></td>
                             <td>
-                                <span class="tag tag-alg">数学</span>&nbsp;<span class="tag tag-alg">计算几何</span>&nbsp;<span class="tag tag-alg">凸包</span>&nbsp;<span class="tag tag-alg">模板</span>&nbsp;
+                                &nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpiJdfQ==" class="tag tag-alg">数学</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi/orqHnrpflh6DkvZUiXX0=" class="tag tag-alg">计算几何</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi/orqHnrpflh6DkvZUv5Ye45YyFIl19" class="tag tag-alg">凸包</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaooeadvyJdfQ==" class="tag tag-alg">模板</a>
                             </td>
                             <td>13</td>
                             <td>6</td>
@@ -232,7 +245,7 @@
                             <td>7hihp7</td>
                             <td><a href="/OI/problem/7hihp7">Ant colony</a></td>
                             <td>
-                                <span class="tag tag-alg">数据结构</span>&nbsp;<span class="tag tag-alg">线段树</span>&nbsp;<span class="tag tag-alg">数学</span>&nbsp;<span class="tag tag-alg">最大公约数</span>&nbsp;<span class="tag tag-src">CodeForces</span>&nbsp;
+                                &nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOaNrue7k+aehCJdfQ==" class="tag tag-alg">数据结构</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOaNrue7k+aehC/nur/mrrXmoJEiXX0=" class="tag tag-alg">线段树</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpiJdfQ==" class="tag tag-alg">数学</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi/mnIDlpKflhaznuqbmlbAiXX0=" class="tag tag-alg">最大公约数</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadpea6kC9Db2RlRm9yY2VzIl19" class="tag tag-src">CodeForces</a>
                             </td>
                             <td>14</td>
                             <td>4</td>
@@ -244,7 +257,7 @@
                             <td>z08r55</td>
                             <td><a href="/OI/problem/z08r55">却也想要伪装（pretend）</a></td>
                             <td>
-                                <span class="tag tag-alg">数学</span>&nbsp;<span class="tag tag-alg">组合数学</span>&nbsp;<span class="tag tag-alg">容斥原理</span>&nbsp;<span class="tag tag-alg">组合计数</span>&nbsp;
+                                &nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpiJdfQ==" class="tag tag-alg">数学</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi/nu4TlkIjmlbDlraYiXX0=" class="tag tag-alg">组合数学</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi/nu4TlkIjmlbDlraYv5a655pal5Y6f55CGIl19" class="tag tag-alg">容斥原理</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi/nu4TlkIjmlbDlraYv57uE5ZCI6K6h5pWwIl19" class="tag tag-alg">组合计数</a>
                             </td>
                             <td>16</td>
                             <td>4</td>
@@ -256,7 +269,7 @@
                             <td>ox8kfm</td>
                             <td><a href="/OI/problem/ox8kfm">矩阵乘法</a></td>
                             <td>
-                                <span class="tag tag-alg">整体二分</span>&nbsp;<span class="tag tag-alg">数据结构</span>&nbsp;<span class="tag tag-alg">树状数组</span>&nbsp;<span class="tag tag-alg">二维树状数组</span>&nbsp;<span class="tag tag-alg">扫描线</span>&nbsp;<span class="tag tag-alg">离散化</span>&nbsp;<span class="tag tag-alg">莫队</span>&nbsp;<span class="tag tag-alg">二维莫队</span>&nbsp;
+                                &nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadgumhuS/mlbTkvZPkuozliIYiXX0=" class="tag tag-alg">整体二分</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOaNrue7k+aehCJdfQ==" class="tag tag-alg">数据结构</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOaNrue7k+aehC/moJHnirbmlbDnu4QiXX0=" class="tag tag-alg">树状数组</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOaNrue7k+aehC/moJHnirbmlbDnu4Qv5LqM57u05qCR54q25pWw57uEIl19" class="tag tag-alg">二维树状数组</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadgumhuS/miavmj4/nur8iXX0=" class="tag tag-alg">扫描线</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadgumhuS/nprvmlaPljJYiXX0=" class="tag tag-alg">离散化</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadgumhuS/ojqvpmJ8iXX0=" class="tag tag-alg">莫队</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadgumhuS/kuoznu7TojqvpmJ8iXX0=" class="tag tag-alg">二维莫队</a>
                             </td>
                             <td>15</td>
                             <td>6</td>
@@ -268,7 +281,7 @@
                             <td>iq01gb</td>
                             <td><a href="/OI/problem/iq01gb">矩形计算</a></td>
                             <td>
-                                <span class="tag tag-alg">离散化</span>&nbsp;<span class="tag tag-alg">莫队</span>&nbsp;<span class="tag tag-alg">二维莫队</span>&nbsp;<span class="tag tag-src">BZOJ</span>&nbsp;
+                                &nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadgumhuS/nprvmlaPljJYiXX0=" class="tag tag-alg">离散化</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadgumhuS/ojqvpmJ8iXX0=" class="tag tag-alg">莫队</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadgumhuS/kuoznu7TojqvpmJ8iXX0=" class="tag tag-alg">二维莫队</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadpea6kC9CWk9KIl19" class="tag tag-src">BZOJ</a>
                             </td>
                             <td>13</td>
                             <td>6</td>
@@ -280,7 +293,7 @@
                             <td>g5bvi7</td>
                             <td><a href="/OI/problem/g5bvi7">The Top Scorer</a></td>
                             <td>
-                                <span class="tag tag-alg">数学</span>&nbsp;<span class="tag tag-alg">组合数学</span>&nbsp;<span class="tag tag-alg">容斥原理</span>&nbsp;<span class="tag tag-alg">组合计数</span>&nbsp;<span class="tag tag-alg">概率</span>&nbsp;<span class="tag tag-src">CodeForces</span>&nbsp;<span class="tag tag-special">缺题解</span>&nbsp;
+                                &nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpiJdfQ==" class="tag tag-alg">数学</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi/nu4TlkIjmlbDlraYiXX0=" class="tag tag-alg">组合数学</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi/nu4TlkIjmlbDlraYv5a655pal5Y6f55CGIl19" class="tag tag-alg">容斥原理</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi/nu4TlkIjmlbDlraYv57uE5ZCI6K6h5pWwIl19" class="tag tag-alg">组合计数</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi/mpoLnjociXX0=" class="tag tag-alg">概率</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadpea6kC9Db2RlRm9yY2VzIl19" class="tag tag-src">CodeForces</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIue8uumimOinoyJdfQ==" class="tag tag-special">缺题解</a>
                             </td>
                             <td>11</td>
                             <td>4</td>
@@ -292,7 +305,7 @@
                             <td>jhfvu6</td>
                             <td><a href="/OI/problem/jhfvu6">理想城</a></td>
                             <td>
-                                <span class="tag tag-alg">动态规划</span>&nbsp;<span class="tag tag-alg">树形动态规划</span>&nbsp;<span class="tag tag-src">IOI</span>&nbsp;<span class="tag tag-time">2012</span>&nbsp;
+                                &nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuWKqOaAgeinhOWIkiJdfQ==" class="tag tag-alg">动态规划</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuagkeW9ouWKqOaAgeinhOWIkiJdfQ==" class="tag tag-alg">树形动态规划</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadpea6kC9JT0kiXX0=" class="tag tag-src">IOI</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaXtumXtC8yMDEyIl19" class="tag tag-time">2012</a>
                             </td>
                             <td>0</td>
                             <td>0</td>
@@ -304,7 +317,7 @@
                             <td>7e2ywa</td>
                             <td><a href="/OI/problem/7e2ywa">KRUŽNICE</a></td>
                             <td>
-                                <span class="tag tag-alg">离散化</span>&nbsp;<span class="tag tag-alg">数据结构</span>&nbsp;<span class="tag tag-alg">线段树</span>&nbsp;<span class="tag tag-alg">单调栈</span>&nbsp;<span class="tag tag-alg">并查集</span>&nbsp;<span class="tag tag-src">COCI</span>&nbsp;<span class="tag tag-time">2013</span>&nbsp;<span class="tag tag-special">缺题解</span>&nbsp;<span class="tag tag-special">缺代码</span>&nbsp;
+                                &nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadgumhuS/nprvmlaPljJYiXX0=" class="tag tag-alg">离散化</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOaNrue7k+aehCJdfQ==" class="tag tag-alg">数据结构</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOaNrue7k+aehC/nur/mrrXmoJEiXX0=" class="tag tag-alg">线段树</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOaNrue7k+aehC/ljZXosIPmoIgiXX0=" class="tag tag-alg">单调栈</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOaNrue7k+aehC/lubbmn6Xpm4YiXX0=" class="tag tag-alg">并查集</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadpea6kC9DT0NJIl19" class="tag tag-src">COCI</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaXtumXtC8yMDEzIl19" class="tag tag-time">2013</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIue8uumimOinoyJdfQ==" class="tag tag-special">缺题解</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIue8uuS7o+eggSJdfQ==" class="tag tag-special">缺代码</a>
                             </td>
                             <td>0</td>
                             <td>0</td>
@@ -316,7 +329,7 @@
                             <td>0z766q</td>
                             <td><a href="/OI/problem/0z766q">玉蟾宫</a></td>
                             <td>
-                                <span class="tag tag-alg">动态规划</span>&nbsp;<span class="tag tag-alg">普通动态规划</span>&nbsp;<span class="tag tag-alg">悬线法</span>&nbsp;<span class="tag tag-alg">模板</span>&nbsp;<span class="tag tag-special">缺题解</span>&nbsp;
+                                &nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuWKqOaAgeinhOWIkiJdfQ==" class="tag tag-alg">动态规划</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuWKqOaAgeinhOWIki/mma7pgJrliqjmgIHop4TliJIiXX0=" class="tag tag-alg">普通动态规划</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadgumhuS/mgqznur/ms5UiXX0=" class="tag tag-alg">悬线法</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaooeadvyJdfQ==" class="tag tag-alg">模板</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIue8uumimOinoyJdfQ==" class="tag tag-special">缺题解</a>
                             </td>
                             <td>9</td>
                             <td>3</td>
@@ -328,7 +341,7 @@
                             <td>7n2tvz</td>
                             <td><a href="/OI/problem/7n2tvz">项链工厂</a></td>
                             <td>
-                                <span class="tag tag-alg">数据结构</span>&nbsp;<span class="tag tag-alg">线段树</span>&nbsp;<span class="tag tag-src">NOI</span>&nbsp;<span class="tag tag-time">2007</span>&nbsp;<span class="tag tag-special">缺题解</span>&nbsp;
+                                &nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOaNrue7k+aehCJdfQ==" class="tag tag-alg">数据结构</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOaNrue7k+aehC/nur/mrrXmoJEiXX0=" class="tag tag-alg">线段树</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadpea6kC9OT0kiXX0=" class="tag tag-src">NOI</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaXtumXtC8yMDA3Il19" class="tag tag-time">2007</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIue8uumimOinoyJdfQ==" class="tag tag-special">缺题解</a>
                             </td>
                             <td>0</td>
                             <td>0</td>
@@ -340,7 +353,7 @@
                             <td>aux748</td>
                             <td><a href="/OI/problem/aux748">奖励关</a></td>
                             <td>
-                                <span class="tag tag-alg">动态规划</span>&nbsp;<span class="tag tag-alg">状态压缩动态规划</span>&nbsp;<span class="tag tag-src">省选</span>&nbsp;<span class="tag tag-place">四川</span>&nbsp;<span class="tag tag-time">2008</span>&nbsp;
+                                &nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuWKqOaAgeinhOWIkiJdfQ==" class="tag tag-alg">动态规划</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuWKqOaAgeinhOWIki/nirbmgIHljovnvKnliqjmgIHop4TliJIiXX0=" class="tag tag-alg">状态压缩动态规划</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadpea6kC/nnIHpgIkiXX0=" class="tag tag-src">省选</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuWcsOWMui/lm5vlt50iXX0=" class="tag tag-place">四川</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaXtumXtC8yMDA4Il19" class="tag tag-time">2008</a>
                             </td>
                             <td>10</td>
                             <td>4</td>
@@ -352,7 +365,7 @@
                             <td>zd7g4g</td>
                             <td><a href="/OI/problem/zd7g4g">ATM Mechine</a></td>
                             <td>
-                                <span class="tag tag-alg">动态规划</span>&nbsp;<span class="tag tag-alg">记忆化搜索</span>&nbsp;<span class="tag tag-src">HDU</span>&nbsp;<span class="tag tag-special">缺题解</span>&nbsp;
+                                &nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuWKqOaAgeinhOWIkiJdfQ==" class="tag tag-alg">动态规划</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuWKqOaAgeinhOWIki/orrDlv4bljJbmkJzntKIiXX0=" class="tag tag-alg">记忆化搜索</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadpea6kC9IRFUiXX0=" class="tag tag-src">HDU</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIue8uumimOinoyJdfQ==" class="tag tag-special">缺题解</a>
                             </td>
                             <td>0</td>
                             <td>0</td>
@@ -364,7 +377,7 @@
                             <td>m0qtk3</td>
                             <td><a href="/OI/problem/m0qtk3">A game with probability</a></td>
                             <td>
-                                <span class="tag tag-alg">数学</span>&nbsp;<span class="tag tag-alg">概率</span>&nbsp;<span class="tag tag-alg">递推</span>&nbsp;<span class="tag tag-src">SPOJ</span>&nbsp;<span class="tag tag-special">缺题解</span>&nbsp;
+                                &nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpiJdfQ==" class="tag tag-alg">数学</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi/mpoLnjociXX0=" class="tag tag-alg">概率</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuWfuuehgOeul+azlS/pgJLmjqgiXX0=" class="tag tag-alg">递推</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadpea6kC9TUE9KIl19" class="tag tag-src">SPOJ</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIue8uumimOinoyJdfQ==" class="tag tag-special">缺题解</a>
                             </td>
                             <td>0</td>
                             <td>0</td>
@@ -376,7 +389,7 @@
                             <td>s47y9h</td>
                             <td><a href="/OI/problem/s47y9h">Cards</a></td>
                             <td>
-                                <span class="tag tag-alg">动态规划</span>&nbsp;<span class="tag tag-alg">记忆化搜索</span>&nbsp;<span class="tag tag-src">UVA</span>&nbsp;
+                                &nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuWKqOaAgeinhOWIkiJdfQ==" class="tag tag-alg">动态规划</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuWKqOaAgeinhOWIki/orrDlv4bljJbmkJzntKIiXX0=" class="tag tag-alg">记忆化搜索</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadpea6kC9VVkEiXX0=" class="tag tag-src">UVA</a>
                             </td>
                             <td>0</td>
                             <td>0</td>

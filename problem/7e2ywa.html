@@ -77,27 +77,40 @@
 </style>
 <style>
     .tag{
-        padding: 2px 8px;
+        padding: 2px 6px;
         border-radius: 3px;
+        font-size: 90%;
         color: white;
-        background: #14558f;
+        background: var(--tag-color);
         display: inline-block;
         line-height: 17.25px;
     }
+    .tag:hover{
+        color: white !important;
+        background: var(--tag-color-hover);
+    }
+    .tag:hover::after{
+        width: 0 !important;
+    }
     .tag-alg{
-        background: #14558f;
+        --tag-color: #14558f;
+        --tag-color-hover: #4a7aa3;
     }
     .tag-time{
-        background: #1c830e;
+        --tag-color: #1c830e;
+        --tag-color-hover: #499e3e;
     }
     .tag-src{
-        background: #b88b0f;
+        --tag-color: #b88b0f;
+        --tag-color-hover: #b99738;
     }
     .tag-special{
-        background: #6926c0;
+        --tag-color: #6926c0;
+        --tag-color-hover: #7c47c2;
     }
     .tag-place{
-        background: #c33e85;
+        --tag-color: #c33e85;
+        --tag-color-hover: #c86198;
     }
 </style>
 
@@ -126,7 +139,7 @@
                     
                     
                         <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
-                        <span class="tag tag-alg">离散化</span>&nbsp;<span class="tag tag-alg">数据结构</span>&nbsp;<span class="tag tag-alg">线段树</span>&nbsp;<span class="tag tag-alg">单调栈</span>&nbsp;<span class="tag tag-alg">并查集</span>&nbsp;<span class="tag tag-src">COCI</span>&nbsp;<span class="tag tag-time">2013</span>&nbsp;<span class="tag tag-special">缺题解</span>&nbsp;<span class="tag tag-special">缺代码</span>&nbsp;
+                        <a href="/OI?search=eyJmb2xkZXJzIjpbIuadgumhuS/nprvmlaPljJYiXX0=" class="tag tag-alg">离散化</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOaNrue7k+aehCJdfQ==" class="tag tag-alg">数据结构</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOaNrue7k+aehC/nur/mrrXmoJEiXX0=" class="tag tag-alg">线段树</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOaNrue7k+aehC/ljZXosIPmoIgiXX0=" class="tag tag-alg">单调栈</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOaNrue7k+aehC/lubbmn6Xpm4YiXX0=" class="tag tag-alg">并查集</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadpea6kC9DT0NJIl19" class="tag tag-src">COCI</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaXtumXtC8yMDEzIl19" class="tag tag-time">2013</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIue8uumimOinoyJdfQ==" class="tag tag-special">缺题解</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIue8uuS7o+eggSJdfQ==" class="tag tag-special">缺代码</a>&nbsp;
                     
                 </p>
                 <p class="messages-display">

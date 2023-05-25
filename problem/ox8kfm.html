@@ -77,27 +77,40 @@
 </style>
 <style>
     .tag{
-        padding: 2px 8px;
+        padding: 2px 6px;
         border-radius: 3px;
+        font-size: 90%;
         color: white;
-        background: #14558f;
+        background: var(--tag-color);
         display: inline-block;
         line-height: 17.25px;
     }
+    .tag:hover{
+        color: white !important;
+        background: var(--tag-color-hover);
+    }
+    .tag:hover::after{
+        width: 0 !important;
+    }
     .tag-alg{
-        background: #14558f;
+        --tag-color: #14558f;
+        --tag-color-hover: #4a7aa3;
     }
     .tag-time{
-        background: #1c830e;
+        --tag-color: #1c830e;
+        --tag-color-hover: #499e3e;
     }
     .tag-src{
-        background: #b88b0f;
+        --tag-color: #b88b0f;
+        --tag-color-hover: #b99738;
     }
     .tag-special{
-        background: #6926c0;
+        --tag-color: #6926c0;
+        --tag-color-hover: #7c47c2;
     }
     .tag-place{
-        background: #c33e85;
+        --tag-color: #c33e85;
+        --tag-color-hover: #c86198;
     }
 </style>
 
@@ -126,7 +139,7 @@
                     
                     
                         <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
-                        <span class="tag tag-alg">整体二分</span>&nbsp;<span class="tag tag-alg">数据结构</span>&nbsp;<span class="tag tag-alg">树状数组</span>&nbsp;<span class="tag tag-alg">二维树状数组</span>&nbsp;<span class="tag tag-alg">扫描线</span>&nbsp;<span class="tag tag-alg">离散化</span>&nbsp;<span class="tag tag-alg">莫队</span>&nbsp;<span class="tag tag-alg">二维莫队</span>&nbsp;
+                        <a href="/OI?search=eyJmb2xkZXJzIjpbIuadgumhuS/mlbTkvZPkuozliIYiXX0=" class="tag tag-alg">整体二分</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOaNrue7k+aehCJdfQ==" class="tag tag-alg">数据结构</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOaNrue7k+aehC/moJHnirbmlbDnu4QiXX0=" class="tag tag-alg">树状数组</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOaNrue7k+aehC/moJHnirbmlbDnu4Qv5LqM57u05qCR54q25pWw57uEIl19" class="tag tag-alg">二维树状数组</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadgumhuS/miavmj4/nur8iXX0=" class="tag tag-alg">扫描线</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadgumhuS/nprvmlaPljJYiXX0=" class="tag tag-alg">离散化</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadgumhuS/ojqvpmJ8iXX0=" class="tag tag-alg">莫队</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadgumhuS/kuoznu7TojqvpmJ8iXX0=" class="tag tag-alg">二维莫队</a>&nbsp;
                     
                 </p>
                 <p class="messages-display">

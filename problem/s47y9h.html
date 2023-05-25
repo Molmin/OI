@@ -77,27 +77,40 @@
 </style>
 <style>
     .tag{
-        padding: 2px 8px;
+        padding: 2px 6px;
         border-radius: 3px;
+        font-size: 90%;
         color: white;
-        background: #14558f;
+        background: var(--tag-color);
         display: inline-block;
         line-height: 17.25px;
     }
+    .tag:hover{
+        color: white !important;
+        background: var(--tag-color-hover);
+    }
+    .tag:hover::after{
+        width: 0 !important;
+    }
     .tag-alg{
-        background: #14558f;
+        --tag-color: #14558f;
+        --tag-color-hover: #4a7aa3;
     }
     .tag-time{
-        background: #1c830e;
+        --tag-color: #1c830e;
+        --tag-color-hover: #499e3e;
     }
     .tag-src{
-        background: #b88b0f;
+        --tag-color: #b88b0f;
+        --tag-color-hover: #b99738;
     }
     .tag-special{
-        background: #6926c0;
+        --tag-color: #6926c0;
+        --tag-color-hover: #7c47c2;
     }
     .tag-place{
-        background: #c33e85;
+        --tag-color: #c33e85;
+        --tag-color-hover: #c86198;
     }
 </style>
 
@@ -123,7 +136,7 @@
                     
                     
                         <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
-                        <span class="tag tag-alg">动态规划</span>&nbsp;<span class="tag tag-alg">记忆化搜索</span>&nbsp;<span class="tag tag-src">UVA</span>&nbsp;
+                        <a href="/OI?search=eyJmb2xkZXJzIjpbIuWKqOaAgeinhOWIkiJdfQ==" class="tag tag-alg">动态规划</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuWKqOaAgeinhOWIki/orrDlv4bljJbmkJzntKIiXX0=" class="tag tag-alg">记忆化搜索</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadpea6kC9VVkEiXX0=" class="tag tag-src">UVA</a>&nbsp;
                     
                 </p>
                 <p class="messages-display">
