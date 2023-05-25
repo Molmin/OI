@@ -73,7 +73,7 @@
                             <td><%= pid %></td>
                             <td><a href="/<%= Config.on %>/problem/<%= pid %>"><%= detail.title %></a></td>
                             <td>
-                                <% detail.tags.split(',').forEach(tag=>{ %><%- Tag(tag) %>&nbsp;<% }) %>
+                                <% detail.tags.split(',').forEach(tag=>{ %>&nbsp;<%- Tag(tag) %><% }) %>
                             </td>
                             <td><%= detail.difficulty.algorithm+detail.difficulty.thinking+detail.difficulty.implementation %></td>
                             <td><%= detail.difficulty.algorithm %></td>
