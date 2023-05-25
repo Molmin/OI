@@ -3,6 +3,7 @@ module.exports=(tag)=>{
     var tagtype='alg';
     if(tag.split('/')[0]=='时间')tagtype='time';
     if(tag.split('/')[0]=='来源')tagtype='src';
+    if(tag.split('/')[0]=='地区')tagtype='place';
     if(['缺题解','缺代码','缺中文题面'].includes(tag.split('/')[0]))tagtype='special';
     return `<span class="tag tag-${tagtype}">${tagname}</span>`;
 }

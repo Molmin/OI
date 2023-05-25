@@ -43,11 +43,15 @@
             <div class="topan-section-shadow">
                 <h2>#<%= prodata.pid %>. <%= prodata.title %></h2>
                 <p class="messages-display">
+                    <% if(prodata.judge.time){ %>
                     <strong><i class="fa fa-solid fa-clock"></i> 时间限制：</strong><%= prodata.judge.time %>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <% } %>
+                    <% if(prodata.judge.memory){ %>
                     <strong><i class="fa fa-solid fa-database"></i> 空间限制：</strong><%= prodata.judge.memory %>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <% } %>
                     <% if(prodata.tags){ %>
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
                         <% prodata.tags.split(',').forEach(tag=>{ %><%- Tag(tag) %>&nbsp;<% }) %>
                     <% } %>
