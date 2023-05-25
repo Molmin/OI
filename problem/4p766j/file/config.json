@@ -33,16 +33,5 @@
       "file": "solution3.md",
       "code": "code.cpp"
     }
-  ],
-  "submit": [],
-  "downloads": [
-    {
-      "name": "英文 pdf 题面（原卷）",
-      "file": "statement_en.pdf"
-    },
-    {
-      "name": "中文 pdf 题面（原卷）",
-      "file": "statement_zh.pdf"
-    }
   ]
 }
