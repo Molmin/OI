@@ -4,7 +4,8 @@
   "description": "",
   "main": "runner.js",
   "scripts": {
-    "start": "node runner.js"
+    "start": "node runner.js",
+    "build": "node src/build/bin.js"
   },
   "repository": {
     "type": "git",
