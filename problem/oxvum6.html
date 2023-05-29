@@ -113,6 +113,16 @@
         --tag-color-hover: #e071ad;
     }
 </style>
+<script>
+    var directTag=(tag)=>{
+        if(pageName=='problem_detail')
+            window.location.href=`/OI/?search=${tag}`;
+        if(pageName=='problem_list'){
+            window.history.pushState(null,null,`/OI/?search=${tag}`);
+            show(search(JSON.parse(new Base64().decode(tag))));
+        }
+    }
+</script>
 
 <div class="row">
     <div class="column-one-fifth">
@@ -139,7 +149,7 @@
                     
                     
                         <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
-                        <a href="/OI?search=eyJmb2xkZXJzIjpbIuadpea6kC%2FnnIHpgIkiXX0%3D" class="tag tag-src">省选</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuWcsOWMui%2FmuZbljZciXX0%3D" class="tag tag-place">湖南</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaXtumXtC8yMDEwIl19" class="tag tag-time">2010</a>&nbsp;
+                        <a href="javascript:directTag('eyJmb2xkZXJzIjpbIuadpea6kC%2FnnIHpgIkiXX0%3D')" class="tag tag-src">省选</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuWcsOWMui%2FmuZbljZciXX0%3D')" class="tag tag-place">湖南</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaXtumXtC8yMDEwIl19')" class="tag tag-time">2010</a>&nbsp;
                     
                 </p>
                 <p class="messages-display">
@@ -199,6 +209,10 @@
         </div>
     </div>
 </div>
+
+<script>
+    var pageName='problem_detail';
+</script>
                     <br>
                 </div>
                 <footer class="topan-footer">

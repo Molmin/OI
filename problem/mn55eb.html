@@ -113,6 +113,16 @@
         --tag-color-hover: #e071ad;
     }
 </style>
+<script>
+    var directTag=(tag)=>{
+        if(pageName=='problem_detail')
+            window.location.href=`/OI/?search=${tag}`;
+        if(pageName=='problem_list'){
+            window.history.pushState(null,null,`/OI/?search=${tag}`);
+            show(search(JSON.parse(new Base64().decode(tag))));
+        }
+    }
+</script>
 
 <div class="row">
     <div class="column-one-fifth">
@@ -139,7 +149,7 @@
                     
                     
                         <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
-                        <a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOaNrue7k%2BaehC%2FlnZfnirbmlbDmja7nu5PmnoQv5YiG5Z2XIl19" class="tag tag-alg">分块</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIue8uumimOinoyJdfQ%3D%3D" class="tag tag-special">缺题解</a>&nbsp;
+                        <a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaVsOaNrue7k%2BaehC%2FlnZfnirbmlbDmja7nu5PmnoQv5YiG5Z2XIl19')" class="tag tag-alg">分块</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIue8uumimOinoyJdfQ%3D%3D')" class="tag tag-special">缺题解</a>&nbsp;
                     
                 </p>
                 <p class="messages-display">
@@ -201,6 +211,10 @@
         </div>
     </div>
 </div>
+
+<script>
+    var pageName='problem_detail';
+</script>
                     <br>
                 </div>
                 <footer class="topan-footer">

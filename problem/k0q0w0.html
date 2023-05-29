@@ -113,6 +113,16 @@
         --tag-color-hover: #e071ad;
     }
 </style>
+<script>
+    var directTag=(tag)=>{
+        if(pageName=='problem_detail')
+            window.location.href=`/OI/?search=${tag}`;
+        if(pageName=='problem_list'){
+            window.history.pushState(null,null,`/OI/?search=${tag}`);
+            show(search(JSON.parse(new Base64().decode(tag))));
+        }
+    }
+</script>
 
 <div class="row">
     <div class="column-one-fifth">
@@ -139,7 +149,7 @@
                     
                     
                         <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
-                        <a href="/OI?search=eyJmb2xkZXJzIjpbIuWbvuiuuiJdfQ%3D%3D" class="tag tag-alg">图论</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuWbvuiuui%2FmrKfmi4not68iXX0%3D" class="tag tag-alg">欧拉路</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadpea6kC9Db2RlRm9yY2VzIl19" class="tag tag-src">CodeForces</a>&nbsp;
+                        <a href="javascript:directTag('eyJmb2xkZXJzIjpbIuWbvuiuuiJdfQ%3D%3D')" class="tag tag-alg">图论</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuWbvuiuui%2FmrKfmi4not68iXX0%3D')" class="tag tag-alg">欧拉路</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuadpea6kC9Db2RlRm9yY2VzIl19')" class="tag tag-src">CodeForces</a>&nbsp;
                     
                 </p>
                 <p class="messages-display">
@@ -192,6 +202,10 @@
         </div>
     </div>
 </div>
+
+<script>
+    var pageName='problem_detail';
+</script>
                     <br>
                 </div>
                 <footer class="topan-footer">

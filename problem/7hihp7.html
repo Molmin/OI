@@ -113,6 +113,16 @@
         --tag-color-hover: #e071ad;
     }
 </style>
+<script>
+    var directTag=(tag)=>{
+        if(pageName=='problem_detail')
+            window.location.href=`/OI/?search=${tag}`;
+        if(pageName=='problem_list'){
+            window.history.pushState(null,null,`/OI/?search=${tag}`);
+            show(search(JSON.parse(new Base64().decode(tag))));
+        }
+    }
+</script>
 
 <div class="row">
     <div class="column-one-fifth">
@@ -139,7 +149,7 @@
                     
                     
                         <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
-                        <a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOaNrue7k%2BaehCJdfQ%3D%3D" class="tag tag-alg">数据结构</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOaNrue7k%2BaehC%2Fnur%2FmrrXmoJEiXX0%3D" class="tag tag-alg">线段树</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpiJdfQ%3D%3D" class="tag tag-alg">数学</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi%2FmnIDlpKflhaznuqbmlbAiXX0%3D" class="tag tag-alg">最大公约数</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadpea6kC9Db2RlRm9yY2VzIl19" class="tag tag-src">CodeForces</a>&nbsp;
+                        <a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaVsOaNrue7k%2BaehCJdfQ%3D%3D')" class="tag tag-alg">数据结构</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaVsOaNrue7k%2BaehC%2Fnur%2FmrrXmoJEiXX0%3D')" class="tag tag-alg">线段树</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaVsOWtpiJdfQ%3D%3D')" class="tag tag-alg">数学</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaVsOWtpi%2FmnIDlpKflhaznuqbmlbAiXX0%3D')" class="tag tag-alg">最大公约数</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuadpea6kC9Db2RlRm9yY2VzIl19')" class="tag tag-src">CodeForces</a>&nbsp;
                     
                 </p>
                 <p class="messages-display">
@@ -199,6 +209,10 @@
         </div>
     </div>
 </div>
+
+<script>
+    var pageName='problem_detail';
+</script>
                     <br>
                 </div>
                 <footer class="topan-footer">

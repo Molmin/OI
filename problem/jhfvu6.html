@@ -113,6 +113,16 @@
         --tag-color-hover: #e071ad;
     }
 </style>
+<script>
+    var directTag=(tag)=>{
+        if(pageName=='problem_detail')
+            window.location.href=`/OI/?search=${tag}`;
+        if(pageName=='problem_list'){
+            window.history.pushState(null,null,`/OI/?search=${tag}`);
+            show(search(JSON.parse(new Base64().decode(tag))));
+        }
+    }
+</script>
 
 <div class="row">
     <div class="column-one-fifth">
@@ -139,7 +149,7 @@
                     
                     
                         <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
-                        <a href="/OI?search=eyJmb2xkZXJzIjpbIuWKqOaAgeinhOWIkiJdfQ%3D%3D" class="tag tag-alg">动态规划</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuagkeW9ouWKqOaAgeinhOWIkiJdfQ%3D%3D" class="tag tag-alg">树形动态规划</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadpea6kC9JT0kiXX0%3D" class="tag tag-src">IOI</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaXtumXtC8yMDEyIl19" class="tag tag-time">2012</a>&nbsp;
+                        <a href="javascript:directTag('eyJmb2xkZXJzIjpbIuWKqOaAgeinhOWIkiJdfQ%3D%3D')" class="tag tag-alg">动态规划</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuagkeW9ouWKqOaAgeinhOWIkiJdfQ%3D%3D')" class="tag tag-alg">树形动态规划</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuadpea6kC9JT0kiXX0%3D')" class="tag tag-src">IOI</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaXtumXtC8yMDEyIl19')" class="tag tag-time">2012</a>&nbsp;
                     
                 </p>
                 <p class="messages-display">
@@ -231,6 +241,10 @@
         </div>
     </div>
 </div>
+
+<script>
+    var pageName='problem_detail';
+</script>
                     <br>
                 </div>
                 <footer class="topan-footer">

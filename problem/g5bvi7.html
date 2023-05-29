@@ -113,6 +113,16 @@
         --tag-color-hover: #e071ad;
     }
 </style>
+<script>
+    var directTag=(tag)=>{
+        if(pageName=='problem_detail')
+            window.location.href=`/OI/?search=${tag}`;
+        if(pageName=='problem_list'){
+            window.history.pushState(null,null,`/OI/?search=${tag}`);
+            show(search(JSON.parse(new Base64().decode(tag))));
+        }
+    }
+</script>
 
 <div class="row">
     <div class="column-one-fifth">
@@ -139,7 +149,7 @@
                     
                     
                         <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
-                        <a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpiJdfQ%3D%3D" class="tag tag-alg">数学</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi%2Fnu4TlkIjmlbDlraYiXX0%3D" class="tag tag-alg">组合数学</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi%2Fnu4TlkIjmlbDlraYv5a655pal5Y6f55CGIl19" class="tag tag-alg">容斥原理</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi%2Fnu4TlkIjmlbDlraYv57uE5ZCI6K6h5pWwIl19" class="tag tag-alg">组合计数</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuaVsOWtpi%2FmpoLnjociXX0%3D" class="tag tag-alg">概率</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIuadpea6kC9Db2RlRm9yY2VzIl19" class="tag tag-src">CodeForces</a>&nbsp;<a href="/OI?search=eyJmb2xkZXJzIjpbIue8uumimOinoyJdfQ%3D%3D" class="tag tag-special">缺题解</a>&nbsp;
+                        <a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaVsOWtpiJdfQ%3D%3D')" class="tag tag-alg">数学</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaVsOWtpi%2Fnu4TlkIjmlbDlraYiXX0%3D')" class="tag tag-alg">组合数学</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaVsOWtpi%2Fnu4TlkIjmlbDlraYv5a655pal5Y6f55CGIl19')" class="tag tag-alg">容斥原理</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaVsOWtpi%2Fnu4TlkIjmlbDlraYv57uE5ZCI6K6h5pWwIl19')" class="tag tag-alg">组合计数</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaVsOWtpi%2FmpoLnjociXX0%3D')" class="tag tag-alg">概率</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuadpea6kC9Db2RlRm9yY2VzIl19')" class="tag tag-src">CodeForces</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIue8uumimOinoyJdfQ%3D%3D')" class="tag tag-special">缺题解</a>&nbsp;
                     
                 </p>
                 <p class="messages-display">
@@ -230,6 +240,10 @@
         </div>
     </div>
 </div>
+
+<script>
+    var pageName='problem_detail';
+</script>
                     <br>
                 </div>
                 <footer class="topan-footer">
