@@ -1,0 +1,26 @@
+{
+  "title": "Colored Jenga",
+  "difficulty": {
+    "algorithm": 0,
+    "thinking": 0,
+    "implementation": 0
+  },
+  "judge": {
+    "time": "5 s",
+    "memory": "250 MiB",
+    "type": "default"
+  },
+  "tags": "数学,数学/概率期望,搜索,搜索/深度优先搜索,动态规划,动态规划/状态压缩动态规划,动态规划/概率动态规划",
+  "source": "[Codeforces Round 242 (Div. 2) Problem E](https://codeforces.com/contest/424/problem/E)",
+  "statement": {
+    "简体中文": "statement_zh.md"
+  },
+  "solution": [
+    {
+      "title": "状态压缩动态规划",
+      "file": "sol.md",
+      "author": "",
+      "code": "code.cpp"
+    }
+  ]
+}

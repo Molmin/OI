@@ -1,0 +1,276 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title id="title">#60v5d7. Piece of Cake - OI Problems</title>
+        <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
+        <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
+        <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
+        <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+        <style>
+            @font-face{
+                font-family: font-firacode;
+                src: url("/OI/pub/FiraCode-Regular.ttf");
+            }
+            pre{
+	            font-family: "font-firacode";
+            }
+        </style>
+        
+    </head>
+    <body>
+        <div class="topan-header">
+            <div class="topan-header-home">
+                <a href="/OI">
+                    <button class="topan-button-ordinary topan-button-commonly topan-button-header-round-left">
+                        <i class="fa fa-home"></i>
+                    </button>
+                </a>
+            </div>
+            <div class="topan-header-left">
+                <span class="topan-header-text">OI Problems&nbsp;</span>
+                <a href="/OI/about">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
+                        <i class="fa fa-solid fa-circle-info"></i>
+                        <span>&nbsp;关于</span>
+                    </span>
+                </a>
+                
+                
+            </div>
+            <div class="topan-header-right">
+            </div>
+        </div>
+        <div class="topan-outer">
+            <div class="topan-page">
+                <div class="topan-mainpage-auto">
+                    <br>
+                    <style>
+    .row:after{
+        clear: both;
+    }
+    .row:before,.row:after{
+        content: " ";
+        display: table;
+    }
+    .row{
+        margin: 0 auto;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .column-one-fifth{
+        width: 20%;
+        float: left;
+    }
+    .column-four-fifth{
+        width: 80%;
+        float: left;
+    }
+    .messages-display{
+        color: #888;
+    }
+</style>
+<style>
+    .tag{
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 90%;
+        color: white;
+        background: var(--tag-color);
+        display: inline-block;
+        line-height: 17.25px;
+    }
+    .tag:hover{
+        color: white !important;
+        background: var(--tag-color-hover);
+    }
+    .tag:hover::after{
+        width: 0 !important;
+    }
+    .tag-alg{
+        --tag-color: #14558f;
+        --tag-color-hover: #5388a7;
+    }
+    .tag-time{
+        --tag-color: #1c830e;
+        --tag-color-hover: #60af55;
+    }
+    .tag-src{
+        --tag-color: #be9420;
+        --tag-color-hover: #f0bb65;
+    }
+    .tag-special{
+        --tag-color: #6926c0;
+        --tag-color-hover: #8f5dd1;
+    }
+    .tag-place{
+        --tag-color: #c33e85;
+        --tag-color-hover: #e071ad;
+    }
+</style>
+<script>
+    var directTag=(tag)=>{
+        if(pageName=='problem_detail')
+            window.location.href=`/OI/?search=${tag}`;
+        if(pageName=='problem_list'){
+            window.history.pushState(null,null,`/OI/?search=${tag}`);
+            show(search(JSON.parse(new Base64().decode(tag))));
+        }
+    }
+</script>
+
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                
+                <a class="topan-menu-option" href="/OI/problem/60v5d7/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                <a class="topan-menu-option" href="/OI/problem/60v5d7/files"><i class="fa fa-regular fa-file-code"></i>&nbsp;&nbsp;文件</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            <div class="topan-section-shadow">
+                <h2>#60v5d7. Piece of Cake</h2>
+                <p class="messages-display">
+                    
+                    <strong><i class="fa fa-solid fa-clock"></i> 时间限制：</strong>1 s
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    
+                    
+                    <strong><i class="fa fa-solid fa-database"></i> 空间限制：</strong>1 GiB
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    
+                    
+                        <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
+                        <a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaVsOWtpiJdfQ%3D%3D')" class="tag tag-alg">数学</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaVsOWtpi%2ForqHnrpflh6DkvZUiXX0%3D')" class="tag tag-alg">计算几何</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaXtumXtC8yMDE5Il19')" class="tag tag-time">2019</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIue8uumimOinoyJdfQ%3D%3D')" class="tag tag-special">缺题解</a>&nbsp;
+                    
+                </p>
+                <p class="messages-display">
+                    <strong>算法难度等级：</strong>0
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <strong>思维难度等级：</strong>0
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <strong>实现难度等级：</strong>0
+                </p>
+            </div>
+            <br>
+            
+                <blockquote class="topan-blockquote-tip">
+                    <p>本题来源于：Grand Prix of America Div 1 2019 Problem A</p>
+                </blockquote>
+            
+            
+                <div class="topan-tab">
+                    <ul>
+                        
+                            <li class="topan-tab-showed">简体中文</li>
+                        
+                            <li>English</li>
+                        
+                    </ul>
+                    
+                        <div class="topan-tab-showed">
+                            <div class="topan-section-shadow">
+                                <p>给定 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">n</span></span></span></span> 个点的凸多边形，随机选 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.69444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03148em;">k</span></span></span></span> 个点，期望面积是多少？</p>
+<p><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>3</mn><mo>≤</mo><mi>k</mi><mo>≤</mo><mi>n</mi><mo>≤</mo><mn>2</mn><mn>5</mn><mn>0</mn><mn>0</mn></mrow><annotation encoding="application/x-tex">3\leq k\leq n\leq 2500</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.83041em;vertical-align:-0.13597em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">3</span><span class="mrel">≤</span><span class="mord mathit" style="margin-right:0.03148em;">k</span><span class="mrel">≤</span><span class="mord mathit">n</span><span class="mrel">≤</span><span class="mord mathrm">2</span><span class="mord mathrm">5</span><span class="mord mathrm">0</span><span class="mord mathrm">0</span></span></span></span></p>
+<h2>样例输入输出</h2>
+<pre><code class="language-input1">4 3
+0 0
+1 1
+2 1
+1 0
+</code></pre>
+<pre><code class="language-output1">0.50000000
+</code></pre>
+<pre><code class="language-input2">5 5
+0 4
+4 2
+4 1
+3 -1
+-2 4
+</code></pre>
+<pre><code class="language-output2">12.50000000
+</code></pre>
+<pre><code class="language-input3">5 3
+-1.20 2.80
+3.30 2.40
+3.10 -0.80
+2.00 -4.60
+-4.40 -0.50
+</code></pre>
+<pre><code class="language-output3">12.43300000
+</code></pre>
+
+                            </div>
+                        </div>
+                    
+                        <div>
+                            <div class="topan-section-shadow">
+                                <p>Alice received a cake for her birthday! Her cake can be described by a convex polygon with <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">n</span></span></span></span> vertices. No three vertices are collinear.</p>
+<p>Alice will now choose exactly <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.69444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03148em;">k</span></span></span></span> random vertices (<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi><mo>≥</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">k\geq 3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.83041em;vertical-align:-0.13597em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03148em;">k</span><span class="mrel">≥</span><span class="mord mathrm">3</span></span></span></span>) from her cake and cut a piece, the shape of which is the convex polygon defined by those vertices. Compute the expected area of this piece of cake.</p>
+<h2>Input</h2>
+<p>Each test case will begin with a line with two space-separated integers <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">n</span></span></span></span> and <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.69444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03148em;">k</span></span></span></span> (<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>3</mn><mo>≤</mo><mi>k</mi><mo>≤</mo><mi>n</mi><mo>≤</mo><mn>2</mn><mtext> </mtext><mn>5</mn><mn>0</mn><mn>0</mn></mrow><annotation encoding="application/x-tex">3\leq k\leq n\leq 2\ 500</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.83041em;vertical-align:-0.13597em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">3</span><span class="mrel">≤</span><span class="mord mathit" style="margin-right:0.03148em;">k</span><span class="mrel">≤</span><span class="mord mathit">n</span><span class="mrel">≤</span><span class="mord mathrm">2</span><span class="mord mspace"> </span><span class="mord mathrm">5</span><span class="mord mathrm">0</span><span class="mord mathrm">0</span></span></span></span>), where <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">n</span></span></span></span> is the number of vertices of the cake, and <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.69444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03148em;">k</span></span></span></span> is the number of vertices of the piece that Alice cuts.</p>
+<p>Each of the next <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">n</span></span></span></span> lines will contain two space-separated real numbers <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">x</span></span></span></span> and <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>y</mi></mrow><annotation encoding="application/x-tex">y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03588em;">y</span></span></span></span> (−10.0\leq x,\ y\leq 10.0), where <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">(x, y)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">(</span><span class="mord mathit">x</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span></span> is a vertex of the cake. The vertices will be listed in clockwise order. No three vertices will be collinear. All real numbers have at most <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>6</mn></mrow><annotation encoding="application/x-tex">6</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">6</span></span></span></span> digits after the decimal point.</p>
+<h2>Output</h2>
+<p>Output a single real number, which is the expected area of the piece of cake that Alice cuts out. Your answer will be accepted if it is within an absolute error of 10^{−6}.</p>
+<h2>Samples</h2>
+<pre><code class="language-input1">4 3
+0 0
+1 1
+2 1
+1 0
+</code></pre>
+<pre><code class="language-output1">0.50000000
+</code></pre>
+<pre><code class="language-input2">5 5
+0 4
+4 2
+4 1
+3 -1
+-2 4
+</code></pre>
+<pre><code class="language-output2">12.50000000
+</code></pre>
+<pre><code class="language-input3">5 3
+-1.20 2.80
+3.30 2.40
+3.10 -0.80
+2.00 -4.60
+-4.40 -0.50
+</code></pre>
+<pre><code class="language-output3">12.43300000
+</code></pre>
+
+                            </div>
+                        </div>
+                    
+                </div>
+            
+        </div>
+    </div>
+</div>
+
+<script>
+    var pageName='problem_detail';
+</script>
+                    <br>
+                </div>
+                <footer class="topan-footer">
+                    <p></p>
+                    <p style="text-align: center; color: #555; font-size: 12px;">
+                        Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
+                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>
+    
