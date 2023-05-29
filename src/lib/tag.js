@@ -1,5 +1,5 @@
 const YAML=require('yamljs');
-var Config=YAML.load('./data/config.yaml');
+// var Config=YAML.load('./data/config.yaml');
 
 module.exports=(tag)=>{
     var tagname=tag.split('/')[tag.split('/').length-1];
@@ -10,5 +10,5 @@ module.exports=(tag)=>{
     if(['缺题解','缺代码','缺中文题面'].includes(tag.split('/')[0]))tagtype='special';
     var search={folders: [tag]};
     var searchcode=new Buffer.from(JSON.stringify(search)).toString('base64');
-    return `<a href="/${Config.on}?search=${encodeURIComponent(searchcode)}" class="tag tag-${tagtype}">${tagname}</a>`;
+    return `<a href="javascript:directTag('${encodeURIComponent(searchcode)}')" class="tag tag-${tagtype}">${tagname}</a>`;
 }
