@@ -1,0 +1,49 @@
+{
+  "title": "迷失游乐园",
+  "difficulty": {
+    "algorithm": 0,
+    "thinking": 0,
+    "implementation": 0
+  },
+  "judge": {
+    "time": "1 s",
+    "memory": "500 MiB",
+    "type": "default"
+  },
+  "tags": "动态规划,动态规划/概率动态规划,动态规划/树形动态规划,数学,数学/概率期望,图论,图论/基环树,来源/NOI,时间/2012",
+  "source": "NOI 2012",
+  "statement": {
+    "简体中文": "statement_zh.md"
+  },
+  "solution": [
+    {
+      "title": "分析",
+      "file": "sol1.md",
+      "author": ""
+    },
+    {
+      "title": "down 的求法",
+      "file": "sol_down.md",
+      "author": "",
+      "code": "code_down.cpp"
+    },
+    {
+      "title": "up 的求法",
+      "file": "sol_up.md",
+      "author": "",
+      "code": "code_up.cpp"
+    },
+    {
+      "title": "基环树",
+      "file": "sol2.md",
+      "author": "",
+      "code": "code1.cpp"
+    },
+    {
+      "title": "总结",
+      "file": "sol_main.md",
+      "author": "",
+      "code": "code_main.cpp"
+    }
+  ]
+}

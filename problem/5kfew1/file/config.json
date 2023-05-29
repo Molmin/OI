@@ -1,17 +1,17 @@
 {
-  "title": "弹飞绵羊",
+  "title": "丁香之路",
   "difficulty": {
     "algorithm": 0,
     "thinking": 0,
     "implementation": 0
   },
   "judge": {
-    "time": "1 s",
-    "memory": "125 MiB",
+    "time": "2 s",
+    "memory": "512 MiB",
     "type": "default"
   },
-  "tags": "来源/省选,地区/湖南,时间/2010,缺题解",
-  "source": "湖南 2010 年省队选拔",
+  "tags": "图论,图论/欧拉路,来源/省选,时间/2020",
+  "source": "2020 年省选联考 B 卷",
   "statement": {
     "简体中文": "statement_zh.md"
   },
