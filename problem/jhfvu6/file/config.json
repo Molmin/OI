@@ -18,7 +18,13 @@
   },
   "solution": [
     {
-      "title": "题解",
+      "title": "题解 1",
+      "file": "sol2.md",
+      "author": "",
+      "code": "code.cpp"
+    },
+    {
+      "title": "题解 2",
       "file": "sol1.md",
       "code": "std.cpp",
       "author": "[hank0402](https://www.luogu.com.cn/user/482642)"

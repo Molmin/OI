@@ -10,10 +10,17 @@
     "memory": "512 MiB",
     "type": "default"
   },
-  "tags": "来源/NOI Online",
+  "tags": "来源/NOI Online,缺题解",
   "source": "NOI Online #2 提高组",
   "statement": {
     "简体中文": "statement_zh.md"
   },
-  "solution": []
+  "solution": [
+    {
+      "title": "题解",
+      "file": "sol.md",
+      "author": "",
+      "code": "code.cpp"
+    }
+  ]
 }
