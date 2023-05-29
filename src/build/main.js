@@ -83,6 +83,13 @@ problemList.forEach(pid=>{
                       header: ``},HTML)
         );
     });
+    ejs.renderFile("./src/templates/problem_comment.html",
+        {isadmin: false, Config, prodata},(err,HTML)=>{
+        fs.writeFileSync(`dist/problem/${prodata.pid}/comment.html`,
+            Template({title: `评论 - ${prodata.title}`,
+                      header: ``},HTML)
+        );
+    });
     fs.mkdirSync(`dist/problem/${prodata.pid}/file`);
     var filelist=fs.readdirSync(`data/${prodata.pid}`);
     filelist.forEach(filename=>fs.copyFileSync(`data/${prodata.pid}/${filename}`,
