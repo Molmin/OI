@@ -1,0 +1,42 @@
+{
+  "title": "Bags with Balls",
+  "difficulty": {
+    "algorithm": 0,
+    "thinking": 0,
+    "implementation": 0
+  },
+  "judge": {
+    "time": "3 s",
+    "memory": "500 MiB",
+    "type": "default"
+  },
+  "tags": "数学,数学/组合数学,数学/斯特林数,数学/第二类斯特林数,来源/CodeForces,缺题解",
+  "source": "[Educational Codeforces Round 133 (Rated for Div. 2)](https://codeforces.com/contest/1716) [Problem F](https://codeforces.com/contest/1716/problem/F)",
+  "statement": {
+    "简体中文": "statement_zh.md",
+    "English": "statement_en.md"
+  },
+  "solution": [
+    {
+      "title": "列式",
+      "file": "sol1.md",
+      "author": ""
+    },
+    {
+      "title": "法一：推式子",
+      "file": "sol2.md",
+      "author": ""
+    },
+    {
+      "title": "法二：求导",
+      "file": "sol3.md",
+      "author": ""
+    },
+    {
+      "title": "代码实现",
+      "file": "sol4.md",
+      "author": "",
+      "code": "code.cpp"
+    }
+  ]
+}

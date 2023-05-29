@@ -1,9 +1,9 @@
 {
   "title": "丁香之路",
   "difficulty": {
-    "algorithm": 0,
-    "thinking": 0,
-    "implementation": 0
+    "algorithm": 6,
+    "thinking": 5,
+    "implementation": 5
   },
   "judge": {
     "time": "2 s",

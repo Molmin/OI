@@ -1,9 +1,9 @@
 {
   "title": "Yes or No",
   "difficulty": {
-    "algorithm": 0,
-    "thinking": 0,
-    "implementation": 0
+    "algorithm": 3,
+    "thinking": 9,
+    "implementation": 4
   },
   "judge": {
     "time": "2 s",

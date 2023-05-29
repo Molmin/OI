@@ -1,9 +1,9 @@
 {
   "title": "Oil",
   "difficulty": {
-    "algorithm": 0,
-    "thinking": 0,
-    "implementation": 0
+    "algorithm": 3,
+    "thinking": 7,
+    "implementation": 5
   },
   "judge": {
     "time": "1.5 min",

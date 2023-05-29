@@ -1,8 +1,8 @@
 {
   "title": "玉蟾宫",
   "difficulty": {
-    "algorithm": 3,
-    "thinking": 3,
+    "algorithm": 4,
+    "thinking": 2,
     "implementation": 3
   },
   "judge": {

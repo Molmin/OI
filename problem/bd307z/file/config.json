@@ -1,9 +1,9 @@
 {
   "title": "Colored Jenga",
   "difficulty": {
-    "algorithm": 0,
-    "thinking": 0,
-    "implementation": 0
+    "algorithm": 4,
+    "thinking": 5,
+    "implementation": 7
   },
   "judge": {
     "time": "5 s",

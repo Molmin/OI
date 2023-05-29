@@ -1,9 +1,9 @@
 {
   "title": "迷失游乐园",
   "difficulty": {
-    "algorithm": 0,
-    "thinking": 0,
-    "implementation": 0
+    "algorithm": 4,
+    "thinking": 7,
+    "implementation": 6
   },
   "judge": {
     "time": "1 s",

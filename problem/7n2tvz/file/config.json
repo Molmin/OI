@@ -1,9 +1,9 @@
 {
   "title": "项链工厂",
   "difficulty": {
-    "algorithm": 0,
-    "thinking": 0,
-    "implementation": 0
+    "algorithm": 4,
+    "thinking": 5,
+    "implementation": 6
   },
   "judge": {
     "time": "4 s",
