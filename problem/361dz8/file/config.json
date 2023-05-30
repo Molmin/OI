@@ -1,0 +1,26 @@
+{
+  "title": "Fluorescent",
+  "difficulty": {
+    "algorithm": 0,
+    "thinking": 0,
+    "implementation": 0
+  },
+  "judge": {
+    "time": "2 s",
+    "memory": "512 MiB"
+  },
+  "tags": "数学,数学/概率期望,动态规划,动态规划/状态压缩动态规划,来源/ACM-ICPC,时间/2014,缺题解",
+  "source": "2014 年 ACM/ICPC 亚洲区北京站",
+  "statement": {
+    "简体中文": "statement_zh.md",
+    "English": "statement_en.md"
+  },
+  "solution": [
+    {
+      "title": "题解",
+      "file": "sol.md",
+      "author": "",
+      "code": "code.cpp"
+    }
+  ]
+}

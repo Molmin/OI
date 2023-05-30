@@ -1,4 +1,6 @@
-> **本题可以加强到 $r,\ s,\ p\leq 10^7$，题解中将介绍该做法。**
+::: tip
+**本题可以加强到 $r,\ s,\ p\leq 10^7$，题解中将介绍该做法。**
+:::
 
 Hasan loves playing games and has recently discovered a game called TopScore. In this soccer-like game there are $p$ players doing penalty shoot-outs. Winner is the one who scores the most. In case of ties, one of the top-scorers will be declared as the winner randomly with equal probability.
 

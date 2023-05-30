@@ -11,14 +11,87 @@
         <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
         <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+        <script src="/OI/pub/clipboard.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script>
+            $(document).ready(()=>{
+                var prelist=$("pre");
+                prelist.each(function(){
+                    let button=$("<span class='button-copy btn'></span>");
+                    button.attr("onclick","copyCode(this);");
+                    button.prependTo($(this));
+                });
+            });
+            var copyCode=(obj)=>{
+                navigator.clipboard.writeText($(obj).parent().text())
+                    .then(()=>{
+                        $(obj).text('复制成功！');
+                        $(obj).addClass('button-copy-success');
+                        setTimeout(()=>{
+                            $(obj).removeClass('button-copy-success');
+                            $(obj).text('');
+                        },1000);
+                    })
+                    .catch(err=>{
+                        $(obj).text('复制失败。');
+                        console.log(err);
+                        $(obj).addClass('button-copy-fail');
+                        setTimeout(()=>{
+                            $(obj).removeClass('button-copy-fail');
+                            $(obj).text('');
+                        },1000);
+                    });
+            }
+        </script>
         <style>
             @font-face{
                 font-family: font-firacode;
                 src: url("/OI/pub/FiraCode-Regular.ttf");
             }
-            pre{
-	            font-family: "font-firacode";
+            code{
+                font-family: "font-firacode";
+            }
+            pre:not(.remove-style,.ace_editor){
+                border-radius: 10px;
+                background-color: #e7e7e7;
+            }
+            .hljs{
+                border-radius: 10px;
+                background-color: #e7e7e7;
+            }
+            .button-copy{
+                font-family: "楷体";
+                float: right;
+                margin-right: 10px; margin-top: 10px;
+                cursor: pointer;
+                --button-color: var(--topan-colors-main);
+            }
+            .button-copy-success{
+                color: green;
+            }
+            .button-copy-fail{
+                color: red;
+            }
+            .button-copy:hover{
+                --button-color: var(--topan-colors-stress);
+            }
+            .button-copy:not(.button-copy-success,.button-copy-fail)::before{
+                box-sizing: inherit;
+                background-color: var(--button-color);
+                content: "";
+                display: block;
+                height: 18px; width: 18px;
+                margin: 0 auto;
+                -webkit-mask-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12V1Z"/></svg>');
+                mask-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12V1Z"/></svg>');
+                -webkit-mask-position: center;
+                mask-position: center;
+                -webkit-mask-repeat: no-repeat;
+                mask-repeat: no-repeat;
+                -webkit-mask-size: contain;
+                mask-size: contain;
+                transition: background-color .2s;
             }
         </style>
         
@@ -180,7 +253,7 @@
 <p>You can move to the right or to the bottom only. Formally, from the cell <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><mi>i</mi><mo separator="true">,</mo><mtext> </mtext><mi>j</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">(i,\ j)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">(</span><span class="mord mathit">i</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit" style="margin-right:0.05724em;">j</span><span class="mclose">)</span></span></span></span> you may move to the cell <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><mi>i</mi><mo separator="true">,</mo><mtext> </mtext><mi>j</mi><mo>+</mo><mn>1</mn><mo>)</mo></mrow><annotation encoding="application/x-tex">(i,\ j+1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">(</span><span class="mord mathit">i</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit" style="margin-right:0.05724em;">j</span><span class="mbin">+</span><span class="mord mathrm">1</span><span class="mclose">)</span></span></span></span> or to the cell <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><mi>i</mi><mo>+</mo><mn>1</mn><mo separator="true">,</mo><mtext> </mtext><mi>j</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">(i+1,\ j)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">(</span><span class="mord mathit">i</span><span class="mbin">+</span><span class="mord mathrm">1</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit" style="margin-right:0.05724em;">j</span><span class="mclose">)</span></span></span></span>. The target cell can't be outside of the grid.</p>
 </li>
 <li>
-<p>The xor of all the numbers on the path from the cell <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><mn>1</mn><mo separator="true">,</mo><mtext> </mtext><mn>1</mn><mo>)</mo></mrow><annotation encoding="application/x-tex">(1,\ 1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">(</span><span class="mord mathrm">1</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathrm">1</span><span class="mclose">)</span></span></span></span> to the cell <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><mi>n</mi><mo separator="true">,</mo><mtext> </mtext><mi>m</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">(n,\ m)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">(</span><span class="mord mathit">n</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit">m</span><span class="mclose">)</span></span></span></span> must be equal to <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.69444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03148em;">k</span></span></span></span> (xor operation is the bitwise exclusive OR, it is represented as <code>^</code> in Java or C++ and <code>xor</code> in Pascal).</p>
+<p>The xor of all the numbers on the path from the cell <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><mn>1</mn><mo separator="true">,</mo><mtext> </mtext><mn>1</mn><mo>)</mo></mrow><annotation encoding="application/x-tex">(1,\ 1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">(</span><span class="mord mathrm">1</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathrm">1</span><span class="mclose">)</span></span></span></span> to the cell <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><mi>n</mi><mo separator="true">,</mo><mtext> </mtext><mi>m</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">(n,\ m)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">(</span><span class="mord mathit">n</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit">m</span><span class="mclose">)</span></span></span></span> must be equal to <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.69444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03148em;">k</span></span></span></span> (xor operation is the bitwise exclusive OR, it is represented as <code class="hljs">^</code> in Java or C++ and <code class="hljs"><span class="hljs-keyword">xor</span></code> in Pascal).</p>
 </li>
 </ul>
 <p>Find the number of such paths in the given grid.</p>
@@ -190,26 +263,26 @@
 <h2>输出格式</h2>
 <p>Print one integer — the number of paths from <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><mn>1</mn><mo separator="true">,</mo><mtext> </mtext><mn>1</mn><mo>)</mo></mrow><annotation encoding="application/x-tex">(1,\ 1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">(</span><span class="mord mathrm">1</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathrm">1</span><span class="mclose">)</span></span></span></span> to <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><mi>n</mi><mo separator="true">,</mo><mtext> </mtext><mi>m</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">(n,\ m)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">(</span><span class="mord mathit">n</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit">m</span><span class="mclose">)</span></span></span></span> with xor sum equal to <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.69444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03148em;">k</span></span></span></span>.</p>
 <h2>样例输入输出</h2>
-<pre><code class="language-input1">3 3 11
+<pre><code class="hljs language-input1">3 3 11
 2 1 5
 7 10 0
 12 6 4
 </code></pre>
-<pre><code class="language-output1">3
+<pre><code class="hljs language-output1">3
 </code></pre>
-<pre><code class="language-input2">3 4 2
+<pre><code class="hljs language-input2">3 4 2
 1 3 3 3
 0 3 3 2
 3 0 1 1
 </code></pre>
-<pre><code class="language-output2">5
+<pre><code class="hljs language-output2">5
 </code></pre>
-<pre><code class="language-input3">3 4 1000000000000000000
+<pre><code class="hljs language-input3">3 4 1000000000000000000
 1 3 3 3
 0 3 3 2
 3 0 1 1
 </code></pre>
-<pre><code class="language-output3">0
+<pre><code class="hljs language-output3">0
 </code></pre>
 <h2>提示</h2>
 <p>All the paths from the first example:</p>

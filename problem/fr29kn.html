@@ -11,14 +11,87 @@
         <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
         <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+        <script src="/OI/pub/clipboard.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script>
+            $(document).ready(()=>{
+                var prelist=$("pre");
+                prelist.each(function(){
+                    let button=$("<span class='button-copy btn'></span>");
+                    button.attr("onclick","copyCode(this);");
+                    button.prependTo($(this));
+                });
+            });
+            var copyCode=(obj)=>{
+                navigator.clipboard.writeText($(obj).parent().text())
+                    .then(()=>{
+                        $(obj).text('复制成功！');
+                        $(obj).addClass('button-copy-success');
+                        setTimeout(()=>{
+                            $(obj).removeClass('button-copy-success');
+                            $(obj).text('');
+                        },1000);
+                    })
+                    .catch(err=>{
+                        $(obj).text('复制失败。');
+                        console.log(err);
+                        $(obj).addClass('button-copy-fail');
+                        setTimeout(()=>{
+                            $(obj).removeClass('button-copy-fail');
+                            $(obj).text('');
+                        },1000);
+                    });
+            }
+        </script>
         <style>
             @font-face{
                 font-family: font-firacode;
                 src: url("/OI/pub/FiraCode-Regular.ttf");
             }
-            pre{
-	            font-family: "font-firacode";
+            code{
+                font-family: "font-firacode";
+            }
+            pre:not(.remove-style,.ace_editor){
+                border-radius: 10px;
+                background-color: #e7e7e7;
+            }
+            .hljs{
+                border-radius: 10px;
+                background-color: #e7e7e7;
+            }
+            .button-copy{
+                font-family: "楷体";
+                float: right;
+                margin-right: 10px; margin-top: 10px;
+                cursor: pointer;
+                --button-color: var(--topan-colors-main);
+            }
+            .button-copy-success{
+                color: green;
+            }
+            .button-copy-fail{
+                color: red;
+            }
+            .button-copy:hover{
+                --button-color: var(--topan-colors-stress);
+            }
+            .button-copy:not(.button-copy-success,.button-copy-fail)::before{
+                box-sizing: inherit;
+                background-color: var(--button-color);
+                content: "";
+                display: block;
+                height: 18px; width: 18px;
+                margin: 0 auto;
+                -webkit-mask-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12V1Z"/></svg>');
+                mask-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12V1Z"/></svg>');
+                -webkit-mask-position: center;
+                mask-position: center;
+                -webkit-mask-repeat: no-repeat;
+                mask-repeat: no-repeat;
+                -webkit-mask-size: contain;
+                mask-size: contain;
+                transition: background-color .2s;
             }
         </style>
         
@@ -189,17 +262,17 @@
 </ul>
 <p>答案对 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>9</mn></msup><mo>+</mo><mn>7</mn></mrow><annotation encoding="application/x-tex">10^9+7</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:0.897438em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">1</span><span class="mord"><span class="mord mathrm">0</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">9</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">+</span><span class="mord mathrm">7</span></span></span></span> 取模。</p>
 <h2>样例</h2>
-<pre><code class="language-input1">2 2
+<pre><code class="hljs language-input1">2 2
 </code></pre>
-<pre><code class="language-output1">5
+<pre><code class="hljs language-output1">5
 </code></pre>
-<pre><code class="language-input2">10 1
+<pre><code class="hljs language-input2">10 1
 </code></pre>
-<pre><code class="language-output2">55
+<pre><code class="hljs language-output2">55
 </code></pre>
-<pre><code class="language-input3">723 9
+<pre><code class="hljs language-input3">723 9
 </code></pre>
-<pre><code class="language-output3">157557417
+<pre><code class="hljs language-output3">157557417
 </code></pre>
 
                             </div>
@@ -221,17 +294,17 @@
 <h2>Output</h2>
 <p>Print one integer – the number of arrays $ a $ and $ b $ satisfying the conditions described above modulo <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><msup><mn>0</mn><mn>9</mn></msup><mo>+</mo><mn>7</mn></mrow><annotation encoding="application/x-tex">10^9+7</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:0.897438em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">1</span><span class="mord"><span class="mord mathrm">0</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">9</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">+</span><span class="mord mathrm">7</span></span></span></span> .</p>
 <h2>Samples</h2>
-<pre><code class="language-input1">2 2
+<pre><code class="hljs language-input1">2 2
 </code></pre>
-<pre><code class="language-output1">5
+<pre><code class="hljs language-output1">5
 </code></pre>
-<pre><code class="language-input2">10 1
+<pre><code class="hljs language-input2">10 1
 </code></pre>
-<pre><code class="language-output2">55
+<pre><code class="hljs language-output2">55
 </code></pre>
-<pre><code class="language-input3">723 9
+<pre><code class="hljs language-input3">723 9
 </code></pre>
-<pre><code class="language-output3">157557417
+<pre><code class="hljs language-output3">157557417
 </code></pre>
 <h2>Tips</h2>
 <p>In the first test there are <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>5</mn></mrow><annotation encoding="application/x-tex">5</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">5</span></span></span></span> suitable arrays:</p>

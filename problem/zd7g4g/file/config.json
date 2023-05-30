@@ -11,7 +11,7 @@
     "type": "default"
   },
   "tags": "动态规划,动态规划/记忆化搜索,来源/HDU,缺题解",
-  "source": "[2016 Multi-University Training Contest 5](http://acm.hdu.edu.cn/search.php?field=problem&key=2016+Multi-University+Training+Contest+5&source=1&searchmode=source)",
+  "source": "[ATM Machine](http://acm.hdu.edu.cn/showproblem.php?pid=5781) - [2016 Multi-University Training Contest 5](http://acm.hdu.edu.cn/search.php?field=problem&key=2016+Multi-University+Training+Contest+5&source=1&searchmode=source)",
   "statement": {
     "简体中文": "statement_zh.md",
     "English": "statement_en.md"

@@ -11,14 +11,87 @@
         <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
         <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+        <script src="/OI/pub/clipboard.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script>
+            $(document).ready(()=>{
+                var prelist=$("pre");
+                prelist.each(function(){
+                    let button=$("<span class='button-copy btn'></span>");
+                    button.attr("onclick","copyCode(this);");
+                    button.prependTo($(this));
+                });
+            });
+            var copyCode=(obj)=>{
+                navigator.clipboard.writeText($(obj).parent().text())
+                    .then(()=>{
+                        $(obj).text('复制成功！');
+                        $(obj).addClass('button-copy-success');
+                        setTimeout(()=>{
+                            $(obj).removeClass('button-copy-success');
+                            $(obj).text('');
+                        },1000);
+                    })
+                    .catch(err=>{
+                        $(obj).text('复制失败。');
+                        console.log(err);
+                        $(obj).addClass('button-copy-fail');
+                        setTimeout(()=>{
+                            $(obj).removeClass('button-copy-fail');
+                            $(obj).text('');
+                        },1000);
+                    });
+            }
+        </script>
         <style>
             @font-face{
                 font-family: font-firacode;
                 src: url("/OI/pub/FiraCode-Regular.ttf");
             }
-            pre{
-	            font-family: "font-firacode";
+            code{
+                font-family: "font-firacode";
+            }
+            pre:not(.remove-style,.ace_editor){
+                border-radius: 10px;
+                background-color: #e7e7e7;
+            }
+            .hljs{
+                border-radius: 10px;
+                background-color: #e7e7e7;
+            }
+            .button-copy{
+                font-family: "楷体";
+                float: right;
+                margin-right: 10px; margin-top: 10px;
+                cursor: pointer;
+                --button-color: var(--topan-colors-main);
+            }
+            .button-copy-success{
+                color: green;
+            }
+            .button-copy-fail{
+                color: red;
+            }
+            .button-copy:hover{
+                --button-color: var(--topan-colors-stress);
+            }
+            .button-copy:not(.button-copy-success,.button-copy-fail)::before{
+                box-sizing: inherit;
+                background-color: var(--button-color);
+                content: "";
+                display: block;
+                height: 18px; width: 18px;
+                margin: 0 auto;
+                -webkit-mask-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12V1Z"/></svg>');
+                mask-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12V1Z"/></svg>');
+                -webkit-mask-position: center;
+                mask-position: center;
+                -webkit-mask-repeat: no-repeat;
+                mask-repeat: no-repeat;
+                -webkit-mask-size: contain;
+                mask-size: contain;
+                transition: background-color .2s;
             }
         </style>
         
@@ -193,21 +266,21 @@
 <h2>数据范围</h2>
 <p><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mo>≤</mo><mi>n</mi><mo>≤</mo><mn>2</mn><mo>×</mo><mn>1</mn><msup><mn>0</mn><mn>5</mn></msup></mrow><annotation encoding="application/x-tex">1\le n \le 2\times 10^5</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:0.950078em;vertical-align:-0.13597em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">1</span><span class="mrel">≤</span><span class="mord mathit">n</span><span class="mrel">≤</span><span class="mord mathrm">2</span><span class="mbin">×</span><span class="mord mathrm">1</span><span class="mord"><span class="mord mathrm">0</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">5</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span>，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0</mn><mo>≤</mo><mi>k</mi><mo>≤</mo><mfrac><mrow><mi>n</mi><mo>(</mo><mi>n</mi><mo>−</mo><mn>1</mn><mo>)</mo></mrow><mrow><mn>2</mn></mrow></mfrac></mrow><annotation encoding="application/x-tex">0 \le k \le  \frac{n(n-1)}{2}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:1.01em;"></span><span class="strut bottom" style="height:1.355em;vertical-align:-0.345em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">0</span><span class="mrel">≤</span><span class="mord mathit" style="margin-right:0.03148em;">k</span><span class="mrel">≤</span><span class="mord reset-textstyle textstyle uncramped"><span class="sizing reset-size5 size5 reset-textstyle textstyle uncramped nulldelimiter"></span><span class="mfrac"><span class="vlist"><span style="top:0.345em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord scriptstyle cramped"><span class="mord mathrm">2</span></span></span></span><span style="top:-0.22999999999999998em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle uncramped frac-line"></span></span><span style="top:-0.485em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord scriptstyle uncramped"><span class="mord mathit">n</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mbin">−</span><span class="mord mathrm">1</span><span class="mclose">)</span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="sizing reset-size5 size5 reset-textstyle textstyle uncramped nulldelimiter"></span></span></span></span></span>。</p>
 <h2>样例输入输出</h2>
-<pre><code class="language-input1">3 2
+<pre><code class="hljs language-input1">3 2
 </code></pre>
-<pre><code class="language-output1">6
+<pre><code class="hljs language-output1">6
 </code></pre>
-<pre><code class="language-input2">3 3
+<pre><code class="hljs language-input2">3 3
 </code></pre>
-<pre><code class="language-output2">0
+<pre><code class="hljs language-output2">0
 </code></pre>
-<pre><code class="language-input3">4 0
+<pre><code class="hljs language-input3">4 0
 </code></pre>
-<pre><code class="language-output3">24
+<pre><code class="hljs language-output3">24
 </code></pre>
-<pre><code class="language-input4">1337 42
+<pre><code class="hljs language-input4">1337 42
 </code></pre>
-<pre><code class="language-output4">807905441
+<pre><code class="hljs language-output4">807905441
 </code></pre>
 
                             </div>
@@ -229,21 +302,21 @@
 <h2>Output</h2>
 <p>Print one integer — the number of ways to place the rooks, taken modulo <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>9</mn><mn>9</mn><mn>8</mn><mn>2</mn><mn>4</mn><mn>4</mn><mn>3</mn><mn>5</mn><mn>3</mn></mrow><annotation encoding="application/x-tex">998244353</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">9</span><span class="mord mathrm">9</span><span class="mord mathrm">8</span><span class="mord mathrm">2</span><span class="mord mathrm">4</span><span class="mord mathrm">4</span><span class="mord mathrm">3</span><span class="mord mathrm">5</span><span class="mord mathrm">3</span></span></span></span> .</p>
 <h2>Samples</h2>
-<pre><code class="language-input1">3 2
+<pre><code class="hljs language-input1">3 2
 </code></pre>
-<pre><code class="language-output1">6
+<pre><code class="hljs language-output1">6
 </code></pre>
-<pre><code class="language-input2">3 3
+<pre><code class="hljs language-input2">3 3
 </code></pre>
-<pre><code class="language-output2">0
+<pre><code class="hljs language-output2">0
 </code></pre>
-<pre><code class="language-input3">4 0
+<pre><code class="hljs language-input3">4 0
 </code></pre>
-<pre><code class="language-output3">24
+<pre><code class="hljs language-output3">24
 </code></pre>
-<pre><code class="language-input4">1337 42
+<pre><code class="hljs language-input4">1337 42
 </code></pre>
-<pre><code class="language-output4">807905441
+<pre><code class="hljs language-output4">807905441
 </code></pre>
 
                             </div>

@@ -11,14 +11,87 @@
         <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
         <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+        <script src="/OI/pub/clipboard.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script>
+            $(document).ready(()=>{
+                var prelist=$("pre");
+                prelist.each(function(){
+                    let button=$("<span class='button-copy btn'></span>");
+                    button.attr("onclick","copyCode(this);");
+                    button.prependTo($(this));
+                });
+            });
+            var copyCode=(obj)=>{
+                navigator.clipboard.writeText($(obj).parent().text())
+                    .then(()=>{
+                        $(obj).text('复制成功！');
+                        $(obj).addClass('button-copy-success');
+                        setTimeout(()=>{
+                            $(obj).removeClass('button-copy-success');
+                            $(obj).text('');
+                        },1000);
+                    })
+                    .catch(err=>{
+                        $(obj).text('复制失败。');
+                        console.log(err);
+                        $(obj).addClass('button-copy-fail');
+                        setTimeout(()=>{
+                            $(obj).removeClass('button-copy-fail');
+                            $(obj).text('');
+                        },1000);
+                    });
+            }
+        </script>
         <style>
             @font-face{
                 font-family: font-firacode;
                 src: url("/OI/pub/FiraCode-Regular.ttf");
             }
-            pre{
-	            font-family: "font-firacode";
+            code{
+                font-family: "font-firacode";
+            }
+            pre:not(.remove-style,.ace_editor){
+                border-radius: 10px;
+                background-color: #e7e7e7;
+            }
+            .hljs{
+                border-radius: 10px;
+                background-color: #e7e7e7;
+            }
+            .button-copy{
+                font-family: "楷体";
+                float: right;
+                margin-right: 10px; margin-top: 10px;
+                cursor: pointer;
+                --button-color: var(--topan-colors-main);
+            }
+            .button-copy-success{
+                color: green;
+            }
+            .button-copy-fail{
+                color: red;
+            }
+            .button-copy:hover{
+                --button-color: var(--topan-colors-stress);
+            }
+            .button-copy:not(.button-copy-success,.button-copy-fail)::before{
+                box-sizing: inherit;
+                background-color: var(--button-color);
+                content: "";
+                display: block;
+                height: 18px; width: 18px;
+                margin: 0 auto;
+                -webkit-mask-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12V1Z"/></svg>');
+                mask-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12V1Z"/></svg>');
+                -webkit-mask-position: center;
+                mask-position: center;
+                -webkit-mask-repeat: no-repeat;
+                mask-repeat: no-repeat;
+                -webkit-mask-size: contain;
+                mask-size: contain;
+                transition: background-color .2s;
             }
         </style>
         
@@ -108,7 +181,7 @@
                         <div class="topan-fold">
                             <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
                             <dl>
-                                <pre><span class="hljs-keyword">namespace</span> SegmentTree{
+                                <pre class="remove-style"><code><span class="hljs-keyword">namespace</span> SegmentTree{
     <span class="hljs-keyword">struct</span> <span class="hljs-title class_">Node</span>{
         <span class="hljs-type">int</span> left,right,cnt; <span class="hljs-comment">// 最左/右的颜色 / 不同颜色数量</span>
         <span class="hljs-type">int</span> tag;
@@ -163,7 +236,7 @@
         <span class="hljs-keyword">if</span>(R&gt;mid) <span class="hljs-built_in">update</span>((id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r,L,R,color);
         <span class="hljs-built_in">pushup</span>(id);
     }
-}</pre>
+}</code></pre>
                             </dl>
                         </div>
                     
@@ -185,12 +258,12 @@
                         <div class="topan-fold">
                             <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
                             <dl>
-                                <pre><span class="hljs-type">bool</span> flipped; <span class="hljs-type">int</span> rotated;
+                                <pre class="remove-style"><code><span class="hljs-type">bool</span> flipped; <span class="hljs-type">int</span> rotated;
 <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">convert</span><span class="hljs-params">(<span class="hljs-type">int</span> &amp;x)</span></span>{
     <span class="hljs-keyword">if</span>(flipped)x=rotated+<span class="hljs-number">2</span>-x;
     <span class="hljs-keyword">else</span> x-=rotated;
     x=(x+n+n<span class="hljs-number">-1</span>)%n+<span class="hljs-number">1</span>;
-}</pre>
+}</code></pre>
                             </dl>
                         </div>
                     
@@ -218,7 +291,7 @@
                         <div class="topan-fold">
                             <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
                             <dl>
-                                <pre><span class="hljs-comment">// 2023.05.24</span>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.05.24</span>
 
 <span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
 <span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
@@ -349,7 +422,7 @@
         }
     }
     <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
-}</pre>
+}</code></pre>
                             </dl>
                         </div>
                     

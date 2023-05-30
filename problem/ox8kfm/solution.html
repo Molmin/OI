@@ -11,14 +11,87 @@
         <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
         <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+        <script src="/OI/pub/clipboard.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script>
+            $(document).ready(()=>{
+                var prelist=$("pre");
+                prelist.each(function(){
+                    let button=$("<span class='button-copy btn'></span>");
+                    button.attr("onclick","copyCode(this);");
+                    button.prependTo($(this));
+                });
+            });
+            var copyCode=(obj)=>{
+                navigator.clipboard.writeText($(obj).parent().text())
+                    .then(()=>{
+                        $(obj).text('复制成功！');
+                        $(obj).addClass('button-copy-success');
+                        setTimeout(()=>{
+                            $(obj).removeClass('button-copy-success');
+                            $(obj).text('');
+                        },1000);
+                    })
+                    .catch(err=>{
+                        $(obj).text('复制失败。');
+                        console.log(err);
+                        $(obj).addClass('button-copy-fail');
+                        setTimeout(()=>{
+                            $(obj).removeClass('button-copy-fail');
+                            $(obj).text('');
+                        },1000);
+                    });
+            }
+        </script>
         <style>
             @font-face{
                 font-family: font-firacode;
                 src: url("/OI/pub/FiraCode-Regular.ttf");
             }
-            pre{
-	            font-family: "font-firacode";
+            code{
+                font-family: "font-firacode";
+            }
+            pre:not(.remove-style,.ace_editor){
+                border-radius: 10px;
+                background-color: #e7e7e7;
+            }
+            .hljs{
+                border-radius: 10px;
+                background-color: #e7e7e7;
+            }
+            .button-copy{
+                font-family: "楷体";
+                float: right;
+                margin-right: 10px; margin-top: 10px;
+                cursor: pointer;
+                --button-color: var(--topan-colors-main);
+            }
+            .button-copy-success{
+                color: green;
+            }
+            .button-copy-fail{
+                color: red;
+            }
+            .button-copy:hover{
+                --button-color: var(--topan-colors-stress);
+            }
+            .button-copy:not(.button-copy-success,.button-copy-fail)::before{
+                box-sizing: inherit;
+                background-color: var(--button-color);
+                content: "";
+                display: block;
+                height: 18px; width: 18px;
+                margin: 0 auto;
+                -webkit-mask-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12V1Z"/></svg>');
+                mask-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 21H8V7h11m0-2H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2m-3-4H4a2 2 0 0 0-2 2v14h2V3h12V1Z"/></svg>');
+                -webkit-mask-position: center;
+                mask-position: center;
+                -webkit-mask-repeat: no-repeat;
+                mask-repeat: no-repeat;
+                -webkit-mask-size: contain;
+                mask-size: contain;
+                transition: background-color .2s;
             }
         </style>
         
@@ -103,12 +176,12 @@
                     <p>首先将所有的询问存放在 <strong>操作序列 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>Q</mi></mrow><annotation encoding="application/x-tex">Q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit">Q</span></span></span></span></strong> 中。<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>Q</mi></mrow><annotation encoding="application/x-tex">Q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit">Q</span></span></span></span> 中的每个元素都记录下矩形坐标、<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.69444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03148em;">k</span></span></span></span> 的值以及询问编号。特别地，我们把初始化矩阵的 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mo>×</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">n\times n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.58333em;"></span><span class="strut bottom" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord mathit">n</span><span class="mbin">×</span><span class="mord mathit">n</span></span></span></span> 个数也视为操作产生，放入操作序列 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>Q</mi></mrow><annotation encoding="application/x-tex">Q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit">Q</span></span></span></span> 中。</p>
 <p>（注意到矩阵中共 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>n</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">n^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:0.8141079999999999em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">n</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">2</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 个数，共有 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>q</mi></mrow><annotation encoding="application/x-tex">q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03588em;">q</span></span></span></span> 次询问，所以操作序列 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>Q</mi></mrow><annotation encoding="application/x-tex">Q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit">Q</span></span></span></span> 的容量应达到 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mi>n</mi><mn>2</mn></msup><mo>+</mo><mi>q</mi><mo>≤</mo><mn>3</mn><mi mathvariant="normal">.</mi><mn>1</mn><mo>×</mo><mn>1</mn><msup><mn>0</mn><mn>5</mn></msup></mrow><annotation encoding="application/x-tex">n^2+q\leq 3.1\times 10^5</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:1.008548em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">n</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">2</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">+</span><span class="mord mathit" style="margin-right:0.03588em;">q</span><span class="mrel">≤</span><span class="mord mathrm">3</span><span class="mord mathrm">.</span><span class="mord mathrm">1</span><span class="mbin">×</span><span class="mord mathrm">1</span><span class="mord"><span class="mord mathrm">0</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">5</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span>。）</p>
 <p>我们定义如下函数来完成操作区间 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>[</mo><mi>Q</mi><mi>l</mi><mo separator="true">,</mo><mtext> </mtext><mi>Q</mi><mi>r</mi><mo>]</mo></mrow><annotation encoding="application/x-tex">[Ql,\ Qr]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">[</span><span class="mord mathit">Q</span><span class="mord mathit" style="margin-right:0.01968em;">l</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit">Q</span><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="mclose">]</span></span></span></span> 中的操作：</p>
-<pre><code class="language-cpp">void binarySearch(int Ql,int Qr,int l,int r);
+<pre><code class="hljs language-cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">binarySearch</span><span class="hljs-params">(<span class="hljs-type">int</span> Ql,<span class="hljs-type">int</span> Qr,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r)</span></span>;
 </code></pre>
-<p>这意味着我们已知操作区间 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>[</mo><mi>Q</mi><mi>l</mi><mo separator="true">,</mo><mtext> </mtext><mi>Q</mi><mi>r</mi><mo>]</mo></mrow><annotation encoding="application/x-tex">[Ql,\ Qr]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">[</span><span class="mord mathit">Q</span><span class="mord mathit" style="margin-right:0.01968em;">l</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit">Q</span><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="mclose">]</span></span></span></span> 中的操作答案都在 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>[</mo><mi>l</mi><mo separator="true">,</mo><mtext> </mtext><mi>r</mi><mo>]</mo></mrow><annotation encoding="application/x-tex">[l,\ r]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">[</span><span class="mord mathit" style="margin-right:0.01968em;">l</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="mclose">]</span></span></span></span> 中，那么我们就可以写出入口函数（其中 <code>Qcnt</code> 表示操作总数）：</p>
-<pre><code class="language-cpp">binarySearch(1,Qcnt,0,1e9);
+<p>这意味着我们已知操作区间 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>[</mo><mi>Q</mi><mi>l</mi><mo separator="true">,</mo><mtext> </mtext><mi>Q</mi><mi>r</mi><mo>]</mo></mrow><annotation encoding="application/x-tex">[Ql,\ Qr]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">[</span><span class="mord mathit">Q</span><span class="mord mathit" style="margin-right:0.01968em;">l</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit">Q</span><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="mclose">]</span></span></span></span> 中的操作答案都在 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>[</mo><mi>l</mi><mo separator="true">,</mo><mtext> </mtext><mi>r</mi><mo>]</mo></mrow><annotation encoding="application/x-tex">[l,\ r]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">[</span><span class="mord mathit" style="margin-right:0.01968em;">l</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="mclose">]</span></span></span></span> 中，那么我们就可以写出入口函数（其中 <code class="hljs"><span class="hljs-attribute">Qcnt</span></code> 表示操作总数）：</p>
+<pre><code class="hljs language-cpp"><span class="hljs-built_in">binarySearch</span>(<span class="hljs-number">1</span>,Qcnt,<span class="hljs-number">0</span>,<span class="hljs-number">1e9</span>);
 </code></pre>
-<p>接下来考虑如何实现 <code>binarySearch</code> 函数。</p>
+<p>接下来考虑如何实现 <code class="hljs"><span class="hljs-attribute">binarySearch</span></code> 函数。</p>
 <p>先对答案进行二分，即令 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mtext><mi mathvariant="normal">m</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">d</mi></mtext><mo>=</mo><mrow><mo fence="true">⌊</mo><mfrac><mrow><mi>l</mi><mo>+</mo><mi>r</mi></mrow><mn>2</mn></mfrac><mo fence="true">⌋</mo></mrow></mrow><annotation encoding="application/x-tex">\text{mid}=\left\lfloor\dfrac{l+r}2\right\rfloor</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:1.45em;"></span><span class="strut bottom" style="height:2.40003em;vertical-align:-0.95003em;"></span><span class="base textstyle uncramped"><span class="text mord textstyle uncramped"><span class="mord mathrm">m</span><span class="mord mathrm">i</span><span class="mord mathrm">d</span></span><span class="mrel">=</span><span class="minner textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size3">⌊</span></span><span class="mord reset-textstyle displaystyle textstyle uncramped"><span class="sizing reset-size5 size5 reset-textstyle textstyle uncramped nulldelimiter"></span><span class="mfrac"><span class="vlist"><span style="top:0.686em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle cramped"><span class="mord mathrm">2</span></span></span><span style="top:-0.22999999999999998em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle uncramped frac-line"></span></span><span style="top:-0.677em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle uncramped"><span class="mord textstyle uncramped"><span class="mord mathit" style="margin-right:0.01968em;">l</span><span class="mbin">+</span><span class="mord mathit" style="margin-right:0.02778em;">r</span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="sizing reset-size5 size5 reset-textstyle textstyle uncramped nulldelimiter"></span></span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size3">⌋</span></span></span></span></span></span>。</p>
 <p>接着我们需要在操作区间 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>[</mo><mi>Q</mi><mi>l</mi><mo separator="true">,</mo><mtext> </mtext><mi>Q</mi><mi>r</mi><mo>]</mo></mrow><annotation encoding="application/x-tex">[Ql,\ Qr]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">[</span><span class="mord mathit">Q</span><span class="mord mathit" style="margin-right:0.01968em;">l</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit">Q</span><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="mclose">]</span></span></span></span> 中对操作进行分类。分别求出它们的答案是否 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>≤</mo><mtext><mi mathvariant="normal">m</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">d</mi></mtext></mrow><annotation encoding="application/x-tex">\leq\text{mid}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.83041em;vertical-align:-0.13597em;"></span><span class="base textstyle uncramped"><span class="mrel">≤</span><span class="text mord textstyle uncramped"><span class="mord mathrm">m</span><span class="mord mathrm">i</span><span class="mord mathrm">d</span></span></span></span></span>，然后只需交换操作之间的位置，进行下一层整体二分即可。</p>
 <p>如何判断答案是否 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>≤</mo><mtext><mi mathvariant="normal">m</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">d</mi></mtext></mrow><annotation encoding="application/x-tex">\leq\text{mid}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.83041em;vertical-align:-0.13597em;"></span><span class="base textstyle uncramped"><span class="mrel">≤</span><span class="text mord textstyle uncramped"><span class="mord mathrm">m</span><span class="mord mathrm">i</span><span class="mord mathrm">d</span></span></span></span></span>？考虑维护一个二维矩阵，每个数的值为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">0</span></span></span></span> 或 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">1</span></span></span></span> 表示是否 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>≤</mo><mtext><mi mathvariant="normal">m</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">d</mi></mtext></mrow><annotation encoding="application/x-tex">\leq\text{mid}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.83041em;vertical-align:-0.13597em;"></span><span class="base textstyle uncramped"><span class="mrel">≤</span><span class="text mord textstyle uncramped"><span class="mord mathrm">m</span><span class="mord mathrm">i</span><span class="mord mathrm">d</span></span></span></span></span>。遇到询问时，就求出矩阵内的数和，判断其是否 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>&lt;</mo><mi>k</mi></mrow><annotation encoding="application/x-tex">&lt; k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.73354em;vertical-align:-0.0391em;"></span><span class="base textstyle uncramped"><span class="mrel">&lt;</span><span class="mord mathit" style="margin-right:0.03148em;">k</span></span></span></span> 即可；而遇到修改时，则应修改对应位置的值。在遍历结束后，再将加的 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">1</span></span></span></span> 减掉即可。</p>
@@ -118,7 +191,7 @@
                         <div class="topan-fold">
                             <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
                             <dl>
-                                <pre><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">binarySearch</span><span class="hljs-params">(<span class="hljs-type">int</span> Ql,<span class="hljs-type">int</span> Qr,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r)</span></span>{
+                                <pre class="remove-style"><code><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">binarySearch</span><span class="hljs-params">(<span class="hljs-type">int</span> Ql,<span class="hljs-type">int</span> Qr,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r)</span></span>{
     <span class="hljs-keyword">if</span>(Qr-Ql&lt;<span class="hljs-number">0</span>)<span class="hljs-keyword">return</span>;
     <span class="hljs-keyword">if</span>(r-l==<span class="hljs-number">0</span>){
         <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=Ql;i&lt;=Qr;i++)
@@ -152,7 +225,7 @@
             <span class="hljs-built_in">addvalue</span>(Q[i].x1,Q[i].y1,<span class="hljs-number">-1</span>);
     <span class="hljs-built_in">binarySearch</span>(Ql,Ql+QLcnt<span class="hljs-number">-1</span>,l,mid);
     <span class="hljs-built_in">binarySearch</span>(Ql+QLcnt,Qr,mid+<span class="hljs-number">1</span>,r);
-}</pre>
+}</code></pre>
                             </dl>
                         </div>
                     
@@ -174,7 +247,7 @@
                         <div class="topan-fold">
                             <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
                             <dl>
-                                <pre><span class="hljs-comment">// 2023.05.06</span>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.05.06</span>
 
 <span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
 <span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
@@ -258,7 +331,7 @@
     <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=q;i++)
         <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d\n&quot;</span>,ans[i]);
     <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
-}</pre>
+}</code></pre>
                             </dl>
                         </div>
                     
@@ -290,13 +363,13 @@
 <h3>奇偶排序优化</h3>
 <p>莫队中奇偶排序是一种常用的优化方法。</p>
 <p>指针经常在移动到边界之后，又因为另一个指针的移动要移动很长的距离，所以可以使用奇偶排序的方法。</p>
-<pre><code class="language-cpp">struct Question{
-    int x1,y1,x2,y2,k,qid;
-    bool operator&lt;(Question tmp)const{
-        if(blockId[x1]!=blockId[tmp.x1])return blockId[x1]&lt;blockId[tmp.x1];
-        if(blockId[y1]!=blockId[tmp.y1])return blockId[x1]&amp;1?y1&lt;tmp.y1:y1&gt;tmp.y1;
-        if(blockId[y2]!=blockId[tmp.y2])return blockId[y1]&amp;1?y2&lt;tmp.y2:y2&gt;tmp.y2;
-        else return blockId[y2]&amp;1?x2&lt;tmp.x2:x2&gt;tmp.x2;
+<pre><code class="hljs language-cpp"><span class="hljs-keyword">struct</span> <span class="hljs-title class_">Question</span>{
+    <span class="hljs-type">int</span> x1,y1,x2,y2,k,qid;
+    <span class="hljs-type">bool</span> <span class="hljs-keyword">operator</span>&lt;(Question tmp)<span class="hljs-type">const</span>{
+        <span class="hljs-keyword">if</span>(blockId[x1]!=blockId[tmp.x1])<span class="hljs-keyword">return</span> blockId[x1]&lt;blockId[tmp.x1];
+        <span class="hljs-keyword">if</span>(blockId[y1]!=blockId[tmp.y1])<span class="hljs-keyword">return</span> blockId[x1]&amp;<span class="hljs-number">1</span>?y1&lt;tmp.y1:y1&gt;tmp.y1;
+        <span class="hljs-keyword">if</span>(blockId[y2]!=blockId[tmp.y2])<span class="hljs-keyword">return</span> blockId[y1]&amp;<span class="hljs-number">1</span>?y2&lt;tmp.y2:y2&gt;tmp.y2;
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> blockId[y2]&amp;<span class="hljs-number">1</span>?x2&lt;tmp.x2:x2&gt;tmp.x2;
     }
 };
 </code></pre>
@@ -305,7 +378,7 @@
                         <div class="topan-fold">
                             <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
                             <dl>
-                                <pre><span class="hljs-comment">// 2023.05.12</span>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.05.12</span>
 
 <span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
 <span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
@@ -426,7 +499,7 @@ vector&lt;Position&gt; pos[<span class="hljs-number">250001</span>];
     <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=q;++i)
         <span class="hljs-built_in">write</span>(ans[i]),<span class="hljs-built_in">puts</span>(<span class="hljs-string">&quot;&quot;</span>);
     <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
-}</pre>
+}</code></pre>
                             </dl>
                         </div>
                     
