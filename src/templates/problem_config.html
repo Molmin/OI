@@ -10,8 +10,7 @@
                 },
                 judge: {
                     time: $('#pro-judge-time').val(),
-                    memory: $('#pro-judge-memory').val(),
-                    type: $('#pro-judge-type').val()
+                    memory: $('#pro-judge-memory').val()
                 },
                 tags: $('#pro-tags').val(),
                 source: $('#pro-source').val()
@@ -88,9 +87,8 @@
                     <input placeholder="实现难度" type="text" id="pro-difficulty-implementation" value="<%= prodata.difficulty.implementation %>"></input>
                     <input placeholder="时间限制" type="text" id="pro-judge-time" value="<%= prodata.judge.time %>"></input>
                     <input placeholder="空间限制" type="text" id="pro-judge-memory" value="<%= prodata.judge.memory %>"></input>
-                    <input placeholder="评测类型" type="text" id="pro-judge-type" value="<%= prodata.judge.type %>"></input>
                 </p>
-                <p><input placeholder="标签（用中文或英文逗号隔开）" type="text" id="pro-tags" value="<%= prodata.tags %>"></input></p>
+                <p><input placeholder="标签（用英文逗号隔开）" type="text" id="pro-tags" value="<%= prodata.tags %>"></input></p>
                 <p><input placeholder="来源" type="text" id="pro-source" value="<%= prodata.source %>"></input></p>
                 <p>
                     <button id="confirm" class="topan-button-emphasize topan-button-default"><i class="fa fa-solid fa-check"></i>&nbsp;确认</button>
