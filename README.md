@@ -2,15 +2,13 @@
 
 GitHub 仓库地址：https://github.com/Molmin/OI.git
 
-::: tip
+提示：
+
 - 若您发现内容有误，请在评论区说明或在 GitHub Issues 中提出；
 - 若您希望为本项目贡献内容，请提交 Pull Requests。
 - 我们非常欢迎**一题多解**的做法！但是对于不同的做法，我们更希望您能提供相应代码（码风任意）。
-:::
 
-::: tip
 本站目前的维护者：[Milmon](https://github.com/Molmin)，[hank0402](https://www.luogu.com.cn/user/482642)
-:::
 
 ### 后台展示
 
