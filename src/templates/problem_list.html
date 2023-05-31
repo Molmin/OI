@@ -118,6 +118,6 @@
         return res;
     }
     if(getSearch()){
-        show(search(JSON.parse(new Base64().decode(getSearch()))));
+        show(search(JSON.parse(decodeURIComponent(getSearch()))));
     }
 </script>
