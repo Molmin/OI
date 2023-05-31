@@ -50,6 +50,325 @@
         font-weight: normal;
     }
 </style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 整体二分模板
+
+首先将所有的询问存放在 **操作序列 $Q$** 中。$Q$ 中的每个元素都记录下矩形坐标、$k$ 的值以及询问编号。特别地，我们把初始化矩阵的 $n\times n$ 个数也视为操作产生，放入操作序列 $Q$ 中。
+
+（注意到矩阵中共 $n^2$ 个数，共有 $q$ 次询问，所以操作序列 $Q$ 的容量应达到 $n^2+q\leq 3.1\times 10^5$。）
+
+我们定义如下函数来完成操作区间 $[Ql,\ Qr]$ 中的操作：
+
+```cpp
+void binarySearch(int Ql,int Qr,int l,int r);
+```
+
+这意味着我们已知操作区间 $[Ql,\ Qr]$ 中的操作答案都在 $[l,\ r]$ 中，那么我们就可以写出入口函数（其中 `Qcnt` 表示操作总数）：
+
+```cpp
+binarySearch(1,Qcnt,0,1e9);
+```
+
+接下来考虑如何实现 `binarySearch` 函数。
+
+先对答案进行二分，即令 $\text{mid}=\left\lfloor\dfrac{l+r}2\right\rfloor$。
+
+接着我们需要在操作区间 $[Ql,\ Qr]$ 中对操作进行分类。分别求出它们的答案是否 $\leq\text{mid}$，然后只需交换操作之间的位置，进行下一层整体二分即可。
+
+如何判断答案是否 $\leq\text{mid}$？考虑维护一个二维矩阵，每个数的值为 $0$ 或 $1$ 表示是否 $\leq\text{mid}$。遇到询问时，就求出矩阵内的数和，判断其是否 $&lt; k$ 即可；而遇到修改时，则应修改对应位置的值。在遍历结束后，再将加的 $1$ 减掉即可。
+
+最后，当二分的范围变为单个数时，就确定了答案，进行答案赋值。
+
+```cpp
+void binarySearch(int Ql,int Qr,int l,int r){
+    if(Qr-Ql&lt;0)return;
+    if(r-l==0){
+        for(int i=Ql;i&lt;=Qr;i++)
+            if(Q[i].qid)ans[Q[i].qid]=l;
+        return;
+    }
+    int mid=(l+r)&gt;&gt;1,QLcnt=0,QRcnt=0;
+    for(int i=Ql;i&lt;=Qr;i++){
+        if(Q[i].qid){
+            int sum=getsum(Q[i].x1,Q[i].y1,Q[i].x2,Q[i].y2);
+            if(sum&gt;=Q[i].k)  QL[++QLcnt]=Q[i];
+            else Q[i].k-=sum,QR[++QRcnt]=Q[i];
+        }
+        else{
+            if(Q[i].k&gt;mid){
+                QR[++QRcnt]=Q[i];
+                continue;
+            }
+            addvalue(Q[i].x1,Q[i].y1,1);
+            QL[++QLcnt]=Q[i];
+        }
+    }
+
+    int Qid=Ql;
+    for(int i=1;i&lt;=QLcnt;i++)
+        Q[Qid++]=QL[i];
+    for(int i=1;i&lt;=QRcnt;i++)
+        Q[Qid++]=QR[i];
+    for(int i=Ql;i&lt;=Ql-1+QLcnt;i++)
+        if(!Q[i].qid&amp;&amp;Q[i].k&lt;=mid)
+            addvalue(Q[i].x1,Q[i].y1,-1);
+    binarySearch(Ql,Ql+QLcnt-1,l,mid);
+    binarySearch(Ql+QLcnt,Qr,mid+1,r);
+}
+```
+
+## 法一：整体二分 &amp; 二维树状数组
+
+按照“整体二分模板”部分所述，我们只需要实现维护该矩阵即可。不难想到可以使用二维树状数组。
+
+记操作序列长度为 $Q$。则整体二分时间复杂度为 $\Theta(Q\log a)$，其中 $a$ 表示题目给定矩阵 $a$ 的取值范围大小；而树状数组是二维的，时间复杂度为 $\Theta(\log^2 n)$。又“整体二分模板”部分已证 $Q\leq n^2+q$，所以最终时间复杂度为 $\Theta\left[(n^2+q)\log a\log^2 n\right]$（实现时请注意**代码运行效率常数**）。
+
+注：可将一个询问拆为四个询问，变成二维偏序问题，无需树状数组。此时间复杂度为 $\Theta(n^2\log^2 n)$（假设 $m,\ n^2$ 同阶），具体可参考 [题解 P1527 [国家集训队] 矩阵乘法 - C3H5ClO 的博客 - 洛谷博客](https://www.luogu.com.cn/blog/ILikeDuck/solution-p1527)。
+
+```cpp
+// 2023.05.06
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+int n,q,ans[60001];
+
+struct Node{
+    int x1,y1,x2,y2,k,qid;
+}Q[310001],QL[310001],QR[310001];
+int Qcnt;
+
+int t[1001][1001];
+int lowbit(int x){
+    return x&amp;-x;
+}
+void addvalue(int x,int y,int val){
+    for(int i=x;i&lt;=n;i+=lowbit(i))
+        for(int j=y;j&lt;=n;j+=lowbit(j))
+            t[i][j]+=val;
+}
+int getprefixsum(int x,int y){
+    int sum=0;
+    for(int i=x;i;i-=lowbit(i))
+        for(int j=y;j;j-=lowbit(j))
+            sum+=t[i][j];
+    return sum;
+}
+int getsum(int x1,int y1,int x2,int y2){
+    return getprefixsum(x2,y2)-getprefixsum(x1-1,y2)+getprefixsum(x1-1,y1-1)-getprefixsum(x2,y1-1);
+}
+
+void binarySearch(int Ql,int Qr,int l,int r){
+    if(Qr-Ql&lt;0)return;
+    if(r-l==0){
+        for(int i=Ql;i&lt;=Qr;i++)
+            if(Q[i].qid)ans[Q[i].qid]=l;
+        return;
+    }
+    int mid=(l+r)&gt;&gt;1,QLcnt=0,QRcnt=0;
+    for(int i=Ql;i&lt;=Qr;i++){
+        if(Q[i].qid){
+            int sum=getsum(Q[i].x1,Q[i].y1,Q[i].x2,Q[i].y2);
+            if(sum&gt;=Q[i].k)  QL[++QLcnt]=Q[i];
+            else Q[i].k-=sum,QR[++QRcnt]=Q[i];
+        }
+        else{
+            if(Q[i].k&gt;mid){
+                QR[++QRcnt]=Q[i];
+                continue;
+            }
+            addvalue(Q[i].x1,Q[i].y1,1);
+            QL[++QLcnt]=Q[i];
+        }
+    }
+
+    int Qid=Ql;
+    for(int i=1;i&lt;=QLcnt;i++)
+        Q[Qid++]=QL[i];
+    for(int i=1;i&lt;=QRcnt;i++)
+        Q[Qid++]=QR[i];
+    for(int i=Ql;i&lt;=Ql-1+QLcnt;i++)
+        if(!Q[i].qid&amp;&amp;Q[i].k&lt;=mid)
+            addvalue(Q[i].x1,Q[i].y1,-1);
+    binarySearch(Ql,Ql+QLcnt-1,l,mid);
+    binarySearch(Ql+QLcnt,Qr,mid+1,r);
+}
+
+int main(){
+    scanf(&#34;%d%d&#34;,&amp;n,&amp;q);
+    for(int i=1;i&lt;=n;i++)
+        for(int j=1;j&lt;=n;j++){
+            int x; scanf(&#34;%d&#34;,&amp;x);
+            Q[++Qcnt]={i,j,0,0,x,0};
+        }
+    for(int i=1;i&lt;=q;i++){
+        int x1,y1,x2,y2,k;
+        scanf(&#34;%d%d%d%d%d&#34;,&amp;x1,&amp;y1,&amp;x2,&amp;y2,&amp;k);
+        Q[++Qcnt]={x1,y1,x2,y2,k,i};
+    }
+    binarySearch(1,Qcnt,0,1e9);
+    for(int i=1;i&lt;=q;i++)
+        printf(&#34;%d\n&#34;,ans[i]);
+    return 0;
+}
+```
+
+## 法二：整体二分 &amp; 扫描线 &amp; 离散化
+
+不使用二维树状数组，在整体二分中，用扫描线将修改和询问一起做，复杂度可以消去一个 $\log$。
+
+参考资料：https://www.cnblogs.com/ac-evil/p/14330714.html
+
+## 法三：二维莫队 &amp; 离散化
+
+考虑先离散化，再使用二维莫队。
+
+### 奇偶排序优化
+
+莫队中奇偶排序是一种常用的优化方法。
+
+指针经常在移动到边界之后，又因为另一个指针的移动要移动很长的距离，所以可以使用奇偶排序的方法。
+
+```cpp
+struct Question{
+    int x1,y1,x2,y2,k,qid;
+    bool operator&lt;(Question tmp)const{
+        if(blockId[x1]!=blockId[tmp.x1])return blockId[x1]&lt;blockId[tmp.x1];
+        if(blockId[y1]!=blockId[tmp.y1])return blockId[x1]&amp;1?y1&lt;tmp.y1:y1&gt;tmp.y1;
+        if(blockId[y2]!=blockId[tmp.y2])return blockId[y1]&amp;1?y2&lt;tmp.y2:y2&gt;tmp.y2;
+        else return blockId[y2]&amp;1?x2&lt;tmp.x2:x2&gt;tmp.x2;
+    }
+};
+```
+
+```cpp
+// 2023.05.12
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+inline void read(int &amp;a){
+    a=0; char c;
+    while((c=getchar())&lt;48);
+    do a=(a&lt;&lt;3)+(a&lt;&lt;1)+(c^48);
+    while((c=getchar())&gt;47);
+}
+inline void write(int x){
+    if(x&gt;9)write(x/10);
+    putchar(x%10+&#39;0&#39;);
+}
+
+int n,q,a[501][501],ans[60001];
+int disc[250001],cntdisc; // 离散化用
+int nn;
+
+int blockId[501],blocklen; // 分块
+int rangeblockId[250001],rangeblocklen; // 值域分块
+int counts[250001],countsum[501]; // 该值次数及值域块总和
+
+struct Position{
+    int x,y;
+};
+vector&lt;Position&gt; pos[250001];
+
+struct Question{
+    int x1,y1,x2,y2,k,qid;
+    bool operator&lt;(Question tmp)const{
+        if(blockId[x1]!=blockId[tmp.x1])return blockId[x1]&lt;blockId[tmp.x1];
+        if(blockId[y1]!=blockId[tmp.y1])return blockId[x1]&amp;1?y1&lt;tmp.y1:y1&gt;tmp.y1;
+        if(blockId[y2]!=blockId[tmp.y2])return blockId[y1]&amp;1?y2&lt;tmp.y2:y2&gt;tmp.y2;
+        else return blockId[y2]&amp;1?x2&lt;tmp.x2:x2&gt;tmp.x2;
+    }
+}Q[60001];
+int Qcnt;
+
+void mo_algo(){
+    blocklen=11;
+    for(int i=1;i&lt;=n;++i)
+        blockId[i]=(i-1)/blocklen+1;
+    rangeblocklen=n+1;
+    for(int i=1;i&lt;=nn;++i)
+        rangeblockId[i]=(i-1)/rangeblocklen+1;
+    counts[a[1][1]]=countsum[rangeblockId[a[1][1]]]=1;
+    sort(Q+1,Q+1+Qcnt);
+
+    int L=1,R=1,D=1,U=1;
+    for(int i=1;i&lt;=q;++i){
+        while(R&lt;Q[i].y2){
+            ++R;
+            for(int i=U;i&lt;=D;++i)
+                ++counts[a[i][R]],++countsum[rangeblockId[a[i][R]]];
+        }
+        while(L&gt;Q[i].y1){
+            --L;
+            for(int i=U;i&lt;=D;++i)
+                ++counts[a[i][L]],++countsum[rangeblockId[a[i][L]]];
+        }
+        while(D&lt;Q[i].x2){
+            ++D;
+            for(int i=L;i&lt;=R;++i)
+                ++counts[a[D][i]],++countsum[rangeblockId[a[D][i]]];
+        }
+        while(U&gt;Q[i].x1){
+            --U;
+            for(int i=L;i&lt;=R;++i)
+                ++counts[a[U][i]],++countsum[rangeblockId[a[U][i]]];
+        }
+        while(R&gt;Q[i].y2){
+            for(int i=U;i&lt;=D;++i)
+                --counts[a[i][R]],--countsum[rangeblockId[a[i][R]]];
+            --R;
+        }
+        while(L&lt;Q[i].y1){
+            for(int i=U;i&lt;=D;++i)
+                --counts[a[i][L]],--countsum[rangeblockId[a[i][L]]];
+            ++L;
+        }
+        while(D&gt;Q[i].x2){
+            for(int i=L;i&lt;=R;++i)
+                --counts[a[D][i]],--countsum[rangeblockId[a[D][i]]];
+            --D;
+        }
+        while(U&lt;Q[i].x1){
+            for(int i=L;i&lt;=R;++i)
+                --counts[a[U][i]],--countsum[rangeblockId[a[U][i]]];
+            ++U;
+        }
+        int res=1,cnt=0;
+        while(cnt+countsum[res]&lt;Q[i].k&amp;&amp;res&lt;=rangeblockId[nn])cnt+=countsum[res],++res;
+        res=(res-1)*rangeblocklen+1;
+        while(cnt+counts[res]&lt;Q[i].k&amp;&amp;res&lt;=nn)cnt+=counts[res],++res;
+        ans[Q[i].qid]=disc[res];
+    }
+}
+
+int main(){
+    read(n);read(q);nn=n*n;
+    for(int i=1;i&lt;=n;++i)
+        for(int j=1;j&lt;=n;++j){
+            int x; read(x);
+            a[i][j]=disc[++cntdisc]=x;
+        }
+    sort(disc+1,disc+1+cntdisc);
+    cntdisc=unique(disc+1,disc+cntdisc+1)-disc-1;
+    for(int i=1;i&lt;=n;++i)
+        for(int j=1;j&lt;=n;++j)
+            a[i][j]=lower_bound(disc+1,disc+1+cntdisc,a[i][j])-disc;
+    for(int i=1;i&lt;=q;++i){
+        int x1,y1,x2,y2,k;
+        read(x1);read(y1);read(x2);read(y2);read(k);
+        Q[++Qcnt]={x1,y1,x2,y2,k,i};
+    }
+
+    mo_algo();
+    for(int i=1;i&lt;=q;++i)
+        write(ans[i]),puts(&#34;&#34;);
+    return 0;
+}
+```</textarea>
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">

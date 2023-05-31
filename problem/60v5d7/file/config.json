@@ -1,9 +1,9 @@
 {
   "title": "Piece of Cake",
   "difficulty": {
-    "algorithm": 0,
-    "thinking": 0,
-    "implementation": 0
+    "algorithm": 3,
+    "thinking": 6,
+    "implementation": 3
   },
   "judge": {
     "time": "1 s",

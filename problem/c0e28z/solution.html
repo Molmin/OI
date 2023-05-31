@@ -50,6 +50,77 @@
         font-weight: normal;
     }
 </style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 列式
+
+TODO
+
+时间复杂度 $\Theta(n)$。
+
+## 法一：推式子
+
+TODO
+
+时间复杂度 $\Theta(n)$。
+
+## 法二：求导
+
+TODO
+
+时间复杂度 $\Theta(n)$。
+
+## 代码实现
+
+TODO
+
+时间复杂度 $\Theta(n)$。
+
+```cpp
+// 2023.05.29
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+const long long mod=998244353;
+long long power(long long a,long long n=mod-2){
+    long long res=1;
+    while(n){
+        if(n&amp;1)res=res*a%mod;
+        a=a*a%mod;
+        n&gt;&gt;=1;
+    }
+    return res;
+}
+
+long long S2[2001][2001];
+void initStirling2(int N){
+    S2[1][1]=1;
+    for(int i=2;i&lt;=N;i++)
+        for(int j=1;j&lt;=i;j++)
+            S2[i][j]=(S2[i-1][j-1]+j*S2[i-1][j])%mod;
+}
+
+int main(){
+    initStirling2(2000);
+    int T; scanf(&#34;%d&#34;,&amp;T);
+    while(T--){
+        int n,m,k,x;
+        scanf(&#34;%d%d%d&#34;,&amp;n,&amp;m,&amp;k);
+        x=m-m/2;
+        long long answer=0,power_m=power(m),
+            tmp=(long long)n*x%mod*power(m,n-1)%mod;
+        for(int i=1;i&lt;=k&amp;&amp;i&lt;=n;i++)
+            answer+=tmp*S2[k][i]%mod,
+            tmp*=(n-i)*(long long)x%mod
+                *power_m%mod,tmp%=mod;
+        printf(&#34;%lld\n&#34;,answer%mod);
+    }
+    return 0;
+}
+```</textarea>
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">

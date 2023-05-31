@@ -50,6 +50,63 @@
         font-weight: normal;
     }
 </style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 双向搜索
+
+考虑朴素的做法。共有 $\dbinom{n+m-2}{n-1}$ 条可行路径，而此时程序用时显然超出限制。
+
+容易想到使用双向搜索处理。将行与列从 $1$ 开始进行编号。则可以以行号和列号之和为 $\left\lfloor\dfrac{n+m}2\right\rfloor+1$ 的格子作为分界线。第一次从左上角开始搜索，对于每个分界点，求出从左上角到达此格所有情况的路径异或和。第二次从右下角开始搜索，到达任意分界点时统计答案即可。
+
+时间复杂度为 $2$ 的指数级。
+
+```cpp
+// 2022.07.01
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+int n,m;
+map&lt;long long,long long&gt; s[21];
+long long k,tot,now,a[21][21];
+
+void dfs1(int x,int y){
+    if(x+y==(n+m)/2+1){
+        s[x][k^now^a[x][y]]++;
+        return;
+    }
+    now^=a[x][y];
+    if(x&lt;n)dfs1(x+1,y);
+    if(y&lt;m)dfs1(x,y+1);
+    now^=a[x][y];
+}
+
+void dfs2(int x,int y){
+    if(x+y==(n+m)/2+1){
+        tot+=s[x][now];
+        return;
+    }
+    now^=a[x][y];
+    if(x)dfs2(x-1,y);
+    if(y)dfs2(x,y-1);
+    now^=a[x][y];
+}
+
+int main(){
+    scanf(&#34;%d%d%lld&#34;,&amp;n,&amp;m,&amp;k);
+    for(int i=1;i&lt;=n;i++)
+        for(int j=1;j&lt;=m;j++)
+            scanf(&#34;%lld&#34;,a[i]+j);
+    dfs1(1,1);
+    now=0;
+    dfs2(n,m);
+    printf(&#34;%lld\n&#34;,tot);
+    return 0;
+}
+```</textarea>
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">

@@ -50,6 +50,212 @@
         font-weight: normal;
     }
 </style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 容斥原理
+
+由于题目要求各个集合内的人最终位置相同，而不同集合的人最终位置不同，容易想到容斥。
+
+记 $A,\ B,\ C$ 分别表示三个集合内的人，$f(S)$ 为集合 $S$ 内的人走 $m$ 步到同一个点的方案数，则易得答案为
+
+$$
+f(A)f(B)f(C)-\sum_{\text{cyc}}f(A\cup B)f(C)+2f(A\cup B\cup C).
+$$
+
+## 猜想
+
+首先考虑从一个点到另一个点的走法有多少种。
+
+特判两种特殊情况：一是坐标奇偶性与步数不符，二是距离过远无法到达。
+
+我们将从原点 $(0,\ 0)$ 开始，走 $m$ 步到达某个坐标的方案数列出来，这可以用手动递推解决，为了描述方便，我们把坐标系旋转 $45^\circ$。
+
+当 $m=3$ 时，结果为
+
+$$
+\begin{matrix}
+1 &amp; 3 &amp; 3 &amp; 1 \\
+3 &amp; 9 &amp; 9 &amp; 3 \\
+3 &amp; 9 &amp; 9 &amp; 3 \\
+1 &amp; 3 &amp; 3 &amp; 1
+\end{matrix}
+$$
+
+但是这样似乎并没有什么规律，那么当 $m=4$ 时，结果为
+
+$$
+\begin{matrix}
+1 &amp; 4 &amp; 6 &amp; 4 &amp; 1 \\
+4 &amp; 16 &amp; 24 &amp; 16 &amp; 4 \\
+6 &amp; 24 &amp; 36 &amp; 24 &amp; 6 \\
+4 &amp; 16 &amp; 24 &amp; 16 &amp; 4 \\
+1 &amp; 4 &amp; 6 &amp; 4 &amp; 1
+\end{matrix}
+$$
+
+这里有个明显的特征就是矩阵四条边是组合数，仔细观察也可以发现中间每个数都是所在行第一个数与所在列第一个数的乘积。
+
+## 证明
+
+下面使用数学归纳法证明这个结论。
+
+当 $m=1$ 时，结论显然成立。
+
+若 $m=t-1\geq 1$ 时结论成立，则矩阵为
+
+$$
+\begin{matrix}
+C_{t-1}^0 &amp; C_{t-1}^1 &amp; C_{t-1}^2 &amp; \cdots &amp; C_{t-1}^{i-2} &amp; C_{t-1}^{i-1} \\
+C_{t-1}^1 &amp; C_{t-1}^1\cdot C_{t-1}^1 &amp; C_{t-1}^1\cdot C_{t-1}^2 &amp; \cdots &amp; C_{t-1}^1\cdot C_{t-1}^{i-2} &amp; C_{t-1}^{i-2} \\
+C_{t-1}^2 &amp; C_{t-1}^2\cdot C_{t-1}^1 &amp; C_{t-1}^2\cdot C_{t-1}^2 &amp; \cdots &amp; C_{t-1}^2\cdot C_{t-1}^{i-2} &amp; C_{t-1}^{i-3} \\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots &amp; \vdots \\
+C_{t-1}^{i-2} &amp; C_{t-1}^{i-2}\cdot C_{t-1}^1 &amp; C_{t-1}^{i-2}\cdot C_{t-1}^2 &amp; \cdots &amp; C_{t-1}^{i-2}\cdot C_{t-1}^{i-2} &amp; C_{t-1}^1 \\
+C_{t-1}^{i-1} &amp; C_{t-1}^{i-2} &amp; C_{t-1}^{i-3} &amp; \cdots &amp; C_{t-1}^1 &amp; C_{t-1}^0
+\end{matrix}
+$$
+
+设上面矩阵的行与列从 $1$ 开始编号，且第 $i$ 行第 $j$ 列的数为 $a_{i,\ j}$，那么有
+
+$$
+a_{i,\ j}=\binom{t-1}{i-1}\cdot \binom{t-1}{j-1}.
+$$
+
+则当 $m=t$ 时，设其矩阵的行与列从 $0$ 开始编号，且第 $i$ 行第 $j$ 列的数为 $b_{i,\ j}$，则易得
+
+$$
+\begin{aligned}
+b_{i,\ j} &amp; = a_{i,\ j}+a_{i+1,\ j}+a_{i,\ j+1}+a_{i+1,\ j+1} \\
+&amp; = \binom{t-1}{i-1}\cdot \binom{t-1}{j-1}+\binom{t-1}i\cdot \binom{t-1}{j-1}+\binom{t-1}{i-1}\cdot \binom{t-1}j+\binom{t-1}i\cdot \binom{t-1}j \\
+&amp; = \left[\binom{t-1}{i-1}+\binom{t-1}i\right]\cdot\left[\binom{t-1}{j-1}+\binom{t-1}j\right] \\
+&amp; = \binom ti\cdot\binom tj.
+\end{aligned}
+$$
+
+结论成立，**证毕**。
+
+## 预处理 &amp; 枚举
+
+我们枚举该集合 $S$ 中的人最终到达的坐标（这里指的是旋转后的坐标）。则方法数为
+
+$$
+\begin{aligned}
+T &amp; = \sum_{x_0}\sum_{y_0}\prod_{P\in S}\binom m{|x_P-x_0|}\binom m{|y_P-y_0|} \\
+&amp; = \sum_{x_0}\sum_{y_0}\left[\prod_{P\in S}\binom m{|x_P-x_0|}\prod_{P\in S}\binom m{|y_P-y_0|}\right] \\
+&amp; = \sum_{x_0}\left[\prod_{P\in S}\binom m{|x_P-x_0|}\sum_{y_0}\prod_{P\in S}\binom m{|y_P-y_0|}\right] \\
+\end{aligned}
+$$
+
+我们发现 $\prod\limits_{P\in S}\dbinom m{|y_P-y_0|}$ 与 $x_0$ 无关，那么只需预处理这个式子，在枚举时就可以做到 $\Theta(n^2)$。
+
+```cpp
+// 2022.08.16
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+const int mod=1e9+7;
+
+long long power(long long x,long long t=mod-2){
+    long long tmp=1;
+    for(;t;t&gt;&gt;=1,x=x*x%mod)
+        if(t&amp;1)tmp=tmp*x%mod;
+    return tmp;
+}
+
+struct point{
+    int x,y;
+    void read(){
+        int a,b;
+        scanf(&#34;%d%d&#34;,&amp;a,&amp;b);
+        x=a+b,y=a-b;
+    }
+}t,A[1001],B[1001],C[1001];
+int anum,bnum,cnum;
+
+long long fac[3001],invf[3001];
+void init(int n){
+    fac[0]=1;
+    for(int i=1;i&lt;=n;i++)
+        fac[i]=fac[i-1]*(long long)i%mod;
+    invf[n]=power(fac[n]);
+    for(int i=n-1;i&gt;=0;i--)
+        invf[i]=invf[i+1]*(i+1ll)%mod;
+}
+long long calC(int n,int m){
+    if(m&lt;0||m&gt;n)return 0;
+    return 1ll*fac[n]*invf[m]%mod*invf[n-m]%mod;
+}
+
+int m; long long f[6001];
+point p[1001]; int cnt;
+long long work(bool ha,bool hb,bool hc){
+    cnt=0;
+    if(ha)for(int i=1;i&lt;=anum;i++)
+        p[++cnt]=A[i];
+    if(hb)for(int i=1;i&lt;=bnum;i++)
+        p[++cnt]=B[i];
+    if(hc)for(int i=1;i&lt;=cnum;i++)
+        p[++cnt]=C[i];
+    int tmp=-1;
+    for(int i=1;i&lt;=cnt;i++)
+        if((p[i].x&amp;1)!=tmp){
+            if(tmp==-1)tmp=p[i].x&amp;1;
+            else return 0;
+        }
+    tmp=-1;
+    for(int i=1;i&lt;=cnt;i++)
+        if((p[i].y&amp;1)!=tmp){
+            if(tmp==-1)tmp=p[i].y&amp;1;
+            else return 0;
+        }
+    int minx=114514,maxx=-114514,miny=114514,maxy=-114514;
+    for(int i=1;i&lt;=cnt;i++)
+        minx=min(minx,p[i].x),maxx=max(maxx,p[i].x),
+        miny=min(miny,p[i].y),maxy=max(maxy,p[i].y);
+    for(int x=maxx-m;x&lt;=minx+m;x++){
+        f[x+3000]=1;
+        for(int i=1;i&lt;=cnt;i++)
+            f[x+3000]=f[x+3000]*(m-x+p[i].x)%mod
+                *power(m+x-p[i].x+2)%mod;
+    }
+    long long answer=0;
+    for(int y=maxy-m;y&lt;=miny+m;y+=2){
+        long long tmp=1;
+        for(int i=1;i&lt;=cnt;i++)
+            tmp=tmp*calC(m,m-y+p[i].y&gt;&gt;1)%mod*
+                calC(m,m+(p[i].x-maxx&gt;&gt;1))%mod;
+        for(int x=maxx-m;x&lt;=minx+m;x+=2){
+            answer+=tmp,answer%=mod;
+            tmp*=f[x+3000],tmp%=mod;
+        }
+    }
+    return answer;
+}
+
+int main(){
+    freopen(&#34;pretend.in&#34;,&#34;r&#34;,stdin);
+    freopen(&#34;pretend.out&#34;,&#34;w&#34;,stdout);
+    init(3000);
+    int n;
+    scanf(&#34;%d%d%d%d&#34;,&amp;n,&amp;anum,&amp;bnum,&amp;m);
+    cnum=n-anum-bnum;
+    for(int i=1;i&lt;=anum;i++)A[i].read();
+    for(int i=1;i&lt;=bnum;i++)B[i].read();
+    for(int i=1;i&lt;=cnum;i++)C[i].read();
+    long long answer=0,ansA,ansB,ansC;
+    ansA=work(1,0,0),ansB=work(0,1,0),ansC=work(0,0,1);
+    answer=ansA*ansB%mod*ansC%mod;
+    answer-=work(1,1,0)*ansC%mod;
+    answer-=work(0,1,1)*ansA%mod;
+    answer-=work(1,0,1)*ansB%mod;
+    answer+=(work(1,1,1)&lt;&lt;1)%mod;
+    answer=answer%mod+mod,answer%=mod;
+    printf(&#34;%lld\n&#34;,answer);
+    return 0;
+}
+```</textarea>
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">

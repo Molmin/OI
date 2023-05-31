@@ -50,6 +50,237 @@
         font-weight: normal;
     }
 </style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 简化版
+
+考虑后四种询问。
+
+把整个项链当成一条链来做，在其上建线段树，维护不同颜色的段数。合并时还需要用到区间两端的颜色，所以对每个区间还需要维护区间两端颜色。
+
+对于整个项链的查询，只需当成区间 $[1,n]$ 来做，在特判两端是否为同种颜色即可。
+
+```cpp
+namespace SegmentTree{
+    struct Node{
+        int left,right,cnt; // 最左/右的颜色 / 不同颜色数量
+        int tag;
+    }a[1000001];
+    void pushup(int id){
+        int l=id&lt;&lt;1,r=(id&lt;&lt;1)+1;
+        a[id].left=a[l].left,
+        a[id].right=a[r].right;
+        a[id].cnt=a[l].cnt+a[r].cnt;
+        if(a[l].right==a[r].left)a[id].cnt--;
+    }
+    void pushdown(int id){
+        int l=id&lt;&lt;1,r=(id&lt;&lt;1)+1;
+        if(a[id].tag==0)return;
+        a[l].left=a[l].right=a[l].tag=a[id].tag;
+        a[r].left=a[r].right=a[r].tag=a[id].tag;
+        a[l].cnt=a[r].cnt=1,a[id].tag=0;
+    }
+
+    void build(int id,int l,int r){
+        if(l==r){
+            a[id].left=a[id].right=x[l],a[id].cnt=1;
+            return;
+        }
+        int mid=l+r&gt;&gt;1;
+        build(id&lt;&lt;1,l,mid);
+        build((id&lt;&lt;1)+1,mid+1,r);
+        pushup(id);
+    }
+    Node query(int id,int l,int r,int L,int R){
+        if(L&lt;=l&amp;&amp;r&lt;=R)return a[id];
+        int mid=l+r&gt;&gt;1;
+        pushdown(id);
+        Node lNode={0,0,0,0},rNode={0,0,0,0};
+        if(L&lt;=mid)lNode=query(id&lt;&lt;1,l,mid,L,R);
+        if(R&gt;mid) rNode=query((id&lt;&lt;1)+1,mid+1,r,L,R);
+        return {
+            lNode.left==0?rNode.left:lNode.left,
+            rNode.right==0?lNode.right:rNode.right,
+            lNode.cnt+rNode.cnt-(lNode.right==rNode.left?1:0),
+            0
+        };
+    }
+    void update(int id,int l,int r,int L,int R,int color){
+        if(L&lt;=l&amp;&amp;r&lt;=R){
+            a[id].left=a[id].right=a[id].tag=color,a[id].cnt=1;
+            return;
+        }
+        int mid=l+r&gt;&gt;1;
+        pushdown(id);
+        if(L&lt;=mid)update(id&lt;&lt;1,l,mid,L,R,color);
+        if(R&gt;mid) update((id&lt;&lt;1)+1,mid+1,r,L,R,color);
+        pushup(id);
+    }
+}
+```
+
+## 旋转与翻转
+
+下面考虑旋转和对称怎么做。
+
+容易想到只需考虑将询问反向旋转即可。用 $flipped$ 表示是否翻转过，$rotated$ 表示旋转的个数。只需对于输入的每个位置都反向转换即可。
+
+时间复杂度 $\Theta((N+Q)\log N)$。
+
+```cpp
+bool flipped; int rotated;
+void convert(int &amp;x){
+    if(flipped)x=rotated+2-x;
+    else x-=rotated;
+    x=(x+n+n-1)%n+1;
+}
+```
+
+## 代码实现
+
+**本题细节较多，码量较大。** 实现细节：
+
+- 查询区间颜色段数量时，需要注意输入的区间两端是按**顺时针方向**的，而不是从编号小的到编号大的。若编号大的在前，只需将区间拆为 $[l,n]$ 和 $[1,r]$ 两个部分计算，再合并即可。
+
+- 查询整个项链的颜色段数量时，要注意整个项链为同一种颜色的情况。（只需计算后答案与 $1$ 取 $\max$ 即可。）
+
+```cpp
+// 2023.05.24
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+int n,c,q,x[500001];
+
+namespace SegmentTree{
+    struct Node{
+        int left,right,cnt; // 最左/右的颜色 / 不同颜色数量
+        int tag;
+    }a[1000001];
+    void pushup(int id){
+        int l=id&lt;&lt;1,r=(id&lt;&lt;1)+1;
+        a[id].left=a[l].left,
+        a[id].right=a[r].right;
+        a[id].cnt=a[l].cnt+a[r].cnt;
+        if(a[l].right==a[r].left)a[id].cnt--;
+    }
+    void pushdown(int id){
+        int l=id&lt;&lt;1,r=(id&lt;&lt;1)+1;
+        if(a[id].tag==0)return;
+        a[l].left=a[l].right=a[l].tag=a[id].tag;
+        a[r].left=a[r].right=a[r].tag=a[id].tag;
+        a[l].cnt=a[r].cnt=1,a[id].tag=0;
+    }
+
+    void build(int id,int l,int r){
+        if(l==r){
+            a[id].left=a[id].right=x[l],a[id].cnt=1;
+            return;
+        }
+        int mid=l+r&gt;&gt;1;
+        build(id&lt;&lt;1,l,mid);
+        build((id&lt;&lt;1)+1,mid+1,r);
+        pushup(id);
+    }
+    Node query(int id,int l,int r,int L,int R){
+        if(L&lt;=l&amp;&amp;r&lt;=R)return a[id];
+        int mid=l+r&gt;&gt;1;
+        pushdown(id);
+        Node lNode={0,0,0,0},rNode={0,0,0,0};
+        if(L&lt;=mid)lNode=query(id&lt;&lt;1,l,mid,L,R);
+        if(R&gt;mid) rNode=query((id&lt;&lt;1)+1,mid+1,r,L,R);
+        return {
+            lNode.left==0?rNode.left:lNode.left,
+            rNode.right==0?lNode.right:rNode.right,
+            lNode.cnt+rNode.cnt-(lNode.right==rNode.left?1:0),
+            0
+        };
+    }
+    void update(int id,int l,int r,int L,int R,int color){
+        if(L&lt;=l&amp;&amp;r&lt;=R){
+            a[id].left=a[id].right=a[id].tag=color,a[id].cnt=1;
+            return;
+        }
+        int mid=l+r&gt;&gt;1;
+        pushdown(id);
+        if(L&lt;=mid)update(id&lt;&lt;1,l,mid,L,R,color);
+        if(R&gt;mid) update((id&lt;&lt;1)+1,mid+1,r,L,R,color);
+        pushup(id);
+    }
+}
+
+bool flipped; int rotated;
+void convert(int &amp;x){
+    if(flipped)x=rotated+2-x;
+    else x-=rotated;
+    x=(x+n+n-1)%n+1;
+}
+
+int main(){
+    scanf(&#34;%d%d&#34;,&amp;n,&amp;c);
+    for(int i=1;i&lt;=n;i++)
+        scanf(&#34;%d&#34;,x+i);
+    SegmentTree::build(1,1,n);
+    scanf(&#34;%d&#34;,&amp;q);
+    while(q--){
+        string op; cin&gt;&gt;op;
+        if(op==&#34;R&#34;){
+            // 顺时针旋转 k 位
+            int k; scanf(&#34;%d&#34;,&amp;k);
+            rotated=(rotated+k)%n;
+        }
+        if(op==&#34;F&#34;){
+            // 沿给定对称轴翻转
+            flipped=!flipped,
+            rotated=(n-rotated)%n;
+        }
+        if(op==&#34;S&#34;){
+            // 交换两个珠子
+            int i,j;
+            scanf(&#34;%d%d&#34;,&amp;i,&amp;j);
+            convert(i),convert(j);
+            int color1=SegmentTree::query(1,1,n,i,i).left;
+            int color2=SegmentTree::query(1,1,n,j,j).left;
+            if(color1!=color2)
+                SegmentTree::update(1,1,n,i,i,color2),
+                SegmentTree::update(1,1,n,j,j,color1);
+        }
+        if(op==&#34;P&#34;){
+            // 将 i 顺时针方向到 j 的一段染为 x
+            int i,j,x;
+            scanf(&#34;%d%d%d&#34;,&amp;i,&amp;j,&amp;x);
+            convert(i),convert(j);
+            if(flipped)swap(i,j);
+            if(i&lt;=j)SegmentTree::update(1,1,n,i,j,x);
+            else
+                SegmentTree::update(1,1,n,i,n,x),
+                SegmentTree::update(1,1,n,1,j,x);
+        }
+        if(op==&#34;C&#34;){
+            // 查询当前项链有多少个部分组成
+            printf(&#34;%d\n&#34;,max(SegmentTree::a[1].cnt-
+                (SegmentTree::a[1].left==SegmentTree::a[1].right),1));
+        }
+        if(op==&#34;CS&#34;){
+            // 查询从 i 顺时针方向到 j 有多少个部分组成
+            int i,j;
+            scanf(&#34;%d%d&#34;,&amp;i,&amp;j);
+            convert(i),convert(j);
+            if(flipped)swap(i,j);
+            int res=0;
+            if(i&lt;=j)
+                printf(&#34;%d\n&#34;,SegmentTree::query(1,1,n,i,j).cnt);
+            else printf(&#34;%d\n&#34;,SegmentTree::query(1,1,n,i,n).cnt
+                +SegmentTree::query(1,1,n,1,j).cnt
+                -(SegmentTree::a[1].left==SegmentTree::a[1].right));
+        }
+    }
+    return 0;
+}
+```</textarea>
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">

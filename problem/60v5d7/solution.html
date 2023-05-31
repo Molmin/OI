@@ -50,6 +50,59 @@
         font-weight: normal;
     }
 </style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 题解
+
+考虑计算 $n$ 边形之内，$k$ 边形之外的面积期望。
+
+不妨钦定两个点作为一条边，接着只需要从两个点之间的点中选取 $k-2$ 个即可构成多边形，对答案的贡献即为另一边的多边形部分。
+
+时间复杂度 $\Theta(n^2)$。注意使用 `long double` 以避免精度问题。
+
+```cpp
+// 2023.05.29
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+long double C[2501][2501];
+void initC(int N){
+    C[0][0]=1;
+    for(int i=1;i&lt;=N;i++){
+        C[i][0]=1;
+        for(int j=1;j&lt;=i;j++)
+            C[i][j]=C[i-1][j]+C[i-1][j-1];
+    }
+}
+
+int n,k;
+struct Point{
+    long double x,y;
+}a[2501];
+
+long double calc(Point A,Point B){
+    return (long double)A.x*B.y-(long double)A.y*B.x;
+}
+
+int main(){
+    initC(2500);
+    scanf(&#34;%d%d&#34;,&amp;n,&amp;k);
+    for(int i=1;i&lt;=n;i++)
+        scanf(&#34;%Lf%Lf&#34;,&amp;a[i].x,&amp;a[i].y);
+    long double sum=0;
+    for(int i=1;i&lt;=n;i++)
+        for(int t=k-1;t&lt;n;t++){
+            int j=i+t; if(j&gt;n)j-=n;
+            sum+=calc(a[i],a[j])*C[t-1][k-2]/C[n][k];
+        }
+    printf(&#34;%.7Lf\n&#34;,sum/2);
+    return 0;
+}
+```</textarea>
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">

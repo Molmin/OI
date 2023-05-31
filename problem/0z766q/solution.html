@@ -50,6 +50,62 @@
         font-weight: normal;
     }
 </style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 悬线法
+
+TODO
+
+时间复杂度 $\Theta(n)$。
+
+```cpp
+// 2023.05.23
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+int n,m;
+bool Map[1001][1001];
+int l[1001][1001],r[1001][1001],up[1001][1001];
+// l/r/up[i][j]: 坐标 (i,j) 向左 / 右 / 上能到达的最小列数
+
+int main(){
+    scanf(&#34;%d%d&#34;,&amp;n,&amp;m);
+    for(int i=1;i&lt;=n;i++)
+        for(int j=1;j&lt;=m;j++){
+            char ch;
+            scanf(&#34; %c&#34;,&amp;ch);
+            Map[i][j]=ch==&#39;F&#39;;
+        }
+    for(int i=1;i&lt;=n;i++)
+        for(int j=1;j&lt;=m;j++)
+            l[i][j]=r[i][j]=j,up[i][j]=1;
+    for(int i=1;i&lt;=n;i++)
+        for(int j=2;j&lt;=m;j++)
+            if(Map[i][j]&amp;&amp;Map[i][j-1])
+                l[i][j]=l[i][j-1];
+    for(int i=1;i&lt;=n;i++)
+        for(int j=m-1;j&gt;=1;j--)
+            if(Map[i][j]&amp;&amp;Map[i][j+1])
+                r[i][j]=r[i][j+1];
+    
+    int answer=0;
+    for(int i=1;i&lt;=n;i++)
+        for(int j=1;j&lt;=m;j++){
+            if(i&gt;1&amp;&amp;Map[i][j]&amp;&amp;Map[i-1][j])
+                l[i][j]=max(l[i][j],l[i-1][j]),
+                r[i][j]=min(r[i][j],r[i-1][j]),
+                up[i][j]=up[i-1][j]+1;
+            if(Map[i][j])
+                answer=max(answer,(r[i][j]-l[i][j]+1)*up[i][j]);
+        }
+    printf(&#34;%d\n&#34;,answer*3);
+    return 0;
+}
+```</textarea>
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">

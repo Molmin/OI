@@ -50,6 +50,108 @@
         font-weight: normal;
     }
 </style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 题解
+
+一个石油井所对应的直线，必然可以进行一定的平移与旋转，使得这条直线经过一个石油矿的端点且经过的石油矿线段长度总和不必原先的短。
+
+枚举经过的石油矿的端点。
+
+考虑这条直线与 $x$ 轴的交点在什么区间内时，这条直线会经过某个石油矿线段。容易作出这样的图形：
+
+![](file://pic2.png)
+
+设 $P$ 为已经选定的石油矿线段的一端，线段 $AB$ 为另一个石油矿线段，只需连接 $PA$ 与 $x$ 轴交于 $M$ 点，连接 $PB$ 与 $x$ 轴交于 $N$ 点，则容易得出过 $P$ 的一条直线经过线段 $AB$ 时，必定也经过线段 $MN$。
+
+考虑已知 $P,\ A,\ B$ 三点，如何求出 $x_M,\ x_N$。事实上，我们只需要编写一个函数计算直线 $PQ$ 与 $x$ 轴的交点 $R$ 的 $x$ 坐标 $x_R$ 即可。
+
+![](file://pic3.png)
+
+易得 $\triangle RQA\thicksim\triangle RPB\Rightarrow\dfrac{y_Q}{y_P}=\dfrac{x_Q-x_R}{x_P-x_R}$，解得
+
+$$
+x_R=\frac{x_Py_Q-x_Qy_P}{y_Q-y_P}.
+$$
+
+问题转化为给定若干区间，求出一个值最大化包含这个值的区间的长度总和。只需按照 $x$ 坐标大小从前往后扫描一遍即可。
+
+单个数据时间复杂度 $\Theta(n^2\log n)$。
+
+```cpp
+// 2022.07.31
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+long double cal(int x,int y,int x_,int y_){
+    return(x_-x)*(long double)y/(y-y_)+x;
+}
+
+int n;
+
+struct Mine{
+    int l,r,y;
+}a[2001];
+struct Interval{
+    long double l,r;
+    int value;
+    bool operator&lt;(Interval tmp)const{
+        return l&lt;tmp.l;
+    }
+}b[2001];
+struct Node{
+    long double x;
+    int value;
+    bool operator&lt;(Node tmp)const{
+        return x&gt;tmp.x;
+    }
+};
+
+int cnt;
+
+inline long long work(int x,int y){
+    cnt=0;
+    for(int i=1;i&lt;=n;i++){
+        if(a[i].y==y)continue;
+        long double L=cal(x,y,a[i].l,a[i].y),
+                    R=cal(x,y,a[i].r,a[i].y);
+        if(L&gt;R)swap(L,R);
+        b[++cnt]={L,R,a[i].r-a[i].l};
+    }
+    sort(b+1,b+1+cnt);
+
+    long long sum=0,maxn=0;
+    priority_queue&lt;Node&gt; Q;
+    for(int i=1;i&lt;=cnt;i++){
+        Q.push({b[i].r,b[i].value});
+        sum+=b[i].value;
+        while(!Q.empty()&amp;&amp;Q.top().x&lt;b[i].l)
+            sum-=Q.top().value,Q.pop();
+        maxn=max(sum,maxn);
+    }
+    return maxn;
+}
+
+int main(){
+    while(~scanf(&#34;%d&#34;,&amp;n)){
+        for(int i=1;i&lt;=n;i++){
+            scanf(&#34;%d%d%d&#34;,&amp;a[i].l,&amp;a[i].r,&amp;a[i].y);
+            if(a[i].l&gt;a[i].r)swap(a[i].l,a[i].r);
+        }
+        long long ans=0;
+        for(int i=1;i&lt;=n;i++){
+            ans=max(ans,work(a[i].l,a[i].y)+abs(a[i].l-a[i].r));
+            ans=max(ans,work(a[i].r,a[i].y)+abs(a[i].l-a[i].r));
+        }
+        printf(&#34;%lld\n&#34;,ans);
+    }
+    return 0;
+}
+```</textarea>
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">

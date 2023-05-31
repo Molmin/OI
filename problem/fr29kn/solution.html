@@ -50,6 +50,48 @@
         font-weight: normal;
     }
 </style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 题解
+
+TODO
+
+时间复杂度 $\Theta(n)$。
+
+```cpp
+// 2023.05.29
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+const long long mod=1e9+7;
+long long power(long long a,long long n=mod-2){
+    long long res=1;
+    while(n){
+        if(n&amp;1)res=res*a%mod;
+        a=a*a%mod;
+        n&gt;&gt;=1;
+    }
+    return res;
+}
+
+int main(){
+    int n,m;
+    scanf(&#34;%d%d&#34;,&amp;n,&amp;m);
+    long long ans=1;
+    for(int i=1;i&lt;=2*m+n-1;i++)
+        ans*=i,ans%=mod;
+    for(int i=1;i&lt;=(m&lt;&lt;1);i++)
+        ans*=power(i),ans%=mod;
+    for(int i=1;i&lt;n;i++)
+        ans*=power(i),ans%=mod;
+    printf(&#34;%lld\n&#34;,ans);
+    return 0;
+}
+```</textarea>
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">

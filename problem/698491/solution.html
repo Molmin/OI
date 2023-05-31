@@ -50,6 +50,64 @@
         font-weight: normal;
     }
 </style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 题解
+
+TODO
+
+时间复杂度 $\Theta(n)$。
+
+```cpp
+// 2023.05.29
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+const long long mod=998244353;
+long long power(long long a,long long n=mod-2){
+    long long res=1;
+    while(n){
+        if(n&amp;1)res=res*a%mod;
+        a=a*a%mod;
+        n&gt;&gt;=1;
+    }
+    return res;
+}
+long long fac[200001],invfac[200001];
+void initfac(int N){
+    fac[0]=1;
+    for(int i=1;i&lt;=N;i++)
+        fac[i]=fac[i-1]*i%mod;
+    invfac[N]=power(fac[N]);
+    for(int i=N;i&gt;=1;i--)
+        invfac[i-1]=invfac[i]*i%mod;
+}
+long long C(int m,int n){
+    if(n&lt;0||m&lt;0||n&gt;m)return 0;
+    return fac[m]*invfac[n]%mod*invfac[m-n]%mod;
+}
+long long Stirling2(int n,int m){
+    long long res=0;
+    for(int i=0;i&lt;m;i++)
+        if(i&amp;1)res-=C(m,i)*power(m-i,n)%mod,res%=mod;
+        else res+=C(m,i)*power(m-i,n)%mod,res%=mod;
+    return res*invfac[m]%mod;
+}
+
+int main(){
+    int n; long long k;
+    scanf(&#34;%d%lld&#34;,&amp;n,&amp;k);
+    initfac(n);
+    if(k&gt;=n)return printf(&#34;0\n&#34;),0;
+    if(k==0)return printf(&#34;%lld\n&#34;,fac[n]),0;
+    printf(&#34;%lld\n&#34;,(2*C(n,k)*fac[n-k]%mod
+        *Stirling2(n,n-k)%mod+mod)%mod);
+    return 0;
+}
+```</textarea>
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">

@@ -50,6 +50,111 @@
         font-weight: normal;
     }
 </style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 二维莫队模板
+
+二维莫队，顾名思义就是每个状态有四个方向可以扩展。
+
+二维莫队每次移动指针要操作一行或者一列的数，具体实现方式与普通的一维莫队类似，这里不再赘述。这里重点讲块长选定部分。
+
+### 块长选定
+
+记询问次数为 $q$，当前矩阵的左上角坐标为 $(x_1,\ y_1)$，右下角坐标为 $(x_2,\ y_2)$，取块长为 $B$。
+
+那么指针 $x_1$ 移动了 $\Theta(q\cdot B)$ 次，而指针 $y_2$ 移动了 $\Theta(n^4\cdot B^{-3})$ 次。
+
+所以只需令 $q\cdot B=n^4\cdot B^{-3}$，即 $B=n\cdot q^{-\frac 14}$ 即可。
+
+注意这样计算 $B$ 的结果 **可能为 $0$**，**注意特判**。
+
+最终，计算部分时间复杂度是 $\Theta(n^2\cdot q^{\frac 34})$，加上对询问的排序过程，总时间复杂度为 $\Theta(n^2\cdot q^{\frac 34}+q\log q)$。
+
+```cpp
+// 2023.05.15
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+int n,m,q,a[201][201];
+long long ans[100001];
+int disc[250001],cntdisc; // 离散化用
+
+int blocklen,counts[40001];
+long long now;
+
+struct Question{
+    int x1,y1,x2,y2,qid;
+    bool operator&lt;(Question tmp)const{
+        if(x1/blocklen!=tmp.x1/blocklen)return x1&lt;tmp.x1;
+        if(y1/blocklen!=tmp.y1/blocklen)return y1&lt;tmp.y1;
+        if(x2/blocklen!=tmp.x2/blocklen)return x2&lt;tmp.x2;
+        return y2&lt;tmp.y2;
+    }
+}Q[100001];
+int Qcnt;
+
+void mo_algo_row(int id,int val,int Y1,int Y2){
+    for(int i=Y1;i&lt;=Y2;i++)
+        now-=(long long)counts[a[id][i]]*counts[a[id][i]],
+        counts[a[id][i]]+=val,
+        now+=(long long)counts[a[id][i]]*counts[a[id][i]];
+}
+void mo_algo_column(int id,int val,int X1,int X2){
+    for(int i=X1;i&lt;=X2;i++)
+        now-=(long long)counts[a[i][id]]*counts[a[i][id]],
+        counts[a[i][id]]+=val,
+        now+=(long long)counts[a[i][id]]*counts[a[i][id]];
+}
+
+void mo_algo(){
+    blocklen=pow(n*m,0.5)/pow(q,0.25);
+    if(blocklen&lt;1)blocklen=1;
+    sort(Q+1,Q+1+Qcnt);
+
+    int X1=1,Y1=1,X2=0,Y2=0;
+    for(int i=1;i&lt;=Qcnt;i++){
+        while(X1&gt;Q[i].x1)mo_algo_row(--X1,1,Y1,Y2);
+        while(X2&lt;Q[i].x2)mo_algo_row(++X2,1,Y1,Y2);
+        while(Y1&gt;Q[i].y1)mo_algo_column(--Y1,1,X1,X2);
+        while(Y2&lt;Q[i].y2)mo_algo_column(++Y2,1,X1,X2);
+        while(X1&lt;Q[i].x1)mo_algo_row(X1++,-1,Y1,Y2);
+        while(X2&gt;Q[i].x2)mo_algo_row(X2--,-1,Y1,Y2);
+        while(Y1&lt;Q[i].y1)mo_algo_column(Y1++,-1,X1,X2);
+        while(Y2&gt;Q[i].y2)mo_algo_column(Y2--,-1,X1,X2);
+        ans[Q[i].qid]=now;
+    }
+}
+
+int main(){
+    scanf(&#34;%d%d&#34;,&amp;n,&amp;m);
+    for(int i=1;i&lt;=n;i++)
+        for(int j=1;j&lt;=m;j++)
+            scanf(&#34;%d&#34;,a[i]+j),
+            disc[++cntdisc]=a[i][j];
+    sort(disc+1,disc+1+cntdisc);
+    cntdisc=unique(disc+1,disc+cntdisc+1)-disc-1;
+    for(int i=1;i&lt;=n;i++)
+        for(int j=1;j&lt;=m;j++)
+            a[i][j]=lower_bound(disc+1,disc+1+cntdisc,a[i][j])-disc;
+    scanf(&#34;%d&#34;,&amp;q);
+    for(int i=1;i&lt;=q;i++){
+        int x1,y1,x2,y2;
+        scanf(&#34;%d%d%d%d&#34;,&amp;x1,&amp;y1,&amp;x2,&amp;y2);
+        if(x1&gt;x2)swap(x1,x2);
+        if(y1&gt;y2)swap(y1,y2);
+        Q[++Qcnt]={x1,y1,x2,y2,i};
+    }
+
+    mo_algo();
+    for(int i=1;i&lt;=q;++i)
+        printf(&#34;%lld\n&#34;,ans[i]);
+    return 0;
+}
+```</textarea>
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">

@@ -50,6 +50,61 @@
         font-weight: normal;
     }
 </style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 题解
+
+TODO
+
+时间复杂度 $\Theta(n)$。
+
+```cpp
+// 2023.05.30
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+const long long mod=1e9+7;
+
+int n,m; long long a[51];
+long long dp[8][51];
+
+int main(){
+    int T; scanf(&#34;%d&#34;,&amp;T);
+    for(int caseId=1;caseId&lt;=T;caseId++){
+        scanf(&#34;%d%d&#34;,&amp;n,&amp;m);
+        for(int i=1;i&lt;=m;i++){
+            int k; a[i]=0;
+            scanf(&#34;%d&#34;,&amp;k);
+            while(k--){
+                int x; scanf(&#34;%d&#34;,&amp;x);
+                a[i]|=1ll&lt;&lt;(x-1);
+            }
+        }
+        long long answer=0;
+        for(int i=1;i&lt;=n;i++)
+            for(int j=1;j&lt;=n;j++)
+                for(int k=1;k&lt;=n;k++){
+                    memset(dp,0,sizeof dp);
+                    dp[0][0]=1;
+                    for(int t=1;t&lt;=m;t++){
+                        long long state=0;
+                        if(a[t]&amp;(1ll&lt;&lt;(i-1)))state|=1;
+                        if(a[t]&amp;(1ll&lt;&lt;(j-1)))state|=2;
+                        if(a[t]&amp;(1ll&lt;&lt;(k-1)))state|=4;
+                        for(long long s=0;s&lt;8;s++)
+                            dp[s][t]+=dp[s][t-1],
+                            dp[s][t]+=dp[s^state][t-1];
+                    }
+                    answer+=dp[7][m],answer%=mod;
+                }
+        printf(&#34;Case #%d: %lld\n&#34;,caseId,answer);
+    }
+    return 0;
+}
+```</textarea>
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">

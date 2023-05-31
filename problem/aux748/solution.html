@@ -50,6 +50,54 @@
         font-weight: normal;
     }
 </style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 状压动态规划
+
+从数据范围容易猜到本题应该用状压 dp。
+
+记 $dp_{i,j}$ 表示已经到了第 $i$ 次抛出宝物，已经吃过的宝物的集合为 $j$。易知
+
+$$
+dp_{i,j}=\frac 1n\cdot\sum_{k=1}^n\begin{cases} 
+\max\{dp[i + 1][j],dp[i + 1][j|1&lt;&lt;(k-1)]+p_k\},  &amp; \text{if can get item }k \\
+dp[i + 1][j], &amp; \text{if cannot get item }k 
+\end{cases}.
+$$
+
+```cpp
+// 2023.05.24
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+int n,k,p[16],r[16];
+double dp[102][1&lt;&lt;15];
+
+int main(){
+    scanf(&#34;%d%d&#34;,&amp;k,&amp;n);
+    for(int i=1;i&lt;=n;i++){
+        scanf(&#34;%d&#34;,p+i);
+        int x; scanf(&#34;%d&#34;,&amp;x);
+        while(x)
+            r[i]|=1&lt;&lt;x-1,
+            scanf(&#34;%d&#34;,&amp;x);
+    }
+    for(int i=k;i&gt;=1;i--)
+        for(int j=0;j&lt;(1&lt;&lt;n);j++){
+            for(int t=1;t&lt;=n;t++)
+                if((j|r[t])==j)
+                    dp[i][j]+=max(dp[i+1][j|(1&lt;&lt;(t-1))]+p[t],dp[i+1][j]);
+                else dp[i][j]+=dp[i+1][j];
+            dp[i][j]/=n;
+        }
+    printf(&#34;%.6lf\n&#34;,dp[1][0]);
+    return 0;
+}
+```</textarea>
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">

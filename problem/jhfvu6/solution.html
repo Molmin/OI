@@ -50,6 +50,173 @@
         font-weight: normal;
     }
 </style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 题解 1
+
+TODO
+
+时间复杂度 $\Theta(n)$。
+
+```cpp
+// 2023.05.27
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+const long long mod=1e9;
+
+int n;
+long long ans;
+struct Point{
+    int x,y;
+    bool operator&lt;(Point tmp)const{
+        if(x==tmp.x)return y&lt;tmp.y;
+        else return x&lt;tmp.x;
+    }
+}a[100001];
+
+struct Node{
+    int x,l,r;
+}node[100001];
+int cntNode;
+map&lt;long long,int&gt; nodeId;
+
+struct Edge{
+    int to,nxt;
+}edge[200001];
+int head[100001],cntEdge;
+void addEdge(int u,int v){
+    edge[++cntEdge]={v,head[u]},head[u]=cntEdge;
+    edge[++cntEdge]={u,head[v]},head[v]=cntEdge;
+}
+
+int siz[100001];
+void dfs(int id,int father){
+    siz[id]=node[id].r-node[id].l+1;
+    for(int i=head[id];i;i=edge[i].nxt)
+        if(edge[i].to!=father){
+            dfs(edge[i].to,id);
+            siz[id]+=siz[edge[i].to];
+        }
+    for(int i=head[id];i;i=edge[i].nxt)
+        if(edge[i].to!=father)
+            ans+=((long long)n-siz[edge[i].to])
+                *siz[edge[i].to]%mod,ans%=mod;
+}
+
+void calc(){
+    sort(a+1,a+1+n);
+    cntNode=cntEdge=0;
+    memset(head,0,sizeof head);
+    memset(edge,0,sizeof edge);
+    nodeId.clear();
+    for(int i=1;i&lt;=n;i++)
+        if(i!=1&amp;&amp;a[i].x==a[i-1].x&amp;&amp;a[i].y==a[i-1].y+1)
+            node[cntNode].r=a[i].y,
+            nodeId[a[i].x*(long long)n+a[i].y]=cntNode;
+        else
+            node[++cntNode]={a[i].x,a[i].y,a[i].y},
+            nodeId[a[i].x*(long long)n+a[i].y]=cntNode;
+    for(int i=1;i&lt;=cntNode;i++){
+        bool flag=false;
+        for(int j=node[i].l;j&lt;=node[i].r;j++){
+            if(nodeId[(node[i].x+1)*(long long)n+j]){
+                if(!flag){
+                    flag=true;
+                    addEdge(i,nodeId[(node[i].x+1)*(long long)n+j]);
+                }
+            }
+            else flag=false;
+        }
+    }
+    dfs(1,0);
+}
+
+int main(){
+    scanf(&#34;%d&#34;,&amp;n);
+    int minx=0x7fffffff,miny=0x7fffffff;
+    for(int i=1;i&lt;=n;i++)
+        scanf(&#34;%d%d&#34;,&amp;a[i].x,&amp;a[i].y),
+        minx=min(minx,a[i].x),
+        miny=min(miny,a[i].y);
+    for(int i=1;i&lt;=n;i++)
+        a[i].x-=minx-1,a[i].y-=miny-1;
+    calc();
+    for(int i=1;i&lt;=n;i++)
+        swap(a[i].x,a[i].y);
+    calc();
+    printf(&#34;%lld\n&#34;,ans);
+    return 0;
+}
+```
+
+## 题解 2
+
+考虑计算每条边对答案的贡献。
+
+但如果直接建网格图，是没法直接 dp 的，难以解决，所以考虑转化为树上问题。
+
+因为只有横边和竖边两种，并且统计方式类似，所以考虑将他们分开计数。
+
+对于竖边，每一行的连续块对竖直距离的贡献是一样的，所以可以所成一点，大小为其包含的个数。
+
+类似的建图后，我们发现形成了一棵树，至于为什么，可以考虑按行分割，行之间的点是没有连边的，并且有竖直的边当且仅当这一列两行间是连通的，若存在环一定会有白色被包围的现象。
+
+接下来直接树形 dp，记录子树大小，对于每条边计算贡献即可。
+
+复杂度为 $\Theta(n)$。
+
+```cpp
+void solve() {
+    memset(bel, 0, sizeof(bel));
+    memset(sz, 0, sizeof(sz));
+    for(int i = 1; i &lt;= tot; ++i) S[i].clear();
+    for(int i = 1; i &lt;= tot; ++i) seg[i].first = seg[i].second = xb[i] = 0;
+    for(int i = 1; i &lt;= tot; ++i) ed[i].clear();
+    sort(p + 1, p + n + 1, cmp);
+    for(int i = 1; i &lt;= n; ++i) {
+        chk[f(p[i].x, p[i].y)] = i;
+    }
+    tot = 1;
+    bel[1] = 1;
+    S[1].push_back(1);
+    xb[1] = p[1].x;
+    seg[1].first = seg[1].second = p[1].y;
+    for(int i = 2; i &lt;= n; ++i) {
+        if(p[i].x == p[i - 1].x) {
+            if(p[i].y &gt; p[i - 1].y + 1) {
+                bel[i] = ++tot;
+                S[tot].push_back(i);
+                seg[tot].first = seg[tot].second = p[i].y;
+                xb[tot] = p[i].x;
+            } else {
+                seg[tot].second = p[i].y;
+                bel[i] = tot;
+                S[tot].push_back(i);
+            }
+        } else {
+            ++tot;
+            bel[i] = tot;
+            S[tot].push_back(i);
+            seg[tot].first = seg[tot].second = p[i].y;
+            xb[tot] = p[i].x;
+        }
+    }
+    for(int i = 1; i &lt;= tot; ++i) {
+        for(int tmp = seg[i].first; tmp &lt;= seg[i].second; ++tmp) {
+            if(bel[chk[f(xb[i] + 1, tmp)]] != 0) {
+                ed[i].push_back(bel[chk[f(xb[i] + 1, tmp)]]);
+                ed[bel[chk[f(xb[i] + 1, tmp)]]].push_back(i);
+                tmp = seg[bel[chk[f(xb[i] + 1, tmp)]]].second;
+            }
+        }
+    }
+    dfs(1, 0);
+}
+```</textarea>
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">

@@ -50,6 +50,45 @@
         font-weight: normal;
     }
 </style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 记忆化搜索
+
+TODO
+
+时间复杂度 $\Theta(n)$。
+
+```cpp
+// 2023.05.24
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+double dp[2001][13];
+
+double work(int k,int w){
+    if(!k)dp[k][w]=0;
+    else if(dp[k][w]&gt;0)return dp[k][w];
+    else{
+        dp[k][w]=1e10;
+        if(w)for(int i=1;i&lt;=k;i++)
+            dp[k][w]=min(dp[k][w],(work(k-i,w)*(k-i+1)+work(i-1,w-1)*i)/(k+1)+1);
+    }
+    return dp[k][w];
+}
+
+int main(){
+    int k,w;
+    while(~scanf(&#34;%d%d&#34;,&amp;k,&amp;w)){
+        if(w&gt;12)w=12;
+        printf(&#34;%.6lf\n&#34;,work(k,w));
+    }
+    return 0;
+}
+```</textarea>
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">

@@ -50,6 +50,67 @@
         font-weight: normal;
     }
 </style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## tmp
+
+TODO
+
+```cpp
+// 2023.05.01
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+int n;
+long long a[1000001],b[1000001],d[1000002];
+
+void solve(){
+    scanf(&#34;%d&#34;,&amp;n);
+    for(int i=1;i&lt;=n;i++)
+        scanf(&#34;%lld&#34;,a+i);
+    for(int i=1;i&lt;=n;i++)
+        scanf(&#34;%lld&#34;,b+i);
+    {
+        long long sumA=0,sumB=0;
+        for(int i=1;i&lt;=n;i++)sumA+=a[i];
+        for(int i=1;i&lt;=n;i++)sumB+=b[i];
+        if(sumA!=sumB){
+            printf(&#34;NO\n&#34;);
+            return;
+        }
+    }
+    d[2]=a[1]-b[1];
+    long long l=-d[2],r=-d[2];
+    for(int i=2;i&lt;=n;i++){
+        l=max(l,-d[i]);
+        if(l&gt;r){
+            printf(&#34;NO\n&#34;);
+            return;
+        }
+        d[i+1]=d[i]+a[i]-b[i];
+        if(i&lt;n){
+            l=max(-(d[i]+a[i]-b[i]),(l-(a[i]-b[i]+d[i])+1)&gt;&gt;1);
+            if(l&lt;0)l=0;
+            r=(r&lt;&lt;1)-(a[i]-b[i]);
+            if(r&gt;((1ll&lt;&lt;60)))r=((1ll&lt;&lt;60));
+        }
+    }
+    long long tmp=-(a[n]-b[n]);
+    printf(l&lt;=0&amp;&amp;0&lt;=r&amp;&amp;l+d[n]&lt;=tmp&amp;&amp;tmp&lt;=r+d[n]?&#34;YES\n&#34;:&#34;NO\n&#34;);
+}
+
+int main(){
+    freopen(&#34;move.in&#34;,&#34;r&#34;,stdin);
+    freopen(&#34;move.out&#34;,&#34;w&#34;,stdout);
+    int T; scanf(&#34;%d&#34;,&amp;T);
+    while(T--)solve();
+    return 0;
+}
+```</textarea>
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">

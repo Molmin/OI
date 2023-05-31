@@ -50,6 +50,106 @@
         font-weight: normal;
     }
 </style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 随机化算法
+
+随机取一个 $1\times n$ 的矩阵 $M$，判断在模 $998244353$ 的意义下，
+
+$$
+M\times A\times B=M\times C
+$$
+
+是否成立即可。此时时间复杂度为 $\Theta(\sum n^2)$。
+
+## 正确性
+
+当模数为 $998244353$ 时，只有 $\dfrac 1{998244353}$ 的概率出错，所以随机判定一次即可。
+
+```cpp
+// 2023.03.18
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+const long long mod=998244353;
+
+struct Matrix{
+    int n,m;
+    vector&lt;vector&lt;int&gt; &gt; data;
+    int val(int i,int j){
+        return data[i][j];
+    }
+    int set(int i,int j,int val){
+        return data[i][j]=val;
+    }
+    void init(int n1,int m1){
+        n=n1,m=m1;
+        vector&lt;int&gt; tmp;
+        tmp.clear();
+        for(int i=1;i&lt;=m;i++)
+            tmp.push_back(0);
+        data.clear();
+        for(int i=1;i&lt;=n;i++)
+            data.push_back(tmp);
+    }
+    void read(int a,int b){
+        n=a,m=b;
+        data.clear();
+        for(int i=0;i&lt;n;i++){
+            vector&lt;int&gt; tmp;
+            for(int j=0;j&lt;m;j++){
+                int x;
+                scanf(&#34;%d&#34;,&amp;x);
+                tmp.push_back(x);
+            }
+            data.push_back(tmp);
+        }
+    }
+    Matrix operator*(Matrix S)const{
+        if(m!=S.n)return{0,0,{}};
+        Matrix res;
+        res.n=n,res.m=S.m;
+        for(int i=0;i&lt;res.n;i++){
+            vector&lt;int&gt; tmp;
+            for(int j=0;j&lt;res.m;j++){
+                long long sum=0;
+                for(int k=0;k&lt;m;k++)
+                    sum+=1ll*data[i][k]*S.val(k,j),sum%=mod;
+                tmp.push_back(sum);
+            }
+            res.data.push_back(tmp);
+        }
+        return res;
+    }
+    bool operator==(Matrix S)const{
+        if(n!=S.n||m!=S.m)return false;
+        for(int i=0;i&lt;n;i++)
+            for(int j=0;j&lt;m;j++)
+                if(S.val(i,j)!=data[i][j])return false;
+        return true;
+    }
+}A,B,C,M;
+
+int main(){
+    freopen(&#34;matrix.in&#34;,&#34;r&#34;,stdin);
+    freopen(&#34;matrix.out&#34;,&#34;w&#34;,stdout);
+    srand(time(0));
+    int T; scanf(&#34;%d&#34;,&amp;T);
+    while(T--){
+        int n; scanf(&#34;%d&#34;,&amp;n);
+        A.read(n,n); B.read(n,n); C.read(n,n);
+        M.init(1,n);
+        for(int i=0;i&lt;n;i++)
+            M.set(0,i,rand()%(mod-1)+1);
+        if(M*A*B==M*C)printf(&#34;Yes\n&#34;);
+        else printf(&#34;No\n&#34;);
+    }
+    return 0;
+}
+```</textarea>
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">

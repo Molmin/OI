@@ -4,7 +4,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width">
-        <title id="title">题解与代码 - A game with probability - OI Problems</title>
+        <title id="title">题解与代码 - Count GCD - OI Problems</title>
         <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
         <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
         <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
@@ -57,34 +57,47 @@
 
 <textarea style="display: none;" id="exportcode">## 题解
 
-TODO
 
-时间复杂度 $\Theta(n)$。
 
 ```cpp
-// 2023.05.25
+// 2023.05.31
 
 #include&lt;bits/stdc++.h&gt;
 using namespace std;
+const long long mod=998244353;
 
-double f[101],g[101];
-// f/g[i]: 还剩下 i 颗石子时 Alice 为先手 / 后手，Alice 获胜的概率
+int n,m,a[200001];
 
 int main(){
     int T; scanf(&#34;%d&#34;,&amp;T);
     while(T--){
-        int n; double p,q;
-        scanf(&#34;%d%lf%lf&#34;,&amp;n,&amp;p,&amp;q);
-        n=min(n,100),f[0]=0,g[0]=1;
-        for(int i=1;i&lt;=n;i++){
-            if(f[i-1]&lt;g[i-1])
-                f[i]=(p*g[i-1]+(1-p)*q*f[i-1])/(1-(1-p)*(1-q)),
-                g[i]=(q*f[i-1]+(1-q)*p*g[i-1])/(1-(1-p)*(1-q));
-            else
-                f[i]=((1-p)*g[i-1]+p*(1-q)*f[i-1])/(1-p*q),
-                g[i]=((1-q)*f[i-1]+q*(1-p)*g[i-1])/(1-p*q);
+        scanf(&#34;%d%d&#34;,&amp;n,&amp;m);
+        for(int i=1;i&lt;=n;i++)
+            scanf(&#34;%d&#34;,a+i);
+        long long answer=1;
+        for(int i=2;i&lt;=n&amp;&amp;answer;i++){
+            int x=m/a[i],y=a[i-1]/a[i];
+            if(a[i-1]%a[i])answer=0;
+            // 只需要求 1~x 中与 y 互质的数即可
+            vector&lt;long long&gt; result;
+            for(int j=2;j*j&lt;=y;j++)
+                if(y%j==0){
+                    for(long long k :result)
+                        result.push_back(-k*j);
+                    result.push_back(j);
+                    while(!(y%j))y/=j;
+                }
+            if(y&gt;1){
+                for(long long k :result)
+                    result.push_back(-k*y);
+                result.push_back(y);
+            }
+            long long sum=0;
+            for(long long j :result)
+                sum+=x/j,sum%=mod;
+            answer*=x-sum,answer%=mod;
         }
-        printf(&#34;%.6lf\n&#34;,f[n]);
+        printf(&#34;%lld\n&#34;,(answer+mod)%mod);
     }
     return 0;
 }
@@ -93,12 +106,12 @@ int main(){
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">
             <div class="topan-section-shadow">
-                <h2>A game with probability</h2>
-                <a class="topan-menu-option" href="/OI/problem/m0qtk3"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                <h2>Count GCD</h2>
+                <a class="topan-menu-option" href="/OI/problem/023063"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
                 
-                <a class="topan-menu-option" href="/OI/problem/m0qtk3/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                <a class="topan-menu-option" href="/OI/problem/023063/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
                 
-                <a class="topan-menu-option" href="/OI/problem/m0qtk3/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
+                <a class="topan-menu-option" href="/OI/problem/023063/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
             </div>
         </div>
     </div>
@@ -111,36 +124,49 @@ int main(){
                         
                     </h2>
                     
-                    <p>TODO</p>
-<p>时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mclose">)</span></span></span></span>。</p>
-
+                    
                     
                         <div class="topan-fold">
                             <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
                             <dl>
-                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.05.25</span>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.05.31</span>
 
 <span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
 <span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+<span class="hljs-type">const</span> <span class="hljs-type">long</span> <span class="hljs-type">long</span> mod=<span class="hljs-number">998244353</span>;
 
-<span class="hljs-type">double</span> f[<span class="hljs-number">101</span>],g[<span class="hljs-number">101</span>];
-<span class="hljs-comment">// f/g[i]: 还剩下 i 颗石子时 Alice 为先手 / 后手，Alice 获胜的概率</span>
+<span class="hljs-type">int</span> n,m,a[<span class="hljs-number">200001</span>];
 
 <span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
     <span class="hljs-type">int</span> T; <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;T);
     <span class="hljs-keyword">while</span>(T--){
-        <span class="hljs-type">int</span> n; <span class="hljs-type">double</span> p,q;
-        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%lf%lf&quot;</span>,&amp;n,&amp;p,&amp;q);
-        n=<span class="hljs-built_in">min</span>(n,<span class="hljs-number">100</span>),f[<span class="hljs-number">0</span>]=<span class="hljs-number">0</span>,g[<span class="hljs-number">0</span>]=<span class="hljs-number">1</span>;
-        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++){
-            <span class="hljs-keyword">if</span>(f[i<span class="hljs-number">-1</span>]&lt;g[i<span class="hljs-number">-1</span>])
-                f[i]=(p*g[i<span class="hljs-number">-1</span>]+(<span class="hljs-number">1</span>-p)*q*f[i<span class="hljs-number">-1</span>])/(<span class="hljs-number">1</span>-(<span class="hljs-number">1</span>-p)*(<span class="hljs-number">1</span>-q)),
-                g[i]=(q*f[i<span class="hljs-number">-1</span>]+(<span class="hljs-number">1</span>-q)*p*g[i<span class="hljs-number">-1</span>])/(<span class="hljs-number">1</span>-(<span class="hljs-number">1</span>-p)*(<span class="hljs-number">1</span>-q));
-            <span class="hljs-keyword">else</span>
-                f[i]=((<span class="hljs-number">1</span>-p)*g[i<span class="hljs-number">-1</span>]+p*(<span class="hljs-number">1</span>-q)*f[i<span class="hljs-number">-1</span>])/(<span class="hljs-number">1</span>-p*q),
-                g[i]=((<span class="hljs-number">1</span>-q)*f[i<span class="hljs-number">-1</span>]+q*(<span class="hljs-number">1</span>-p)*g[i<span class="hljs-number">-1</span>])/(<span class="hljs-number">1</span>-p*q);
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d&quot;</span>,&amp;n,&amp;m);
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+            <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,a+i);
+        <span class="hljs-type">long</span> <span class="hljs-type">long</span> answer=<span class="hljs-number">1</span>;
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">2</span>;i&lt;=n&amp;&amp;answer;i++){
+            <span class="hljs-type">int</span> x=m/a[i],y=a[i<span class="hljs-number">-1</span>]/a[i];
+            <span class="hljs-keyword">if</span>(a[i<span class="hljs-number">-1</span>]%a[i])answer=<span class="hljs-number">0</span>;
+            <span class="hljs-comment">// 只需要求 1~x 中与 y 互质的数即可</span>
+            vector&lt;<span class="hljs-type">long</span> <span class="hljs-type">long</span>&gt; result;
+            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">2</span>;j*j&lt;=y;j++)
+                <span class="hljs-keyword">if</span>(y%j==<span class="hljs-number">0</span>){
+                    <span class="hljs-keyword">for</span>(<span class="hljs-type">long</span> <span class="hljs-type">long</span> k :result)
+                        result.<span class="hljs-built_in">push_back</span>(-k*j);
+                    result.<span class="hljs-built_in">push_back</span>(j);
+                    <span class="hljs-keyword">while</span>(!(y%j))y/=j;
+                }
+            <span class="hljs-keyword">if</span>(y&gt;<span class="hljs-number">1</span>){
+                <span class="hljs-keyword">for</span>(<span class="hljs-type">long</span> <span class="hljs-type">long</span> k :result)
+                    result.<span class="hljs-built_in">push_back</span>(-k*y);
+                result.<span class="hljs-built_in">push_back</span>(y);
+            }
+            <span class="hljs-type">long</span> <span class="hljs-type">long</span> sum=<span class="hljs-number">0</span>;
+            <span class="hljs-keyword">for</span>(<span class="hljs-type">long</span> <span class="hljs-type">long</span> j :result)
+                sum+=x/j,sum%=mod;
+            answer*=x-sum,answer%=mod;
         }
-        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%.6lf\n&quot;</span>,f[n]);
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lld\n&quot;</span>,(answer+mod)%mod);
     }
     <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
 }</code></pre>

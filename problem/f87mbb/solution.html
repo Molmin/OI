@@ -50,6 +50,305 @@
         font-weight: normal;
     }
 </style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 分析
+
+因为 $m=n-1$ 或 $m=n$，所以本题的构成的图为一棵基环树或普通树。
+
+**【定义】** 基环树中，对于环上结点，称相邻的环上的结点为父亲结点，其余向另结点为儿子结点。
+
+考虑动态规划。
+
+记 $\text{fa}_u$ 表示结点 $u$ 的父亲结点个数；$\text{son}_u$ 表示结点 $u$ 的儿子结点个数；$w_{u-v}$ 表示结点 $u$ 和 $v$。
+
+记状态 $\text{up}_ u$ 表示以结点 $u$ 为起点，第一步向父亲结点走，最终的期望路径长度；状态 $\text{down}_ u$ 表示以结点 $u$ 为起点，第一步向儿子结点走，最终的期望路径长度。
+
+下面先考虑普通树的做法。
+
+## down 的求法
+
+对于一个结点 $u$，若是叶子结点，为方便处理，令 $\text{down}_u=0$。
+
+若是非叶子结点，则第一步必须向其儿子结点走，若向儿子结点 $v$ 走，那么此时贡献的路径长度期望为
+
+$$
+\text{down}_v+w_{u-v}.
+$$
+
+那么易知
+
+$$
+\text{down}_u = \frac {\sum_{(u, v)\in E}\text{down}_v + w_{u-v}} {\text{son}_u}.
+$$
+
+```cpp
+void dpdown(int id,int father){
+    // 求 fa/son/down[id]
+    down[id]=0;
+    for(int i=head[id];i;i=edge[i].nxt)
+        if(edge[i].to!=father&amp;&amp;!oncir[edge[i].to]){
+            son[id]++;
+            fa[edge[i].to]++;
+            dpdown(edge[i].to,id);
+            down[id]+=down[edge[i].to]+edge[i].w;
+        }
+    if(son[id])down[id]/=son[id];
+}
+```
+
+## up 的求法
+
+记 $u$ 的父亲结点为 $v$，则第一步必须向其父亲结点走，故贡献长度 $w_{u-v}$。
+
+接着会向 $v$ 的相邻结点走。各个情况的期望和（注意不能走回结点 $u$）为
+
+$$
+\text{up}_v \times \text{fa}_v + \text{down}_v \times \text{son}_v-(w_{u-v} + \text{down}_u).
+$$
+
+那么易得
+
+$$
+\text{up}_u=w_{u-v}+\frac{\text{up}_v\times\text{fa}_v+\text{down}_v\times\text{son}_v-(w_{u-v}+\text{down}_u)}{\text{fa}_v+\text{son}_v-1}.
+$$
+
+容易发现 $\text{up}_u$ 的值依赖于其父亲结点的有关信息，那么只需从上到下依次处理即可。
+
+特别地，根结点的 $\text{up}$ 值为 $0$（显然）。
+
+```cpp
+void dpup(int id,int father,int w){
+    if(fa[father]+son[father]&gt;1)
+        up[id]=(up[father]*fa[father]+down[father]*son[father]-
+            (down[id]+w))/(fa[father]+son[father]-1)+w;
+    else up[id]=w;
+    for(int i=head[id];i;i=edge[i].nxt)
+        if(edge[i].to!=father)
+            dpup(edge[i].to,id,edge[i].w);
+}
+```
+
+## 基环树
+
+对于基环树的情况，容易发现 $\text{down}$ 值的处理是类似的。而 $\text{up}$ 值的边界处理略有不同。
+
+考虑环上结点的 $\text{up}$ 值求法。这里环上结点数量 $\leq 20$，故考虑枚举环上的结点 $u$ 分别求出 $\text{up}$ 值。
+
+那么第一步必须向环上 $u$ 的相邻结点走。
+
+首先按一定方向从结点 $u$ 开始遍历一遍环。设 $\text{mul}$ 表示走到当前这个点的概率。那么由结点 $u$ 走到第一个遇到的结点，概率为 $\dfrac 12$，故初始化 $\text{mul}\gets\dfrac 12$。
+
+遇到一个新点 $v$ 时，设前一个点为 $t$。首先要加上之间连接的这条边的贡献即 $w_{v-t}$，然后由于有 $\dfrac{\text{son}_v}{\text{son}_v+1}$ 的概率进入这棵子树，故应更新值：
+
+$$
+\text{up}_u\gets\text{up}_u+\left(\frac{\text{son}_v}{\text{son}_v+1}\cdot\text{down}_v+w_{v-t}\right)\times\text{mul}.
+$$
+
+因为有 $\dfrac{\text{son}_v}{\text{son}_v+1}$ 的概率进入以 $v$ 为根的这棵树，故应更新 $\text{mul}$ 的值：
+
+$$
+\text{mul}\gets\frac{\text{mul}}{\text{son}_v+1}.
+$$
+
+考虑一种特殊情况：绕完一圈后到了 $u$ 的前一格，只能进入所在树内，故此时应更新：
+
+$$
+\text{up}_u\gets\text{up}_u+(\text{down}_v+w_{u-v})\times\text{mul}.
+$$
+
+最后，易知答案为
+
+$$
+\sum_{u=1}^n\frac{\text{up}_u\cdot\text{fa}_u+\text{down}_u\cdot\text{son}_u}{\text{fa}_u+\text{son}_u}.
+$$
+
+```cpp
+findcircle(1,0);
+initcircle(tag,0);
+for(int i=1;i&lt;=len;i++)
+    dpdown(idoncir[i],0);
+for(int i=1;i&lt;=len;i++){
+    int id=idoncir[i];
+    double mul=0.5; // 向顺时针下一个点走的概率占在环上走的一半
+    for(int j=cir::nxt(i);j!=i;j=cir::nxt(j)){
+        int v=idoncir[j];
+        if(j+1==i||(j==len&amp;&amp;i==1)) // 顺时针下一个结点就是起点 i，特殊处理
+            up[id]+=(ldis[j]+down[v])*mul;
+        else up[id]+=(down[v]*son[v]/(son[v]+1)+ldis[j])*mul;
+        mul*=1.0/(son[v]+1);
+    }
+    mul=0.5; // 向逆时针下一个点走的概率占在环上走的一半
+    for(int j=cir::pre(i);j!=i;j=cir::pre(j)){
+        int v=idoncir[j];
+        if(j-1==i||(j==1&amp;&amp;i==len)) // 逆时针下一个结点就是起点 i，特殊处理
+            up[id]+=(rdis[j]+down[v])*mul;
+        else up[id]+=(down[v]*son[v]/(son[v]+1)+rdis[j])*mul;
+        mul*=1.0/(son[v]+1);
+    }
+    for(int j=head[id];j;j=edge[j].nxt)
+        if(!oncir[edge[j].to])
+            dpup(edge[j].to,id,edge[j].w);
+}
+```
+
+## 总结
+
+本题实现细节较多，下面给出示例代码。
+
+```cpp
+// 2022.10.21
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+struct Edge{
+    int to,nxt,w;
+}edge[200001];
+int head[100001],cntEdge;
+inline void addEdge(int u,int v,int w){
+    edge[++cntEdge]={v,head[u],w};
+    head[u]=cntEdge;
+}
+
+int n,m;
+double up[100001],down[100001];
+// up/down[i]: 从 i 点出发，第一步向上/下走的期望步数
+int fa[100001],son[100001];
+// fa/son[i]: i 点的父亲/儿子结点个数
+
+bool oncir[100001];
+// oncir[i]: 是否在环上
+
+void dpdown(int id,int father){
+    // 求 fa/son/down[id]
+    down[id]=0;
+    for(int i=head[id];i;i=edge[i].nxt)
+        if(edge[i].to!=father&amp;&amp;!oncir[edge[i].to]){
+            son[id]++;
+            fa[edge[i].to]++;
+            dpdown(edge[i].to,id);
+            down[id]+=down[edge[i].to]+edge[i].w;
+        }
+    if(son[id])down[id]/=son[id];
+}
+void dpup(int id,int father,int w){
+    if(fa[father]+son[father]&gt;1)
+        up[id]=(up[father]*fa[father]+down[father]*son[father]-
+            (down[id]+w))/(fa[father]+son[father]-1)+w;
+    else up[id]=w;
+    for(int i=head[id];i;i=edge[i].nxt)
+        if(edge[i].to!=father)
+            dpup(edge[i].to,id,edge[i].w);
+}
+
+namespace solve1{
+    void main(){
+        // 输入的是一棵普通树
+        dpdown(1,0);
+        for(int i=head[1];i;i=edge[i].nxt)
+            dpup(edge[i].to,1,edge[i].w);
+    }
+}
+
+namespace solve2{
+    int tag; // 环起始位置
+    bool cirend;
+    void findcircle(int id,int father){
+        // 找出基环树中的还并标记 oncir 以及一个起点标记 tag
+        oncir[id]=true;
+        for(int i=head[id];i;i=edge[i].nxt)
+            if(edge[i].to!=father){
+                if(oncir[edge[i].to]){
+                    tag=edge[i].to; return;
+                }
+                findcircle(edge[i].to,id);
+                if(cirend)break;
+                if(tag){
+                    if(tag==id)cirend=true;
+                    return;
+                }
+            }
+        oncir[id]=false;
+    }
+    int idoncir[21],cirid[100001],len;
+    // idoncir[i]: 环上从 tag 开始顺时针第 i 个点的编号
+    // cirid[i]: 编号为 i 的点在环上从 tag 开始顺时针数的编号
+    // len: 环的长度
+    int ldis[21],rdis[21];
+    // ldis/rdis[i]: 环上从 tag 开始顺时针第 i 个点的上一条/下一条环上边的长度
+    void initcircle(int id,int father){
+        idoncir[++len]=id,cirid[id]=len,fa[id]=2;
+        for(int i=head[id];i;i=edge[i].nxt)
+            if(edge[i].to!=father&amp;&amp;oncir[edge[i].to]){
+                if(!cirid[edge[i].to])
+                    initcircle(edge[i].to,id);
+                ldis[cirid[edge[i].to]]=rdis[cirid[id]]=edge[i].w;
+                return;
+            }
+    }
+
+    namespace cir{
+        inline int pre(int id){
+            if(id==1)return len;
+            return id-1;
+        }
+        inline int nxt(int id){
+            if(id==len)return 1;
+            return id+1;
+        }
+    }
+
+    void main(){
+        findcircle(1,0);
+        initcircle(tag,0);
+        for(int i=1;i&lt;=len;i++)
+            dpdown(idoncir[i],0);
+        for(int i=1;i&lt;=len;i++){
+            int id=idoncir[i];
+            double mul=0.5; // 向顺时针下一个点走的概率占在环上走的一半
+            for(int j=cir::nxt(i);j!=i;j=cir::nxt(j)){
+                int v=idoncir[j];
+                if(j+1==i||(j==len&amp;&amp;i==1)) // 顺时针下一个结点就是起点 i，特殊处理
+                    up[id]+=(ldis[j]+down[v])*mul;
+                else up[id]+=(down[v]*son[v]/(son[v]+1)+ldis[j])*mul;
+                mul*=1.0/(son[v]+1);
+            }
+            mul=0.5; // 向逆时针下一个点走的概率占在环上走的一半
+            for(int j=cir::pre(i);j!=i;j=cir::pre(j)){
+                int v=idoncir[j];
+                if(j-1==i||(j==1&amp;&amp;i==len)) // 逆时针下一个结点就是起点 i，特殊处理
+                    up[id]+=(rdis[j]+down[v])*mul;
+                else up[id]+=(down[v]*son[v]/(son[v]+1)+rdis[j])*mul;
+                mul*=1.0/(son[v]+1);
+            }
+            for(int j=head[id];j;j=edge[j].nxt)
+                if(!oncir[edge[j].to])
+                    dpup(edge[j].to,id,edge[j].w);
+        }
+    }
+}
+
+int main(){
+    scanf(&#34;%d%d&#34;,&amp;n,&amp;m);
+    for(int i=1;i&lt;=m;i++){
+        int u,v,w;
+        scanf(&#34;%d%d%d&#34;,&amp;u,&amp;v,&amp;w);
+        addEdge(u,v,w);
+        addEdge(v,u,w);
+    }
+    if(m&lt;n)solve1::main();
+    else solve2::main();
+    double answer=0;
+    for(int i=1;i&lt;=n;i++)
+        answer+=(up[i]*fa[i]+down[i]*son[i])/(fa[i]+son[i]);
+    printf(&#34;%.5lf\n&#34;,answer/n);
+    return 0;
+}
+```</textarea>
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">

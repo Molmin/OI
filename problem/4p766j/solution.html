@@ -50,6 +50,155 @@
         font-weight: normal;
     }
 </style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 题目大意
+
+一个正方形，要求你将其切割为 $k$ 个锐角三角形，输出切割方案，可能无解。
+
+$1\leq k\leq 50$。
+
+## 问题转化
+
+容易想到一个锐角三角形可以按三边中点连线切割成四个新的锐角三角形。也就是当 $k=k_0$ 时有解就意味着 $k=k_0+3$ 时有解。
+
+问题转化为 $k\equiv 0,\ 1,\ 2\ (\text{mod 3})$ 时分别求最小的 $k$ 使得问题有解并给出构造。
+
+## 性质分析
+
+由于四个顶点都是直角，而要求三角形全部是锐角三角形，故每个顶点至少添加 $1$ 条线段。
+
+而对于非正方形顶点的点，有两种情况：
+
+- 该点出现在一个三角形的边上（不含端点）或该点在正方形的边上。
+
+  那么这个三角形占了该点 $180^\circ$ 的角，还剩下 $180^\circ$。若该点还出现在另一个三角形的边上（不含端点），那么虽然合法，但是由于该点不是任何一个三角形的顶点，故该点没有研究意义。
+  
+  故只需讨论剩下 $180^\circ$ 分配给若干锐角的情况。
+  
+  由于每个锐角都 $&lt; 90^\circ$，故该点至少是 $3$ 个锐角三角形的顶点。
+  
+- 该点没有出现在一个三角形的边上（不含端点）且该点也不在正方形的边上。
+
+  此时该点的 $360^\circ$ 将分配给若干锐角，即至少是 $5$ 个锐角三角形的顶点。
+  
+对于两种情况，记前者出现 $x$ 次，后者出现 $y$ 次。
+
+考虑统计三角形的总顶点数，那么有 $5x+3y+8\leq 3k$。$5x$ 表示 $x$ 个点都至少为 $5$ 个三角形贡献顶点，$3y$ 表示 $y$ 个点至少为 $3$ 个三角形贡献顶点。而 $8=4\times 2$ 表示正方形的 $4$ 个至少各贡献了 $2$ 个顶点。而实际总贡献为 $3k$。
+
+再考虑计算所有三角形的总内角和。首先由于有 $k$ 个三角形，故总内角和为 $180^\circ k$。又第一种情况的点每个点贡献 $360^\circ$，第二种情况的点每个点贡献 $180^\circ$，正方形的四个顶点各贡献 $90^\circ$，故总度数为 $360^\circ x+180^\circ y+360^\circ$。即 $360^\circ x+180^\circ y+360^\circ=180^\circ k$，化简得 $2x+y+2=k$。
+
+代入 $5x+3y+8\leq 3k$ 并化简得 $x\geq 2$。即至少有两个第一类点。
+
+而对于两个第一类点，每个点都有 $5$ 个三角形，共 $10$ 个。而至多有 $2$ 个三角形重复（如下图），故至少有 $8$ 个三角形，即 $k &lt; 8$ 时无解。
+
+![](file://pic2.png =200x200)
+
+## 构造
+
+$k=8,\ 9,\ 10$ 时，按下图方式构造。
+
+![](file://pic3.png =680x200)
+
+先计算 $k$ 模 $3$ 的余数，再构造解即可。
+
+```cpp
+// 2023.02.04
+
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+const int L=1000000000;
+int k;
+
+struct Point{
+    int x,y;
+};
+const Point LU={0,0},RU={0,L},LD={L,0},RD={L,L};
+Point getMiddle(Point A,Point B){
+    return {(A.x+B.x)/2,(A.y+B.y)/2};
+}
+struct Triangle{
+    Point A,B,C;
+}ans[51];
+int total;
+
+int main(){
+    srand(time(0));
+    scanf(&#34;%d&#34;,&amp;k);
+    if(k&lt;8)return printf(&#34;No\n&#34;),0;
+    printf(&#34;Yes\n&#34;);
+    switch(k%3){
+        case 0: {
+            Point A={int(L*0.35),int(L*0.8)},
+                  B={int(L*0.28),int(L*0.64)},
+                  C={0,int(L*0.7)},D={int(L*0.3),L},
+                  O={int(L*0.175),int(L*0.84)};
+            ans[++total]={LU,LD,A};
+            ans[++total]={LD,RD,A};
+            ans[++total]={LU,B,C};
+            ans[++total]={RD,A,D};
+            ans[++total]={A,B,O};
+            ans[++total]={B,C,O};
+            ans[++total]={C,RU,O};
+            ans[++total]={RU,D,O};
+            ans[++total]={D,A,O};
+            break;
+        }
+        case 1: {
+            Point A={int(L*0.7),int(L*0.5)},
+                  B={int(L*0.76),int(L*0.4)},
+                  C={int(L*0.76),int(L*0.6)},
+                  O={int(L*0.78),int(L*0.5)},
+                  D={L,int(L*0.45)},E={L,int(L*0.55)};
+            ans[++total]={LU,RU,A};
+            ans[++total]={LU,LD,A};
+            ans[++total]={RU,RD,A};
+            ans[++total]={LD,B,D};
+            ans[++total]={RD,C,E};
+            ans[++total]={A,B,O};
+            ans[++total]={B,D,O};
+            ans[++total]={D,E,O};
+            ans[++total]={E,C,O};
+            ans[++total]={C,A,O};
+            break;
+        }
+        case 2: {
+            Point A={0,L/2},B={L,L/2},
+                  C={int(L*0.85),int(L*0.48)},
+                  D={int(L*0.85),int(L*0.52)};
+            ans[++total]={LU,LD,C};
+            ans[++total]={RU,RD,D};
+            ans[++total]={LD,B,C};
+            ans[++total]={RD,B,D};
+            ans[++total]={B,C,D};
+            ans[++total]={LU,A,C};
+            ans[++total]={RU,A,D};
+            ans[++total]={A,C,D};
+            break;
+        }
+    }
+    while(total&lt;k){
+        int id=rand()%total+1;
+        Point A=ans[id].A,B=ans[id].B,C=ans[id].C,
+              X=getMiddle(A,B),
+              Y=getMiddle(B,C),
+              Z=getMiddle(C,A);
+        ans[id]     ={A,Z,X};
+        ans[++total]={B,X,Y};
+        ans[++total]={C,Y,Z};
+        ans[++total]={X,Y,Z};
+    }
+    for(int i=1;i&lt;=total;i++)
+        printf(&#34;%d %d %d %d %d %d\n&#34;,
+            ans[i].A.x,ans[i].A.y,ans[i].B.x,
+            ans[i].B.y,ans[i].C.x,ans[i].C.y);
+    return 0;
+}
+```</textarea>
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">
