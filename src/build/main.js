@@ -6,14 +6,7 @@ const ejs=require('ejs');
 const Template=require('./../template.js');
 const highlightjs=require('highlight.js');
 const Tag=require('./../lib/tag.js');
-
-var MarkdownIt=require('markdown-it')({
-    html: true,
-    linkify: true
-});
-MarkdownIt.use(require('markdown-it-katex'));
-MarkdownIt.use(require('markdown-it-imsize'));
-MarkdownIt.use(require('markdown-it-footnote'));
+var MarkdownIt=require('./../lib/markdown.js');
 
 const YAML=require('yamljs');
 var Config=YAML.load('./data/config.yaml');
@@ -36,6 +29,8 @@ deleteDir("dist");
 fs.mkdirSync("dist");
 fs.mkdirSync("dist/problem");
 fs.mkdirSync("dist/pub");
+fs.copyFileSync("src/assets/public/main.js","dist/pub/main.js");
+fs.copyFileSync("src/assets/public/main.css","dist/pub/main.css");
 fs.copyFileSync("src/assets/public/FiraCode-Regular.ttf","dist/pub/FiraCode-Regular.ttf");
 fs.copyFileSync("src/assets/public/base64.js","dist/pub/base64.js");
 

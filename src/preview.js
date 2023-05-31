@@ -1,6 +1,5 @@
 const express=require('express'),
       router=express.Router();
-const path=require('path');
 const ejs=require('ejs');
 const fs=require('fs');
 const Template=require('./template.js');
@@ -9,14 +8,7 @@ var Config=YAML.load('./data/config.yaml');
 const highlightjs=require('highlight.js');
 const fileSize=require('./lib/filesize.js');
 const Tag=require('./lib/tag.js');
-
-var MarkdownIt=require('markdown-it')({
-    html: true,
-    linkify: true
-});
-MarkdownIt.use(require('markdown-it-katex'));
-MarkdownIt.use(require('markdown-it-imsize'));
-MarkdownIt.use(require('markdown-it-footnote'));
+var MarkdownIt=require('./lib/markdown.js');
 
 router.get('/',(req,res)=>{
     var problemList=fs.readFileSync('data/problem.json','utf8');

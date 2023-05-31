@@ -28,7 +28,9 @@
     "gh-pages": "^5.0.0",
     "highlight.js": "^11.8.0",
     "markdown-it": "^13.0.1",
+    "markdown-it-container": "^3.0.0",
     "markdown-it-footnote": "^3.0.3",
+    "markdown-it-highlightjs": "^4.0.1",
     "markdown-it-imsize": "^2.0.1",
     "markdown-it-katex": "^2.0.3",
     "yamljs": "^0.3.0"
