@@ -4,6 +4,15 @@
         font-weight: normal;
     }
 </style>
+<% var exportCode='';
+prodata.solution.forEach((sol,index)=>
+    exportCode+=`${index?'\n\n':''}## ${sol.title}\n\n${fs.readFileSync(`data/${prodata.pid}/${sol.file}`,'utf8')}${sol.code?'\n\n```cpp\n'+fs.readFileSync(`data/${prodata.pid}/${sol.code}`,'utf8')+'\n```':''}`
+); %>
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode"><%= exportCode %></textarea>
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">
