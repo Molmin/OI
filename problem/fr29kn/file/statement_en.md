@@ -14,7 +14,7 @@ The only line contains two integers $n$ and $m$ ( $1 \le n \le 1000$ , $1 \le m 
 
 ## Output
 
-Print one integer – the number of arrays $ a $ and $ b $ satisfying the conditions described above modulo $10^9+7$ .
+Print one integer – the number of arrays $a$ and $b$ satisfying the conditions described above modulo $10^9+7$ .
 
 ## Samples
 
