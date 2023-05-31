@@ -1,0 +1,213 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title id="title">题解与代码 - Color - OI Problems</title>
+        <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
+        <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
+        <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
+        <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script src="/OI/pub/busuanzi.pure.mini.js"></script>
+        <script src="/OI/pub/main.js"></script>
+        <link rel="stylesheet" href="/OI/pub/main.css">
+        
+    </head>
+    <body>
+        <div class="topan-header">
+            <div class="topan-header-home">
+                <a href="/OI">
+                    <button class="topan-button-ordinary topan-button-commonly topan-button-header-round-left">
+                        <i class="fa fa-home"></i>
+                    </button>
+                </a>
+            </div>
+            <div class="topan-header-left">
+                <span class="topan-header-text">OI Problems&nbsp;</span>
+                <a href="/OI/about">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
+                        <i class="fa fa-solid fa-circle-info"></i>
+                        <span>&nbsp;关于</span>
+                    </span>
+                </a>
+                
+                
+            </div>
+            <div class="topan-header-right">
+            </div>
+        </div>
+        <div class="topan-outer">
+            <div class="topan-page">
+                <div class="topan-mainpage-auto">
+                    <br>
+                    <style>
+    .options{
+        font-size: 16px;
+        font-weight: normal;
+    }
+</style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 题解
+
+显然 $m$ 并没有用，可以直接提出 $\dbinom mk$ 来，但是命题人加这个内容可能有别的特殊作用，具体请看下方的说明。
+
+考虑容斥，枚举有多少种（$k-i$ 种）颜色没有使用过（即至多使用了 $i$ 种颜色），则贡献为 $(-1)^{k-i}\dbinom kii(i-1)^{n-1}$。
+
+::: warning
+注意数据范围中 $m\leq 10^9$，求 $\dbinom mk$ 时需要特殊处理！
+:::
+
+```cpp
+// 2023.05.31
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+const long long mod=1e9+7;
+long long power(long long a,long long n=mod-2){
+    long long res=1;
+    while(n){
+        if(n&amp;1)res=res*a%mod;
+        a=a*a%mod;
+        n&gt;&gt;=1;
+    }
+    return res;
+}
+long long fac[1000001],invfac[1000001];
+void initfac(int N){
+    fac[0]=1;
+    for(int i=1;i&lt;=N;i++)
+        fac[i]=fac[i-1]*i%mod;
+    invfac[N]=power(fac[N]);
+    for(int i=N;i&gt;=1;i--)
+        invfac[i-1]=invfac[i]*i%mod;
+}
+long long C(int m,int n){
+    if(n&lt;0||m&lt;0||n&gt;m)return 0;
+    return fac[m]*invfac[n]%mod*invfac[m-n]%mod;
+}
+
+int main(){
+    initfac(1000000);
+    int T; scanf(&#34;%d&#34;,&amp;T);
+    for(int caseId=1;caseId&lt;=T;caseId++){
+        int n,m,k;
+        scanf(&#34;%d%d%d&#34;,&amp;n,&amp;m,&amp;k);
+        long long answer=0;
+        for(int i=k;i&gt;=1;i--)
+            answer+=((k-i)&amp;1?-1:1)*C(k,i)*i%mod*power(i-1,n-1)%mod;
+        long long cmk=1;
+        for(int i=1;i&lt;=k;i++)
+            cmk*=(m-i+1)*power(i)%mod,cmk%=mod;
+        printf(&#34;Case #%d: %lld\n&#34;,caseId,(answer%mod*cmk%mod+mod)%mod);
+    }
+    return 0;
+}
+```</textarea>
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2>Color</h2>
+                <a class="topan-menu-option" href="/OI/problem/0o7ffs"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/0o7ffs/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/0o7ffs/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            
+                <div class="topan-section-shadow">
+                    <h2>
+                        题解
+                        
+                    </h2>
+                    
+                    <p>显然 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">m</span></span></span></span> 并没有用，可以直接提出 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow><mo fence="true">(</mo><mfrac linethickness="0px"><mi>m</mi><mi>k</mi></mfrac><mo fence="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">\dbinom mk</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:1.45em;"></span><span class="strut bottom" style="height:2.40003em;vertical-align:-0.95003em;"></span><span class="base textstyle uncramped"><span class="mord reset-textstyle displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mfrac"><span class="vlist"><span style="top:0.686em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle cramped"><span class="mord mathit" style="margin-right:0.03148em;">k</span></span></span><span style="top:-0.6769999999999999em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle uncramped"><span class="mord mathit">m</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size3">)</span></span></span></span></span></span> 来，但是命题人加这个内容可能有别的特殊作用，具体请看下方的说明。</p>
+<p>考虑容斥，枚举有多少种（<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi><mo>−</mo><mi>i</mi></mrow><annotation encoding="application/x-tex">k-i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.77777em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03148em;">k</span><span class="mbin">−</span><span class="mord mathit">i</span></span></span></span> 种）颜色没有使用过（即至多使用了 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.65952em;"></span><span class="strut bottom" style="height:0.65952em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">i</span></span></span></span> 种颜色），则贡献为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><mo>−</mo><mn>1</mn><msup><mo>)</mo><mrow><mi>k</mi><mo>−</mo><mi>i</mi></mrow></msup><mrow><mo fence="true">(</mo><mfrac linethickness="0px"><mi>k</mi><mi>i</mi></mfrac><mo fence="true">)</mo></mrow><mi>i</mi><mo>(</mo><mi>i</mi><mo>−</mo><mn>1</mn><msup><mo>)</mo><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">(-1)^{k-i}\dbinom kii(i-1)^{n-1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:1.45em;"></span><span class="strut bottom" style="height:2.40003em;vertical-align:-0.95003em;"></span><span class="base textstyle uncramped"><span class="mopen">(</span><span class="mord">−</span><span class="mord mathrm">1</span><span class="mclose"><span class="mclose">)</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord scriptstyle uncramped"><span class="mord mathit" style="margin-right:0.03148em;">k</span><span class="mbin">−</span><span class="mord mathit">i</span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mord reset-textstyle displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mfrac"><span class="vlist"><span style="top:0.686em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle cramped"><span class="mord mathit">i</span></span></span><span style="top:-0.6769999999999999em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle uncramped"><span class="mord mathit" style="margin-right:0.03148em;">k</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size3">)</span></span></span><span class="mord mathit">i</span><span class="mopen">(</span><span class="mord mathit">i</span><span class="mbin">−</span><span class="mord mathrm">1</span><span class="mclose"><span class="mclose">)</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord scriptstyle uncramped"><span class="mord mathit">n</span><span class="mbin">−</span><span class="mord mathrm">1</span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span>。</p>
+<blockquote class="topan-blockquote-warning">
+<p>注意数据范围中 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>m</mi><mo>≤</mo><mn>1</mn><msup><mn>0</mn><mn>9</mn></msup></mrow><annotation encoding="application/x-tex">m\leq 10^9</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:0.950078em;vertical-align:-0.13597em;"></span><span class="base textstyle uncramped"><span class="mord mathit">m</span><span class="mrel">≤</span><span class="mord mathrm">1</span><span class="mord"><span class="mord mathrm">0</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">9</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span>，求 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow><mo fence="true">(</mo><mfrac linethickness="0px"><mi>m</mi><mi>k</mi></mfrac><mo fence="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">\dbinom mk</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:1.45em;"></span><span class="strut bottom" style="height:2.40003em;vertical-align:-0.95003em;"></span><span class="base textstyle uncramped"><span class="mord reset-textstyle displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mfrac"><span class="vlist"><span style="top:0.686em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle cramped"><span class="mord mathit" style="margin-right:0.03148em;">k</span></span></span><span style="top:-0.6769999999999999em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle uncramped"><span class="mord mathit">m</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size3">)</span></span></span></span></span></span> 时需要特殊处理！</p>
+</blockquote>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.05.31</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+<span class="hljs-type">const</span> <span class="hljs-type">long</span> <span class="hljs-type">long</span> mod=<span class="hljs-number">1e9</span>+<span class="hljs-number">7</span>;
+<span class="hljs-function"><span class="hljs-type">long</span> <span class="hljs-type">long</span> <span class="hljs-title">power</span><span class="hljs-params">(<span class="hljs-type">long</span> <span class="hljs-type">long</span> a,<span class="hljs-type">long</span> <span class="hljs-type">long</span> n=mod<span class="hljs-number">-2</span>)</span></span>{
+    <span class="hljs-type">long</span> <span class="hljs-type">long</span> res=<span class="hljs-number">1</span>;
+    <span class="hljs-keyword">while</span>(n){
+        <span class="hljs-keyword">if</span>(n&amp;<span class="hljs-number">1</span>)res=res*a%mod;
+        a=a*a%mod;
+        n&gt;&gt;=<span class="hljs-number">1</span>;
+    }
+    <span class="hljs-keyword">return</span> res;
+}
+<span class="hljs-type">long</span> <span class="hljs-type">long</span> fac[<span class="hljs-number">1000001</span>],invfac[<span class="hljs-number">1000001</span>];
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">initfac</span><span class="hljs-params">(<span class="hljs-type">int</span> N)</span></span>{
+    fac[<span class="hljs-number">0</span>]=<span class="hljs-number">1</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=N;i++)
+        fac[i]=fac[i<span class="hljs-number">-1</span>]*i%mod;
+    invfac[N]=<span class="hljs-built_in">power</span>(fac[N]);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=N;i&gt;=<span class="hljs-number">1</span>;i--)
+        invfac[i<span class="hljs-number">-1</span>]=invfac[i]*i%mod;
+}
+<span class="hljs-function"><span class="hljs-type">long</span> <span class="hljs-type">long</span> <span class="hljs-title">C</span><span class="hljs-params">(<span class="hljs-type">int</span> m,<span class="hljs-type">int</span> n)</span></span>{
+    <span class="hljs-keyword">if</span>(n&lt;<span class="hljs-number">0</span>||m&lt;<span class="hljs-number">0</span>||n&gt;m)<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">return</span> fac[m]*invfac[n]%mod*invfac[m-n]%mod;
+}
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">initfac</span>(<span class="hljs-number">1000000</span>);
+    <span class="hljs-type">int</span> T; <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;T);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> caseId=<span class="hljs-number">1</span>;caseId&lt;=T;caseId++){
+        <span class="hljs-type">int</span> n,m,k;
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d%d&quot;</span>,&amp;n,&amp;m,&amp;k);
+        <span class="hljs-type">long</span> <span class="hljs-type">long</span> answer=<span class="hljs-number">0</span>;
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=k;i&gt;=<span class="hljs-number">1</span>;i--)
+            answer+=((k-i)&amp;<span class="hljs-number">1</span>?<span class="hljs-number">-1</span>:<span class="hljs-number">1</span>)*<span class="hljs-built_in">C</span>(k,i)*i%mod*<span class="hljs-built_in">power</span>(i<span class="hljs-number">-1</span>,n<span class="hljs-number">-1</span>)%mod;
+        <span class="hljs-type">long</span> <span class="hljs-type">long</span> cmk=<span class="hljs-number">1</span>;
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=k;i++)
+            cmk*=(m-i+<span class="hljs-number">1</span>)*<span class="hljs-built_in">power</span>(i)%mod,cmk%=mod;
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Case #%d: %lld\n&quot;</span>,caseId,(answer%mod*cmk%mod+mod)%mod);
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
+        </div>
+    </div>
+</div>
+                    <br>
+                </div>
+                <footer class="topan-footer">
+                    <p></p>
+                    <p style="text-align: center; color: #555; font-size: 12px;">
+                        Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
+                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>&nbsp;&nbsp;&nbsp;
+                        <i class="fa fa-solid fa-eye"></i> 访客数量：<span id="busuanzi_value_site_pv">0</span>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>
+    

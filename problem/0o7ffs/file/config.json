@@ -1,0 +1,25 @@
+{
+  "title": "Color",
+  "difficulty": {
+    "algorithm": 0,
+    "thinking": 0,
+    "implementation": 0
+  },
+  "judge": {
+    "time": "6 s",
+    "memory": "256 MiB"
+  },
+  "tags": "数学,数学/组合数学,数学/组合数学/容斥原理,数学/组合数学/组合计数,来源/ICPC,地区/陕西,时间/2014",
+  "source": "[2014 年 ICPC 亚洲（陕西）西安区域赛](https://codeforces.com/gym/100548) Problem F",
+  "statement": {
+    "简体中文": "statement_zh.md"
+  },
+  "solution": [
+    {
+      "title": "题解",
+      "file": "sol.md",
+      "author": "",
+      "code": "code.cpp"
+    }
+  ]
+}

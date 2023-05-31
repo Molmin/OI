@@ -5,10 +5,10 @@ using namespace std;
 #define mkp make_pair
 #define INF INT_MAX
 template <typename T> inline void rd(T &x){
-	x = 0; bool f = true; char ch = getchar();
-	while(ch < '0' || ch > '9'){ if(ch == '-') f = false; ch = getchar();}
-	while(ch >= '0' && ch <= '9'){ x = (x << 1) + (x << 3) + (ch ^ '0'); ch = getchar();}
-	if(!f) x = -x;
+    x = 0; bool f = true; char ch = getchar();
+    while(ch < '0' || ch > '9'){ if(ch == '-') f = false; ch = getchar();}
+    while(ch >= '0' && ch <= '9'){ x = (x << 1) + (x << 3) + (ch ^ '0'); ch = getchar();}
+    if(!f) x = -x;
 }
 template <typename T, typename ...Args> inline void rd(T &x, Args &...args){ rd(x); rd(args...);}
 const int N = 3e5 + 10;
