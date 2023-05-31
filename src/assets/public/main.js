@@ -1,11 +1,4 @@
 $(document).ready(()=>{
-    var prelist=$("pre");
-    prelist.each(function(){
-        let button=$("<span class='button-copy btn'></span>");
-        button.attr("onclick","copyCode(this);");
-        button.prependTo($(this));
-    });
-
     var idlist=new Array();
     for(var i=0;i<100;i++){
         if($(`.language-input${i}`).length>=2 && $(`.language-output${i}`).length>=2){
@@ -27,7 +20,7 @@ $(document).ready(()=>{
         else if($(`.language-input${i}`).length>=1 && $(`.language-output${i}`).length>=1)
             idlist.push(i);
     }
-    
+
     for(var i=0;i<idlist.length;i++){
         var id=idlist[i],sampleId=id%100;
         $(`.language-input${id}`).parent().before(`<div class="row problem-sample${id}"></div>`);
@@ -37,24 +30,3 @@ $(document).ready(()=>{
         $(`.language-output${id}`).parent().insertAfter(`.problem-sample${id}-output>h2`);
     }
 });
-
-var copyCode=(obj)=>{
-    navigator.clipboard.writeText($(obj).parent().text())
-        .then(()=>{
-            $(obj).text('复制成功！');
-            $(obj).addClass('button-copy-success');
-            setTimeout(()=>{
-                $(obj).removeClass('button-copy-success');
-                $(obj).text('');
-            },1000);
-        })
-        .catch(err=>{
-            $(obj).text('复制失败。');
-            console.log(err);
-            $(obj).addClass('button-copy-fail');
-            setTimeout(()=>{
-                $(obj).removeClass('button-copy-fail');
-                $(obj).text('');
-            },1000);
-        });
-}

@@ -9,6 +9,7 @@ MarkdownIt.use(require('markdown-it-highlightjs'),{inline: true});
 
 MarkdownIt.use(require('markdown-it-container'),'warning',{
     validate: (params)=>
+        params.includes('note')||
         params.includes('warning')||
         params.includes('tip'),
     render: (tokens,idx)=>{
