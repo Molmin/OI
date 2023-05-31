@@ -33,7 +33,7 @@
                 flag=true; %>
                 <div class="topan-section-shadow">
                     <h2>
-                        <%= sol.title %>
+                        <%- MarkdownIt.renderInline(sol.title) %>
                         <% if(isadmin){ %>
                             &nbsp;<a class="options" href="/admin/problem/<%= prodata.pid %>/solution/<%= index %>/edit">
                                 <i class="fa fa-solid fa-edit"></i>&nbsp;编辑
