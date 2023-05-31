@@ -32,7 +32,6 @@ fs.mkdirSync("dist/pub");
 fs.copyFileSync("src/assets/public/main.js","dist/pub/main.js");
 fs.copyFileSync("src/assets/public/main.css","dist/pub/main.css");
 fs.copyFileSync("src/assets/public/FiraCode-Regular.ttf","dist/pub/FiraCode-Regular.ttf");
-fs.copyFileSync("src/assets/public/base64.js","dist/pub/base64.js");
 
 var problemList=fs.readFileSync('data/problem.json','utf8');
 problemList=JSON.parse(problemList);
