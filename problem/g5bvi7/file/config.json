@@ -18,12 +18,6 @@
   },
   "solution": [
     {
-      "title": "Code2",
-      "file": "code2.md",
-      "author": "[hank0402](https://www.luogu.com.cn/user/482642)",
-      "code": "code2.cpp"
-    },
-    {
       "title": "题解",
       "file": "sol.md",
       "author": "",

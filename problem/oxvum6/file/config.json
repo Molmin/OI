@@ -7,10 +7,9 @@
   },
   "judge": {
     "time": "1 s",
-    "memory": "125 MiB",
-    "type": "default"
+    "memory": "125 MiB"
   },
-  "tags": "来源/省选,地区/湖南,时间/2010,缺题解",
+  "tags": "基础算法/递推,数据结构/块状数据结构/分块,来源/省选,地区/湖南,时间/2010,缺题解",
   "source": "湖南 2010 年省队选拔",
   "statement": {
     "简体中文": "statement_zh.md"

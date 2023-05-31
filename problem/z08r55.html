@@ -93,7 +93,7 @@
             window.location.href=`/OI/?search=${tag}`;
         if(pageName=='problem_list'){
             window.history.pushState(null,null,`/OI/?search=${tag}`);
-            show(search(JSON.parse(new Base64().decode(tag))));
+            show(search(JSON.parse(decodeURIComponent(tag))));
         }
     }
 </script>
@@ -124,7 +124,7 @@
                     
                     
                         <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
-                        <a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaVsOWtpiJdfQ%3D%3D')" class="tag tag-alg">数学</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaVsOWtpi%2Fnu4TlkIjmlbDlraYiXX0%3D')" class="tag tag-alg">组合数学</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaVsOWtpi%2Fnu4TlkIjmlbDlraYv5a655pal5Y6f55CGIl19')" class="tag tag-alg">容斥原理</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaVsOWtpi%2Fnu4TlkIjmlbDlraYv57uE5ZCI6K6h5pWwIl19')" class="tag tag-alg">组合计数</a>&nbsp;
+                        <a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%22%5D%7D')" class="tag tag-alg">数学</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%2F%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%22%5D%7D')" class="tag tag-alg">组合数学</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%2F%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%2F%E5%AE%B9%E6%96%A5%E5%8E%9F%E7%90%86%22%5D%7D')" class="tag tag-alg">容斥原理</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%2F%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%2F%E7%BB%84%E5%90%88%E8%AE%A1%E6%95%B0%22%5D%7D')" class="tag tag-alg">组合计数</a>&nbsp;
                     
                 </p>
                 <p class="messages-display">

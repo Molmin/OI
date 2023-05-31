@@ -93,7 +93,7 @@
             window.location.href=`/OI/?search=${tag}`;
         if(pageName=='problem_list'){
             window.history.pushState(null,null,`/OI/?search=${tag}`);
-            show(search(JSON.parse(new Base64().decode(tag))));
+            show(search(JSON.parse(decodeURIComponent(tag))));
         }
     }
 </script>
@@ -124,7 +124,7 @@
                     
                     
                         <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
-                        <a href="javascript:directTag('eyJmb2xkZXJzIjpbIuWKqOaAgeinhOWIkiJdfQ%3D%3D')" class="tag tag-alg">动态规划</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuagkeW9ouWKqOaAgeinhOWIkiJdfQ%3D%3D')" class="tag tag-alg">树形动态规划</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuadpea6kC9JT0kiXX0%3D')" class="tag tag-src">IOI</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaXtumXtC8yMDEyIl19')" class="tag tag-time">2012</a>&nbsp;
+                        <a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%22%5D%7D')" class="tag tag-alg">动态规划</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%A0%91%E5%BD%A2%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%22%5D%7D')" class="tag tag-alg">树形动态规划</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%9D%A5%E6%BA%90%2FIOI%22%5D%7D')" class="tag tag-src">IOI</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%97%B6%E9%97%B4%2F2012%22%5D%7D')" class="tag tag-time">2012</a>&nbsp;
                     
                 </p>
                 <p class="messages-display">

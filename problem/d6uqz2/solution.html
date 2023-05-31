@@ -4,7 +4,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width">
-        <title id="title">题解与代码 - The Top Scorer - OI Problems</title>
+        <title id="title">题解与代码 - Perfect Matchings - OI Problems</title>
         <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
         <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
         <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
@@ -54,13 +54,13 @@
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">
             <div class="topan-section-shadow">
-                <h2>The Top Scorer</h2>
-                <a class="topan-menu-option" href="/OI/problem/g5bvi7"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                <h2>Perfect Matchings</h2>
+                <a class="topan-menu-option" href="/OI/problem/d6uqz2"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
                 
-                <a class="topan-menu-option" href="/OI/problem/g5bvi7/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                <a class="topan-menu-option" href="/OI/problem/d6uqz2/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
                 
-                <a class="topan-menu-option" href="/OI/problem/g5bvi7/files"><i class="fa fa-regular fa-file-code"></i>&nbsp;&nbsp;文件</a>
-                <a class="topan-menu-option" href="/OI/problem/g5bvi7/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
+                <a class="topan-menu-option" href="/OI/problem/d6uqz2/files"><i class="fa fa-regular fa-file-code"></i>&nbsp;&nbsp;文件</a>
+                <a class="topan-menu-option" href="/OI/problem/d6uqz2/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
             </div>
         </div>
     </div>
@@ -80,7 +80,7 @@
                         <div class="topan-fold">
                             <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
                             <dl>
-                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.05.22</span>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.05.31</span>
 
 <span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
 <span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
@@ -94,7 +94,7 @@
     }
     <span class="hljs-keyword">return</span> res;
 }
-<span class="hljs-type">long</span> <span class="hljs-type">long</span> fac[<span class="hljs-number">20000001</span>],invfac[<span class="hljs-number">20000001</span>];
+<span class="hljs-type">long</span> <span class="hljs-type">long</span> fac[<span class="hljs-number">4001</span>],invfac[<span class="hljs-number">4001</span>],invpower2[<span class="hljs-number">4001</span>];
 <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">initfac</span><span class="hljs-params">(<span class="hljs-type">int</span> N)</span></span>{
     fac[<span class="hljs-number">0</span>]=<span class="hljs-number">1</span>;
     <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=N;i++)
@@ -102,24 +102,59 @@
     invfac[N]=<span class="hljs-built_in">power</span>(fac[N]);
     <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=N;i&gt;=<span class="hljs-number">1</span>;i--)
         invfac[i<span class="hljs-number">-1</span>]=invfac[i]*i%mod;
-}
-<span class="hljs-function"><span class="hljs-type">long</span> <span class="hljs-type">long</span> <span class="hljs-title">C</span><span class="hljs-params">(<span class="hljs-type">int</span> m,<span class="hljs-type">int</span> n)</span></span>{
-    <span class="hljs-keyword">if</span>(n&lt;<span class="hljs-number">0</span>||m&lt;<span class="hljs-number">0</span>||n&gt;m)<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
-    <span class="hljs-keyword">return</span> fac[m]*invfac[n]%mod*invfac[m-n]%mod;
+    invpower2[<span class="hljs-number">0</span>]=<span class="hljs-number">1</span>;
+    <span class="hljs-type">long</span> <span class="hljs-type">long</span> inv2=<span class="hljs-built_in">power</span>(<span class="hljs-number">2</span>);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=N;i++)
+        invpower2[i]=invpower2[i<span class="hljs-number">-1</span>]*inv2%mod;
 }
 
-<span class="hljs-type">int</span> n,m,k;
+<span class="hljs-type">int</span> n;
 
-<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span> </span>{
-    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d%d&quot;</span>,&amp;n,&amp;m,&amp;k);
-    <span class="hljs-built_in">initfac</span>(n+m);
-    <span class="hljs-type">long</span> <span class="hljs-type">long</span> answer=<span class="hljs-number">0</span>;
-    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>,maxi=<span class="hljs-built_in">min</span>(n,k?m/k:n);i&lt;=maxi;i++){
-        <span class="hljs-type">long</span> <span class="hljs-type">long</span> tmp=i&amp;<span class="hljs-number">1</span>?<span class="hljs-number">1</span>:<span class="hljs-number">-1</span>;
-        tmp*=<span class="hljs-built_in">C</span>(n,i)*<span class="hljs-built_in">C</span>(m-i*k+n<span class="hljs-number">-1</span>,n<span class="hljs-number">-1</span>)%mod;
-        answer+=tmp,answer%=mod;
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">Edge</span>{
+    <span class="hljs-type">int</span> to,nxt;
+}edge[<span class="hljs-number">8001</span>];
+<span class="hljs-type">int</span> head[<span class="hljs-number">4001</span>],cntEdge;
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">addEdge</span><span class="hljs-params">(<span class="hljs-type">int</span> u,<span class="hljs-type">int</span> v)</span></span>{
+    edge[++cntEdge]={v,head[u]},head[u]=cntEdge;
+}
+
+<span class="hljs-type">int</span> siz[<span class="hljs-number">4001</span>];
+<span class="hljs-type">long</span> <span class="hljs-type">long</span> dp[<span class="hljs-number">4001</span>][<span class="hljs-number">4001</span>][<span class="hljs-number">2</span>];
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">dfs</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> father)</span></span>{
+    dp[id][<span class="hljs-number">0</span>][<span class="hljs-number">0</span>]=siz[id]=<span class="hljs-number">1</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> t=head[id];t;t=edge[t].nxt)
+        <span class="hljs-keyword">if</span>(edge[t].to!=father){
+            <span class="hljs-type">int</span> to=edge[t].to;
+            <span class="hljs-built_in">dfs</span>(to,id);
+            <span class="hljs-type">long</span> <span class="hljs-type">long</span> f[<span class="hljs-number">4001</span>][<span class="hljs-number">2</span>]={};
+            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;i&lt;=siz[id];i++)
+                <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">0</span>;j&lt;=siz[to];j++)
+                    f[i+j][<span class="hljs-number">0</span>]+=dp[id][i][<span class="hljs-number">0</span>]*dp[to][j][<span class="hljs-number">0</span>],f[i+j][<span class="hljs-number">0</span>]%=mod,
+                    f[i+j][<span class="hljs-number">0</span>]+=dp[id][i][<span class="hljs-number">0</span>]*dp[to][j][<span class="hljs-number">1</span>],f[i+j][<span class="hljs-number">0</span>]%=mod,
+                    f[i+j][<span class="hljs-number">1</span>]+=dp[id][i][<span class="hljs-number">1</span>]*dp[to][j][<span class="hljs-number">0</span>],f[i+j][<span class="hljs-number">1</span>]%=mod,
+                    f[i+j][<span class="hljs-number">1</span>]+=dp[id][i][<span class="hljs-number">1</span>]*dp[to][j][<span class="hljs-number">1</span>],f[i+j][<span class="hljs-number">1</span>]%=mod,
+                    f[i+j+<span class="hljs-number">1</span>][<span class="hljs-number">1</span>]+=dp[id][i][<span class="hljs-number">0</span>]*dp[to][j][<span class="hljs-number">0</span>],f[i+j+<span class="hljs-number">1</span>][<span class="hljs-number">1</span>]%=mod;
+            siz[id]+=siz[to];
+            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;i&lt;=siz[id];i++)
+                dp[id][i][<span class="hljs-number">0</span>]=f[i][<span class="hljs-number">0</span>],dp[id][i][<span class="hljs-number">1</span>]=f[i][<span class="hljs-number">1</span>];
+        }
+}
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">initfac</span>(<span class="hljs-number">4000</span>);
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;n);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;(n&lt;&lt;<span class="hljs-number">1</span>);i++){
+        <span class="hljs-type">int</span> u,v;
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d&quot;</span>,&amp;u,&amp;v);
+        <span class="hljs-built_in">addEdge</span>(u,v);
+        <span class="hljs-built_in">addEdge</span>(v,u);
     }
-    answer*=<span class="hljs-built_in">power</span>(n*<span class="hljs-built_in">C</span>(m-k+n<span class="hljs-number">-1</span>,n<span class="hljs-number">-1</span>)%mod);
+
+    <span class="hljs-built_in">dfs</span>(<span class="hljs-number">1</span>,<span class="hljs-number">0</span>);
+    <span class="hljs-type">long</span> <span class="hljs-type">long</span> answer=<span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;i&lt;=n;i++)
+        answer+=(i&amp;<span class="hljs-number">1</span>?<span class="hljs-number">-1</span>:<span class="hljs-number">1</span>)*fac[(n-i)*<span class="hljs-number">2</span>]*invfac[n-i]%mod
+            *invpower2[n-i]%mod*(dp[<span class="hljs-number">1</span>][i][<span class="hljs-number">1</span>]+dp[<span class="hljs-number">1</span>][i][<span class="hljs-number">0</span>])%mod;
     <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lld\n&quot;</span>,(answer%mod+mod)%mod);
     <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
 }</code></pre>

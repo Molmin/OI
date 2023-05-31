@@ -93,7 +93,7 @@
             window.location.href=`/OI/?search=${tag}`;
         if(pageName=='problem_list'){
             window.history.pushState(null,null,`/OI/?search=${tag}`);
-            show(search(JSON.parse(new Base64().decode(tag))));
+            show(search(JSON.parse(decodeURIComponent(tag))));
         }
     }
 </script>
@@ -124,7 +124,7 @@
                     
                     
                         <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
-                        <a href="javascript:directTag('eyJmb2xkZXJzIjpbIuadgumhuS%2FnprvmlaPljJYiXX0%3D')" class="tag tag-alg">离散化</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuadgumhuS%2FojqvpmJ8iXX0%3D')" class="tag tag-alg">莫队</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuadgumhuS%2Fkuoznu7TojqvpmJ8iXX0%3D')" class="tag tag-alg">二维莫队</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuadpea6kC9CWk9KIl19')" class="tag tag-src">BZOJ</a>&nbsp;
+                        <a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%9D%82%E9%A1%B9%2F%E7%A6%BB%E6%95%A3%E5%8C%96%22%5D%7D')" class="tag tag-alg">离散化</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%9D%82%E9%A1%B9%2F%E8%8E%AB%E9%98%9F%22%5D%7D')" class="tag tag-alg">莫队</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%9D%82%E9%A1%B9%2F%E4%BA%8C%E7%BB%B4%E8%8E%AB%E9%98%9F%22%5D%7D')" class="tag tag-alg">二维莫队</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%9D%A5%E6%BA%90%2FBZOJ%22%5D%7D')" class="tag tag-src">BZOJ</a>&nbsp;
                     
                 </p>
                 <p class="messages-display">

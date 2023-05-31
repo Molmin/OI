@@ -93,7 +93,7 @@
             window.location.href=`/OI/?search=${tag}`;
         if(pageName=='problem_list'){
             window.history.pushState(null,null,`/OI/?search=${tag}`);
-            show(search(JSON.parse(new Base64().decode(tag))));
+            show(search(JSON.parse(decodeURIComponent(tag))));
         }
     }
 </script>
@@ -121,7 +121,7 @@
                     
                     
                         <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
-                        <a href="javascript:directTag('eyJmb2xkZXJzIjpbIuWKqOaAgeinhOWIkiJdfQ%3D%3D')" class="tag tag-alg">动态规划</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuWKqOaAgeinhOWIki%2ForrDlv4bljJbmkJzntKIiXX0%3D')" class="tag tag-alg">记忆化搜索</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuadpea6kC9VVkEiXX0%3D')" class="tag tag-src">UVA</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIue8uumimOinoyJdfQ%3D%3D')" class="tag tag-special">缺题解</a>&nbsp;
+                        <a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%22%5D%7D')" class="tag tag-alg">动态规划</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92%2F%E8%AE%B0%E5%BF%86%E5%8C%96%E6%90%9C%E7%B4%A2%22%5D%7D')" class="tag tag-alg">记忆化搜索</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%9D%A5%E6%BA%90%2FUVA%22%5D%7D')" class="tag tag-src">UVA</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E7%BC%BA%E9%A2%98%E8%A7%A3%22%5D%7D')" class="tag tag-special">缺题解</a>&nbsp;
                     
                 </p>
                 <p class="messages-display">

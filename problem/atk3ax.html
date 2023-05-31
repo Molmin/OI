@@ -93,7 +93,7 @@
             window.location.href=`/OI/?search=${tag}`;
         if(pageName=='problem_list'){
             window.history.pushState(null,null,`/OI/?search=${tag}`);
-            show(search(JSON.parse(new Base64().decode(tag))));
+            show(search(JSON.parse(decodeURIComponent(tag))));
         }
     }
 </script>
@@ -124,7 +124,7 @@
                     
                     
                         <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
-                        <a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaQnOe0oiJdfQ%3D%3D')" class="tag tag-alg">搜索</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaQnOe0oi%2Flj4zlkJHmkJzntKIiXX0%3D')" class="tag tag-alg">双向搜索</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuWfuuehgOeul%2BazlS%2FmmrTlipsiXX0%3D')" class="tag tag-alg">暴力</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuWfuuehgOeul%2BazlS%2FkvY3ov5DnrpciXX0%3D')" class="tag tag-alg">位运算</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuadpea6kC9Db2RlRm9yY2VzIl19')" class="tag tag-src">CodeForces</a>&nbsp;
+                        <a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%90%9C%E7%B4%A2%22%5D%7D')" class="tag tag-alg">搜索</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%90%9C%E7%B4%A2%2F%E5%8F%8C%E5%90%91%E6%90%9C%E7%B4%A2%22%5D%7D')" class="tag tag-alg">双向搜索</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95%2F%E6%9A%B4%E5%8A%9B%22%5D%7D')" class="tag tag-alg">暴力</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95%2F%E4%BD%8D%E8%BF%90%E7%AE%97%22%5D%7D')" class="tag tag-alg">位运算</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%9D%A5%E6%BA%90%2FCodeForces%22%5D%7D')" class="tag tag-src">CodeForces</a>&nbsp;
                     
                 </p>
                 <p class="messages-display">

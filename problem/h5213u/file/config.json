@@ -7,10 +7,9 @@
   },
   "judge": {
     "time": "1 s",
-    "memory": "128 MiB",
-    "type": "default"
+    "memory": "128 MiB"
   },
-  "tags": "来源/POI,时间/2011,缺题解",
+  "tags": "数据结构,数据结构/线段树,数据结构/线段树/权值线段树,数据结构/线段树/线段树合并,来源/POI,时间/2011,缺题解",
   "source": "POI 2011 ROT - Tree Rotations",
   "statement": {
     "简体中文": "statement_zh.md"

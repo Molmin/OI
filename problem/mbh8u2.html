@@ -93,7 +93,7 @@
             window.location.href=`/OI/?search=${tag}`;
         if(pageName=='problem_list'){
             window.history.pushState(null,null,`/OI/?search=${tag}`);
-            show(search(JSON.parse(new Base64().decode(tag))));
+            show(search(JSON.parse(decodeURIComponent(tag))));
         }
     }
 </script>
@@ -124,7 +124,7 @@
                     
                     
                         <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
-                        <a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaVsOWtpiJdfQ%3D%3D')" class="tag tag-alg">数学</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaVsOWtpi%2ForqHnrpflh6DkvZUiXX0%3D')" class="tag tag-alg">计算几何</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaVsOWtpi%2ForqHnrpflh6DkvZUv5Ye45YyFIl19')" class="tag tag-alg">凸包</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaooeadvyJdfQ%3D%3D')" class="tag tag-alg">模板</a>&nbsp;
+                        <a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%22%5D%7D')" class="tag tag-alg">数学</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%2F%E8%AE%A1%E7%AE%97%E5%87%A0%E4%BD%95%22%5D%7D')" class="tag tag-alg">计算几何</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%2F%E8%AE%A1%E7%AE%97%E5%87%A0%E4%BD%95%2F%E5%87%B8%E5%8C%85%22%5D%7D')" class="tag tag-alg">凸包</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%A8%A1%E6%9D%BF%22%5D%7D')" class="tag tag-alg">模板</a>&nbsp;
                     
                 </p>
                 <p class="messages-display">

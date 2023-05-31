@@ -93,7 +93,7 @@
             window.location.href=`/OI/?search=${tag}`;
         if(pageName=='problem_list'){
             window.history.pushState(null,null,`/OI/?search=${tag}`);
-            show(search(JSON.parse(new Base64().decode(tag))));
+            show(search(JSON.parse(decodeURIComponent(tag))));
         }
     }
 </script>
@@ -124,7 +124,7 @@
                     
                     
                         <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
-                        <a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaVsOWtpiJdfQ%3D%3D')" class="tag tag-alg">数学</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuaVsOWtpi%2FmpoLnjofmnJ%2FmnJsiXX0%3D')" class="tag tag-alg">概率期望</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuWfuuehgOeul%2BazlS%2FpgJLmjqgiXX0%3D')" class="tag tag-alg">递推</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIuadpea6kC9TUE9KIl19')" class="tag tag-src">SPOJ</a>&nbsp;<a href="javascript:directTag('eyJmb2xkZXJzIjpbIue8uumimOinoyJdfQ%3D%3D')" class="tag tag-special">缺题解</a>&nbsp;
+                        <a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%22%5D%7D')" class="tag tag-alg">数学</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%2F%E6%A6%82%E7%8E%87%E6%9C%9F%E6%9C%9B%22%5D%7D')" class="tag tag-alg">概率期望</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95%2F%E9%80%92%E6%8E%A8%22%5D%7D')" class="tag tag-alg">递推</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%9D%A5%E6%BA%90%2FSPOJ%22%5D%7D')" class="tag tag-src">SPOJ</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E7%BC%BA%E9%A2%98%E8%A7%A3%22%5D%7D')" class="tag tag-special">缺题解</a>&nbsp;
                     
                 </p>
                 <p class="messages-display">
