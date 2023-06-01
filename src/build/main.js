@@ -31,6 +31,7 @@ fs.mkdirSync("dist/problem");
 fs.mkdirSync("dist/pub");
 fs.copyFileSync("src/assets/public/main.js","dist/pub/main.js");
 fs.copyFileSync("src/assets/public/main.css","dist/pub/main.css");
+fs.copyFileSync("src/assets/public/busuanzi.pure.mini.js","dist/pub/busuanzi.pure.mini.js");
 fs.copyFileSync("src/assets/public/FiraCode-Regular.ttf","dist/pub/FiraCode-Regular.ttf");
 
 var problemList=fs.readFileSync('data/problem.json','utf8');

@@ -17,6 +17,7 @@ module.exports=(config,HTML)=>{
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script src="/${Config.on}/pub/busuanzi.pure.mini.js"></script>
         <script src="/${Config.on}/pub/main.js"></script>
         <link rel="stylesheet" href="/${Config.on}/pub/main.css">
         ${config.header}
@@ -68,7 +69,8 @@ module.exports=(config,HTML)=>{
                     <p></p>
                     <p style="text-align: center; color: #555; font-size: 12px;">
                         Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
-                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>
+                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>&nbsp;&nbsp;&nbsp;
+                        <i class="fa fa-solid fa-eye"></i> 访客数量：<span id="busuanzi_value_site_pv">0</span>
                     </p>
                 </footer>
             </div>
