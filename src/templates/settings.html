@@ -1,0 +1,65 @@
+<script src="/file/ace/ace.js"></script>
+<script src="/file/ace/ext-language_tools.js"></script>
+<style>
+    #system-port{
+        width: 150px;
+    }
+    #system-eachPage{
+        width: 100px;
+    }
+    #system-db-repo,#system-ghpage-repo{
+        width: 250px;
+    }
+    #system-db-branch,#system-ghpage-branch{
+        width: 100px;
+    }
+    .tip{
+        color: grey;
+        font-size: 85%;
+    }
+</style>
+<script>
+    $(document).ready(()=>{
+        editor = ace.edit("code");
+        theme = "clouds"
+        language = "markdown"
+        editor.setTheme("ace/theme/" + theme);
+        editor.session.setMode("ace/mode/" + language);
+        editor.setFontSize(18);
+        editor.setReadOnly(false); 
+        editor.setOption("wrap", "free")
+        ace.require("ace/ext/language_tools");
+        editor.setOptions({
+            enableBasicAutocompletion: true,
+            enableSnippets: true,
+            enableLiveAutocompletion: true
+        });
+    });
+</script>
+
+<div class="row">
+    <div class="column-three-fifth">
+        <div style="padding-right: 10px;">
+            <div class="topan-section-shadow">
+                <h2>系统设置</h2>
+                <p><b>端口号：</b><input type="number" placeholder="8299" id="system-port" value="<%= System.port %>"></input></p>
+                <p class="tip">请确保端口未被占用，该项的修改重启后生效。</p>
+                <p><b>题目列表</b></p>
+                <p>每页显示题目：<input type="number" placeholder="30" id="system-eachPage" value="<%= System.eachPage %>"></input></p>
+                <p class="tip">建议值：20 至 50，该项的修改立刻生效。</p>
+                <p><b>仓库地址与分支名</b></p>
+                <p class="tip">用于同步数据库与 <a href="https://pages.github.com/">GitHub Pages</a>，该项的修改立刻生效。</p>
+                <p>（数据库）仓库地址：<input type="text" placeholder="git@github.com:<username>/<repo>.git" id="system-db-repo" value="<%= System.repository.db.repo %>"></input>&nbsp;&nbsp;&nbsp;分支名：<input type="text" placeholder="data" id="system-db-branch" value="<%= System.repository.db.branch %>"></input></p>
+                <p>（GitHub Pages）仓库地址：<input type="text" placeholder="git@github.com:<username>/<repo>.git" id="system-ghpage-repo" value="<%= System.repository.ghpage.repo %>"></input>&nbsp;&nbsp;&nbsp;分支名：<input type="text" placeholder="data" id="system-ghpage-branch" value="<%= System.repository.ghpage.branch %>"></input></p>
+                <p><b>评论区</b></p>
+                <p>HTML 代码：</p>
+                <p class="tip">推荐使用 <a href="https://giscus.app/zh-CN">giscus</a>，<a href="https://github.com/gitalk/gitalk#install">Gitalk</a>，<a href="https://github.com/utterance/utterances">utteranc.es</a> 等，该项的修改立刻生效。</p>
+                <pre id="code" class="ace_editor" style="min-height: 400px;"><textarea class="ace_text-input" id="sys"><%= System.commentHtml %></textarea></pre>
+            </div>
+        </div>
+    </div>
+    <div class="column-two-fifth">
+        <div style="padding-left: 10px;">
+        </div>
+    </div>
+</div>

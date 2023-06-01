@@ -11,6 +11,7 @@ const cookieParser=require('cookie-parser');
 app.use(cookieParser());
 const YAML=require('yamljs');
 var Config=YAML.load('./data/config.yaml');
+var System=JSON.parse(fs.readFileSync('./data/system.json'));
 const Admin=require('./src/lib/admin.js');
 
 var password=parseInt(Math.random()*1000000);
@@ -39,6 +40,6 @@ app.use(`/${Config.on}/pub`,express.static(path.join(__dirname,'src/assets/publi
 app.use(`/${Config.on}`,require('./src/preview.js'));
 app.use(`/admin`,require('./src/admin.js'));
 
-app.listen(8299,()=>{
-    console.log('Port :8299 is opened');
+app.listen(System.port,()=>{
+    console.log(`Port :${System.port} is opened`);
 });

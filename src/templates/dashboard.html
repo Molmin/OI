@@ -44,8 +44,12 @@
     <div class="column-two-fifth">
         <div style="padding-right: 10px;">
             <div class="topan-section-shadow">
+                <a class="topan-menu-option" href="/admin/settings"><i class="fa fa-solid fa-gear"></i>&nbsp;&nbsp;系统设置</a>
+            </div>
+            <br>
+            <div class="topan-section-shadow">
                 <h2>更新 GitHub 页面</h2>
-                <p>更新 GitHub Page 上显示的内容。</p>
+                <p>更新 GitHub Page 上显示的内容。这将会更新到 <code class="hljs"><%= System.repository.ghpage.repo %></code> 的 <code class="hljs"><%= System.repository.ghpage.branch %></code> 分支。</p>
                 <input id="update-ghpage-message" type="text" placeholder="Commit Message" value="Update GitHub Page">
                 <p>
                     <button id="update-ghpage" class="topan-button-emphasize topan-button-default">立即更新</button>
@@ -57,7 +61,7 @@
             <br>
             <div class="topan-section-shadow">
                 <h2>更新数据库</h2>
-                <p>将当前数据上传到 GitHub。</p>
+                <p>将当前数据上传到 GitHub。这将会更新到 <code class="hljs"><%= System.repository.db.repo %></code> 的 <code class="hljs"><%= System.repository.db.branch %></code> 分支。</p>
                 <input id="update-database-message" type="text" placeholder="Commit Message" value="Update Database to GitHub">
                 <p>
                     <button id="update-database" class="topan-button-emphasize topan-button-default">立即更新</button>
@@ -78,7 +82,7 @@
         <div style="padding-left: 10px;">
             <div class="topan-section-shadow">
                 <h2>服务器日志</h2>
-                <pre><%= logs %></pre>
+                <pre><code class="hljs"><%= logs %></code></pre>
             </div>
         </div>
     </div>

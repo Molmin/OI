@@ -6,6 +6,7 @@ const ejs=require('ejs');
 const Template=require('./../template.js');
 const highlightjs=require('highlight.js');
 const Tag=require('./../lib/tag.js');
+var System=JSON.parse(fs.readFileSync('./data/system.json'));
 var MarkdownIt=require('./../lib/markdown.js');
 
 const YAML=require('yamljs');
@@ -39,7 +40,7 @@ problemList=JSON.parse(problemList);
 
 {
     ejs.renderFile("./src/templates/problem_list.html",
-        {isadmin: false, problemList, fs, Config, Tag, eachPage: Config.eachPage},(err,HTML)=>{
+        {isadmin: false, problemList, fs, Config, Tag, eachPage: System.eachPage},(err,HTML)=>{
         fs.writeFileSync("dist/index.html",
             Template({title: `题目列表`,
                     header: ``},HTML)

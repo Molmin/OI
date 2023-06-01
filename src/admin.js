@@ -5,6 +5,7 @@ const fs=require('fs');
 const Template=require('./template.js');
 const YAML=require('yamljs');
 var Config=YAML.load('./data/config.yaml');
+var System=JSON.parse(fs.readFileSync('./data/system.json'));
 const Admin=require('./lib/admin.js');
 const URL=require('url');
 const deletedir=require('./lib/deletedir.js');
@@ -16,7 +17,8 @@ router.all('*',(req,res,next)=>{
 });
 
 router.get('/',(req,res)=>{
-    ejs.renderFile("./src/templates/dashboard.html",{logs: logger.list()},(err,HTML)=>{
+    System=JSON.parse(fs.readFileSync('./data/system.json'));
+    ejs.renderFile("./src/templates/dashboard.html",{logs: logger.list(), System},(err,HTML)=>{
         res.send(Template({title: `仪表盘`,
                            header: ``,
                            preview: true,
@@ -26,12 +28,13 @@ router.get('/',(req,res)=>{
     });
 });
 router.post('/update/db',(req,res)=>{
+    System=JSON.parse(fs.readFileSync('./data/system.json'));
     require('child_process').spawnSync('rm',['-rf','node_modules/gh-pages/.cache']);
     require('child_process').spawnSync('rm',['-rf','node_modules/.cache/gh-pages']);
     require('gh-pages').publish('data',{
-        branch: 'data',
+        branch: System.repository.db.branch,
         message: req.body.message,
-        repo: 'git@github.com:Molmin/OI-data.git'
+        repo: System.repository.db.repo
     },err=>{
         if(err){
             res.status(200).json({error: err.message});
@@ -44,14 +47,15 @@ router.post('/update/db',(req,res)=>{
     });
 });
 router.post('/update/ghpage',(req,res)=>{
+    System=JSON.parse(fs.readFileSync('./data/system.json'));
     require('./build/main.js')();
     setTimeout(()=>{
         require('child_process').spawnSync('rm',['-rf','node_modules/gh-pages/.cache']);
         require('child_process').spawnSync('rm',['-rf','node_modules/.cache/gh-pages']);
         require('gh-pages').publish('dist',{
-            branch: 'gh-pages',
+            branch: System.repository.ghpage.branch,
             message: req.body.message,
-            repo: 'git@github.com:Molmin/OI.git'
+            repo: System.repository.ghpage.repo
         },err=>{
             if(err){
                 res.status(200).json({error: err.message});
@@ -63,6 +67,18 @@ router.post('/update/ghpage',(req,res)=>{
             }
         });
     },1000);
+});
+
+router.get('/settings',(req,res)=>{
+    System=JSON.parse(fs.readFileSync('./data/system.json'));
+    ejs.renderFile("./src/templates/settings.html",{System},(err,HTML)=>{
+        res.send(Template({title: `系统设置`,
+                           header: ``,
+                           preview: true,
+                           onadmin: true,
+                           isadmin: req.logined
+                          },HTML));
+    });
 });
 
 router.get('/login',(req,res)=>{
