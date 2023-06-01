@@ -1,0 +1,315 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title id="title">题解与代码 - Papričice - OI Problems</title>
+        <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
+        <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
+        <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
+        <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script src="/OI/pub/busuanzi.pure.mini.js"></script>
+        <script src="/OI/pub/main.js"></script>
+        <link rel="stylesheet" href="/OI/pub/main.css">
+        
+    </head>
+    <body>
+        <div class="topan-header">
+            <div class="topan-header-home">
+                <a href="/OI">
+                    <button class="topan-button-ordinary topan-button-commonly topan-button-header-round-left">
+                        <i class="fa fa-home"></i>
+                    </button>
+                </a>
+            </div>
+            <div class="topan-header-left">
+                <span class="topan-header-text">OI Problems&nbsp;</span>
+                <a href="/OI/about">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
+                        <i class="fa fa-solid fa-circle-info"></i>
+                        <span>&nbsp;关于</span>
+                    </span>
+                </a>
+                
+                
+            </div>
+            <div class="topan-header-right">
+            </div>
+        </div>
+        <div class="topan-outer">
+            <div class="topan-page">
+                <div class="topan-mainpage-auto">
+                    <br>
+                    <style>
+    .options{
+        font-size: 16px;
+        font-weight: normal;
+    }
+</style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 分类
+
+首先对情况进行分类：
+
+**情况一：** 一条边在根节点到另一条边的路径上；
+
+**情况二：** 任意一条边不在根节点到另一条边的路径上。
+
+只需要按此分类计算答案即可。
+
+## 代码实现
+
+考虑用两个 `multiset` 分别维护当前点**到根节点的路径上的点**的子树大小以及**不在**当前点到根节点的路径上的遍历过的点的子树大小，对于每个点 $u$，考虑选择其与其父亲相连的这条边作为其中一条断掉的边。
+
+显然我们希望剩下两个连通块大小尽量接近，且它们的大小总和为 $n-s_u$（其中 $s_u$ 为以 $u$ 为根的子树大小），那么只需找到一个大小最接近 $\dfrac 12(n-s_u)$ 的部分即可。
+
+特别的，对于情况一，因为要选择的边下的子树大小会包含点 $u$ 的子树，所以要找的大小应为最接近 $\dfrac 12(n-s_u)+s_u$ 的那个。
+
+而查找可以使用 `multiset` 自带的 `lower_bound` 实现，只需要检验其前面的一项和它本身一项即可。
+
+时间复杂度 $\Theta(n\log n)$。
+
+```cpp
+// 2023.06.01
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+int n,answer=0x7ffffff;
+struct Edge{
+    int to,nxt;
+}edge[400001];
+int head[200001],cntEdge;
+void addEdge(int u,int v){
+    edge[++cntEdge]={v,head[u]},head[u]=cntEdge;
+}
+
+int siz[200001];
+void calcSize(int id,int father){
+    siz[id]=1;
+    for(int i=head[id];i;i=edge[i].nxt)
+        if(edge[i].to!=father){
+            calcSize(edge[i].to,id);
+            siz[id]+=siz[edge[i].to];
+        }
+}
+
+multiset&lt;int&gt; hissiz,othsiz;
+// hissiz: 路径上的所有点的子树大小集合
+// othsiz: 其它支路上的所有点的子树大小集合
+
+void work(int id,int father){
+    if(!hissiz.empty()){
+        // 取路径上的另一条边
+        auto tmp=hissiz.lower_bound(siz[id]+(n-siz[id])/2);
+        if(tmp!=hissiz.end()){
+            // 取比目标值大的第一个
+            int x=siz[id],y=*tmp-siz[id],z=n-*tmp;
+            answer=min(answer,max(x,max(y,z))-min(x,min(y,z)));
+        }
+        if(tmp!=hissiz.begin()){
+            // 取比目标值小的第一个
+            tmp--;
+            int x=siz[id],y=*tmp-siz[id],z=n-*tmp;
+            answer=min(answer,max(x,max(y,z))-min(x,min(y,z)));
+        }
+    }
+    if(!othsiz.empty()){
+        // 不取路径上的边
+        auto tmp=othsiz.lower_bound((n-siz[id])/2);
+        if(tmp!=othsiz.end()){
+            // 取比目标值大的第一个
+            int x=siz[id],y=*tmp,z=n-x-y;
+            answer=min(answer,max(x,max(y,z))-min(x,min(y,z)));
+        }
+        if(tmp!=othsiz.begin()){
+            // 取比目标值小的第一个
+            tmp--;
+            int x=siz[id],y=*tmp,z=n-x-y;
+            answer=min(answer,max(x,max(y,z))-min(x,min(y,z)));
+        }
+    }
+    if(id&gt;1)hissiz.insert(siz[id]);
+    for(int i=head[id];i;i=edge[i].nxt)
+        if(edge[i].to!=father)
+            work(edge[i].to,id);
+    if(id&gt;1)
+        hissiz.erase(hissiz.find(siz[id])),
+        othsiz.insert(siz[id]);
+}
+
+int main(){
+    scanf(&#34;%d&#34;,&amp;n);
+    for(int i=1;i&lt;n;i++){
+        int u,v;
+        scanf(&#34;%d%d&#34;,&amp;u,&amp;v);
+        addEdge(u,v);
+        addEdge(v,u);
+    }
+    calcSize(1,0);
+    work(1,0);
+    printf(&#34;%d\n&#34;,answer);
+    return 0;
+}
+```</textarea>
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2>Papričice</h2>
+                <a class="topan-menu-option" href="/OI/problem/9l4gz2"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/9l4gz2/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/9l4gz2/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            
+                <div class="topan-section-shadow">
+                    <h2>
+                        分类
+                        
+                    </h2>
+                    
+                    <p>首先对情况进行分类：</p>
+<p><strong>情况一：</strong> 一条边在根节点到另一条边的路径上；</p>
+<p><strong>情况二：</strong> 任意一条边不在根节点到另一条边的路径上。</p>
+<p>只需要按此分类计算答案即可。</p>
+
+                    
+                </div>
+            
+                <br>
+                
+                <div class="topan-section-shadow">
+                    <h2>
+                        代码实现
+                        
+                    </h2>
+                    
+                    <p>考虑用两个 <code class="hljs">multiset</code> 分别维护当前点<strong>到根节点的路径上的点</strong>的子树大小以及<strong>不在</strong>当前点到根节点的路径上的遍历过的点的子树大小，对于每个点 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>u</mi></mrow><annotation encoding="application/x-tex">u</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">u</span></span></span></span>，考虑选择其与其父亲相连的这条边作为其中一条断掉的边。</p>
+<p>显然我们希望剩下两个连通块大小尽量接近，且它们的大小总和为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mo>−</mo><msub><mi>s</mi><mi>u</mi></msub></mrow><annotation encoding="application/x-tex">n-s_u</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.58333em;"></span><span class="strut bottom" style="height:0.73333em;vertical-align:-0.15em;"></span><span class="base textstyle uncramped"><span class="mord mathit">n</span><span class="mbin">−</span><span class="mord"><span class="mord mathit">s</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">u</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span>（其中 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>s</mi><mi>u</mi></msub></mrow><annotation encoding="application/x-tex">s_u</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">s</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">u</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 为以 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>u</mi></mrow><annotation encoding="application/x-tex">u</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">u</span></span></span></span> 为根的子树大小），那么只需找到一个大小最接近 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>(</mo><mi>n</mi><mo>−</mo><msub><mi>s</mi><mi>u</mi></msub><mo>)</mo></mrow><annotation encoding="application/x-tex">\dfrac 12(n-s_u)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:1.32144em;"></span><span class="strut bottom" style="height:2.00744em;vertical-align:-0.686em;"></span><span class="base textstyle uncramped"><span class="mord reset-textstyle displaystyle textstyle uncramped"><span class="sizing reset-size5 size5 reset-textstyle textstyle uncramped nulldelimiter"></span><span class="mfrac"><span class="vlist"><span style="top:0.686em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle cramped"><span class="mord mathrm">2</span></span></span><span style="top:-0.22999999999999998em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle uncramped frac-line"></span></span><span style="top:-0.677em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle uncramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="sizing reset-size5 size5 reset-textstyle textstyle uncramped nulldelimiter"></span></span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mbin">−</span><span class="mord"><span class="mord mathit">s</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">u</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mclose">)</span></span></span></span> 的部分即可。</p>
+<p>特别的，对于情况一，因为要选择的边下的子树大小会包含点 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>u</mi></mrow><annotation encoding="application/x-tex">u</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">u</span></span></span></span> 的子树，所以要找的大小应为最接近 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mfrac><mn>1</mn><mn>2</mn></mfrac><mo>(</mo><mi>n</mi><mo>−</mo><msub><mi>s</mi><mi>u</mi></msub><mo>)</mo><mo>+</mo><msub><mi>s</mi><mi>u</mi></msub></mrow><annotation encoding="application/x-tex">\dfrac 12(n-s_u)+s_u</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:1.32144em;"></span><span class="strut bottom" style="height:2.00744em;vertical-align:-0.686em;"></span><span class="base textstyle uncramped"><span class="mord reset-textstyle displaystyle textstyle uncramped"><span class="sizing reset-size5 size5 reset-textstyle textstyle uncramped nulldelimiter"></span><span class="mfrac"><span class="vlist"><span style="top:0.686em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle cramped"><span class="mord mathrm">2</span></span></span><span style="top:-0.22999999999999998em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle uncramped frac-line"></span></span><span style="top:-0.677em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle uncramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="sizing reset-size5 size5 reset-textstyle textstyle uncramped nulldelimiter"></span></span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mbin">−</span><span class="mord"><span class="mord mathit">s</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">u</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mclose">)</span><span class="mbin">+</span><span class="mord"><span class="mord mathit">s</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">u</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 的那个。</p>
+<p>而查找可以使用 <code class="hljs">multiset</code> 自带的 <code class="hljs"><span class="hljs-attribute">lower_bound</span></code> 实现，只需要检验其前面的一项和它本身一项即可。</p>
+<p>时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>n</mi><mi>log</mi><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n\log n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mord mathit">n</span><span class="mclose">)</span></span></span></span>。</p>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.06.01</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+
+<span class="hljs-type">int</span> n,answer=<span class="hljs-number">0x7ffffff</span>;
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">Edge</span>{
+    <span class="hljs-type">int</span> to,nxt;
+}edge[<span class="hljs-number">400001</span>];
+<span class="hljs-type">int</span> head[<span class="hljs-number">200001</span>],cntEdge;
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">addEdge</span><span class="hljs-params">(<span class="hljs-type">int</span> u,<span class="hljs-type">int</span> v)</span></span>{
+    edge[++cntEdge]={v,head[u]},head[u]=cntEdge;
+}
+
+<span class="hljs-type">int</span> siz[<span class="hljs-number">200001</span>];
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">calcSize</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> father)</span></span>{
+    siz[id]=<span class="hljs-number">1</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=head[id];i;i=edge[i].nxt)
+        <span class="hljs-keyword">if</span>(edge[i].to!=father){
+            <span class="hljs-built_in">calcSize</span>(edge[i].to,id);
+            siz[id]+=siz[edge[i].to];
+        }
+}
+
+multiset&lt;<span class="hljs-type">int</span>&gt; hissiz,othsiz;
+<span class="hljs-comment">// hissiz: 路径上的所有点的子树大小集合</span>
+<span class="hljs-comment">// othsiz: 其它支路上的所有点的子树大小集合</span>
+
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">work</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> father)</span></span>{
+    <span class="hljs-keyword">if</span>(!hissiz.<span class="hljs-built_in">empty</span>()){
+        <span class="hljs-comment">// 取路径上的另一条边</span>
+        <span class="hljs-keyword">auto</span> tmp=hissiz.<span class="hljs-built_in">lower_bound</span>(siz[id]+(n-siz[id])/<span class="hljs-number">2</span>);
+        <span class="hljs-keyword">if</span>(tmp!=hissiz.<span class="hljs-built_in">end</span>()){
+            <span class="hljs-comment">// 取比目标值大的第一个</span>
+            <span class="hljs-type">int</span> x=siz[id],y=*tmp-siz[id],z=n-*tmp;
+            answer=<span class="hljs-built_in">min</span>(answer,<span class="hljs-built_in">max</span>(x,<span class="hljs-built_in">max</span>(y,z))-<span class="hljs-built_in">min</span>(x,<span class="hljs-built_in">min</span>(y,z)));
+        }
+        <span class="hljs-keyword">if</span>(tmp!=hissiz.<span class="hljs-built_in">begin</span>()){
+            <span class="hljs-comment">// 取比目标值小的第一个</span>
+            tmp--;
+            <span class="hljs-type">int</span> x=siz[id],y=*tmp-siz[id],z=n-*tmp;
+            answer=<span class="hljs-built_in">min</span>(answer,<span class="hljs-built_in">max</span>(x,<span class="hljs-built_in">max</span>(y,z))-<span class="hljs-built_in">min</span>(x,<span class="hljs-built_in">min</span>(y,z)));
+        }
+    }
+    <span class="hljs-keyword">if</span>(!othsiz.<span class="hljs-built_in">empty</span>()){
+        <span class="hljs-comment">// 不取路径上的边</span>
+        <span class="hljs-keyword">auto</span> tmp=othsiz.<span class="hljs-built_in">lower_bound</span>((n-siz[id])/<span class="hljs-number">2</span>);
+        <span class="hljs-keyword">if</span>(tmp!=othsiz.<span class="hljs-built_in">end</span>()){
+            <span class="hljs-comment">// 取比目标值大的第一个</span>
+            <span class="hljs-type">int</span> x=siz[id],y=*tmp,z=n-x-y;
+            answer=<span class="hljs-built_in">min</span>(answer,<span class="hljs-built_in">max</span>(x,<span class="hljs-built_in">max</span>(y,z))-<span class="hljs-built_in">min</span>(x,<span class="hljs-built_in">min</span>(y,z)));
+        }
+        <span class="hljs-keyword">if</span>(tmp!=othsiz.<span class="hljs-built_in">begin</span>()){
+            <span class="hljs-comment">// 取比目标值小的第一个</span>
+            tmp--;
+            <span class="hljs-type">int</span> x=siz[id],y=*tmp,z=n-x-y;
+            answer=<span class="hljs-built_in">min</span>(answer,<span class="hljs-built_in">max</span>(x,<span class="hljs-built_in">max</span>(y,z))-<span class="hljs-built_in">min</span>(x,<span class="hljs-built_in">min</span>(y,z)));
+        }
+    }
+    <span class="hljs-keyword">if</span>(id&gt;<span class="hljs-number">1</span>)hissiz.<span class="hljs-built_in">insert</span>(siz[id]);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=head[id];i;i=edge[i].nxt)
+        <span class="hljs-keyword">if</span>(edge[i].to!=father)
+            <span class="hljs-built_in">work</span>(edge[i].to,id);
+    <span class="hljs-keyword">if</span>(id&gt;<span class="hljs-number">1</span>)
+        hissiz.<span class="hljs-built_in">erase</span>(hissiz.<span class="hljs-built_in">find</span>(siz[id])),
+        othsiz.<span class="hljs-built_in">insert</span>(siz[id]);
+}
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;n);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;n;i++){
+        <span class="hljs-type">int</span> u,v;
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d&quot;</span>,&amp;u,&amp;v);
+        <span class="hljs-built_in">addEdge</span>(u,v);
+        <span class="hljs-built_in">addEdge</span>(v,u);
+    }
+    <span class="hljs-built_in">calcSize</span>(<span class="hljs-number">1</span>,<span class="hljs-number">0</span>);
+    <span class="hljs-built_in">work</span>(<span class="hljs-number">1</span>,<span class="hljs-number">0</span>);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d\n&quot;</span>,answer);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
+        </div>
+    </div>
+</div>
+                    <br>
+                </div>
+                <footer class="topan-footer">
+                    <p></p>
+                    <p style="text-align: center; color: #555; font-size: 12px;">
+                        Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
+                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>&nbsp;&nbsp;&nbsp;
+                        <i class="fa fa-solid fa-eye"></i> 访客数量：<span id="busuanzi_value_site_pv">0</span>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>
+    

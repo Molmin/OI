@@ -89,13 +89,15 @@
     }
 </style>
 <script>
-    var directTag=(tag)=>{
+    var directSearch=(rule)=>{
         if(pageName=='problem_detail')
-            window.location.href=`/OI/?search=${tag}`;
-        if(pageName=='problem_list'){
-            window.history.pushState(null,null,`/OI/?search=${tag}`);
-            show(search(JSON.parse(decodeURIComponent(tag))));
-        }
+            window.location.href=`/OI/?search=${rule}`;
+        if(pageName=='problem_list')
+            show(search(JSON.parse(decodeURIComponent(rule))));
+    }
+    var movetoPage=(pageId)=>{
+        nowsearch.page=pageId;
+        show(search(nowsearch));
     }
 </script>
 
@@ -125,7 +127,7 @@
                     
                     
                         <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
-                        <a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%22%5D%7D')" class="tag tag-alg">数学</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%2F%E6%96%AF%E7%89%B9%E6%9E%97%E6%95%B0%22%5D%7D')" class="tag tag-alg">斯特林数</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%2F%E6%96%AF%E7%89%B9%E6%9E%97%E6%95%B0%2F%E7%AC%AC%E4%BA%8C%E7%B1%BB%E6%96%AF%E7%89%B9%E6%9E%97%E6%95%B0%22%5D%7D')" class="tag tag-alg">第二类斯特林数</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%9D%A5%E6%BA%90%2FCodeForces%22%5D%7D')" class="tag tag-src">CodeForces</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E7%BC%BA%E9%A2%98%E8%A7%A3%22%5D%7D')" class="tag tag-special">缺题解</a>&nbsp;
+                        <a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%22%5D%7D')" class="tag tag-alg">数学</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%2F%E6%96%AF%E7%89%B9%E6%9E%97%E6%95%B0%22%5D%7D')" class="tag tag-alg">斯特林数</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%2F%E6%96%AF%E7%89%B9%E6%9E%97%E6%95%B0%2F%E7%AC%AC%E4%BA%8C%E7%B1%BB%E6%96%AF%E7%89%B9%E6%9E%97%E6%95%B0%22%5D%7D')" class="tag tag-alg">第二类斯特林数</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%9D%A5%E6%BA%90%2FCodeForces%22%5D%7D')" class="tag tag-src">CodeForces</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E7%BC%BA%E9%A2%98%E8%A7%A3%22%5D%7D')" class="tag tag-special">缺题解</a>&nbsp;
                     
                 </p>
                 <p class="messages-display">

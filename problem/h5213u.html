@@ -89,13 +89,15 @@
     }
 </style>
 <script>
-    var directTag=(tag)=>{
+    var directSearch=(rule)=>{
         if(pageName=='problem_detail')
-            window.location.href=`/OI/?search=${tag}`;
-        if(pageName=='problem_list'){
-            window.history.pushState(null,null,`/OI/?search=${tag}`);
-            show(search(JSON.parse(decodeURIComponent(tag))));
-        }
+            window.location.href=`/OI/?search=${rule}`;
+        if(pageName=='problem_list')
+            show(search(JSON.parse(decodeURIComponent(rule))));
+    }
+    var movetoPage=(pageId)=>{
+        nowsearch.page=pageId;
+        show(search(nowsearch));
     }
 </script>
 
@@ -125,7 +127,7 @@
                     
                     
                         <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
-                        <a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%22%5D%7D')" class="tag tag-alg">数据结构</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%2F%E7%BA%BF%E6%AE%B5%E6%A0%91%22%5D%7D')" class="tag tag-alg">线段树</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%2F%E7%BA%BF%E6%AE%B5%E6%A0%91%2F%E6%9D%83%E5%80%BC%E7%BA%BF%E6%AE%B5%E6%A0%91%22%5D%7D')" class="tag tag-alg">权值线段树</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%2F%E7%BA%BF%E6%AE%B5%E6%A0%91%2F%E7%BA%BF%E6%AE%B5%E6%A0%91%E5%90%88%E5%B9%B6%22%5D%7D')" class="tag tag-alg">线段树合并</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%9D%A5%E6%BA%90%2FPOI%22%5D%7D')" class="tag tag-src">POI</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%97%B6%E9%97%B4%2F2011%22%5D%7D')" class="tag tag-time">2011</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E7%BC%BA%E9%A2%98%E8%A7%A3%22%5D%7D')" class="tag tag-special">缺题解</a>&nbsp;
+                        <a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%22%5D%7D')" class="tag tag-alg">数据结构</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%2F%E7%BA%BF%E6%AE%B5%E6%A0%91%22%5D%7D')" class="tag tag-alg">线段树</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%2F%E7%BA%BF%E6%AE%B5%E6%A0%91%2F%E6%9D%83%E5%80%BC%E7%BA%BF%E6%AE%B5%E6%A0%91%22%5D%7D')" class="tag tag-alg">权值线段树</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%2F%E7%BA%BF%E6%AE%B5%E6%A0%91%2F%E7%BA%BF%E6%AE%B5%E6%A0%91%E5%90%88%E5%B9%B6%22%5D%7D')" class="tag tag-alg">线段树合并</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%9D%A5%E6%BA%90%2FPOI%22%5D%7D')" class="tag tag-src">POI</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%97%B6%E9%97%B4%2F2011%22%5D%7D')" class="tag tag-time">2011</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E7%BC%BA%E9%A2%98%E8%A7%A3%22%5D%7D')" class="tag tag-special">缺题解</a>&nbsp;
                     
                 </p>
                 <p class="messages-display">

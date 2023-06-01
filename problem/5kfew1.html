@@ -89,13 +89,15 @@
     }
 </style>
 <script>
-    var directTag=(tag)=>{
+    var directSearch=(rule)=>{
         if(pageName=='problem_detail')
-            window.location.href=`/OI/?search=${tag}`;
-        if(pageName=='problem_list'){
-            window.history.pushState(null,null,`/OI/?search=${tag}`);
-            show(search(JSON.parse(decodeURIComponent(tag))));
-        }
+            window.location.href=`/OI/?search=${rule}`;
+        if(pageName=='problem_list')
+            show(search(JSON.parse(decodeURIComponent(rule))));
+    }
+    var movetoPage=(pageId)=>{
+        nowsearch.page=pageId;
+        show(search(nowsearch));
     }
 </script>
 
@@ -125,7 +127,7 @@
                     
                     
                         <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
-                        <a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E5%9B%BE%E8%AE%BA%22%5D%7D')" class="tag tag-alg">图论</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E5%9B%BE%E8%AE%BA%2F%E6%AC%A7%E6%8B%89%E8%B7%AF%22%5D%7D')" class="tag tag-alg">欧拉路</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%9D%A5%E6%BA%90%2F%E7%9C%81%E9%80%89%22%5D%7D')" class="tag tag-src">省选</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%97%B6%E9%97%B4%2F2020%22%5D%7D')" class="tag tag-time">2020</a>&nbsp;
+                        <a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E5%9B%BE%E8%AE%BA%22%5D%7D')" class="tag tag-alg">图论</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E5%9B%BE%E8%AE%BA%2F%E6%AC%A7%E6%8B%89%E8%B7%AF%22%5D%7D')" class="tag tag-alg">欧拉路</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%9D%A5%E6%BA%90%2F%E7%9C%81%E9%80%89%22%5D%7D')" class="tag tag-src">省选</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%97%B6%E9%97%B4%2F2020%22%5D%7D')" class="tag tag-time">2020</a>&nbsp;
                     
                 </p>
                 <p class="messages-display">

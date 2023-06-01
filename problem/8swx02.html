@@ -89,13 +89,15 @@
     }
 </style>
 <script>
-    var directTag=(tag)=>{
+    var directSearch=(rule)=>{
         if(pageName=='problem_detail')
-            window.location.href=`/OI/?search=${tag}`;
-        if(pageName=='problem_list'){
-            window.history.pushState(null,null,`/OI/?search=${tag}`);
-            show(search(JSON.parse(decodeURIComponent(tag))));
-        }
+            window.location.href=`/OI/?search=${rule}`;
+        if(pageName=='problem_list')
+            show(search(JSON.parse(decodeURIComponent(rule))));
+    }
+    var movetoPage=(pageId)=>{
+        nowsearch.page=pageId;
+        show(search(nowsearch));
     }
 </script>
 
@@ -125,7 +127,7 @@
                     
                     
                         <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
-                        <a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%22%5D%7D')" class="tag tag-alg">数学</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%2F%E6%A6%82%E7%8E%87%E6%9C%9F%E6%9C%9B%22%5D%7D')" class="tag tag-alg">概率期望</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%2F%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%22%5D%7D')" class="tag tag-alg">组合数学</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%2F%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%2F%E7%BB%84%E5%90%88%E8%AE%A1%E6%95%B0%22%5D%7D')" class="tag tag-alg">组合计数</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%9D%A5%E6%BA%90%2FAtCoder%22%5D%7D')" class="tag tag-src">AtCoder</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%9D%A5%E6%BA%90%2FAtCoder%2FAGC%22%5D%7D')" class="tag tag-src">AGC</a>&nbsp;
+                        <a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%22%5D%7D')" class="tag tag-alg">数学</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%2F%E6%A6%82%E7%8E%87%E6%9C%9F%E6%9C%9B%22%5D%7D')" class="tag tag-alg">概率期望</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%2F%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%22%5D%7D')" class="tag tag-alg">组合数学</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%2F%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%2F%E7%BB%84%E5%90%88%E8%AE%A1%E6%95%B0%22%5D%7D')" class="tag tag-alg">组合计数</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%9D%A5%E6%BA%90%2FAtCoder%22%5D%7D')" class="tag tag-src">AtCoder</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%9D%A5%E6%BA%90%2FAtCoder%2FAGC%22%5D%7D')" class="tag tag-src">AGC</a>&nbsp;
                     
                 </p>
                 <p class="messages-display">

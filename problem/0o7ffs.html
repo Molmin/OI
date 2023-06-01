@@ -89,13 +89,15 @@
     }
 </style>
 <script>
-    var directTag=(tag)=>{
+    var directSearch=(rule)=>{
         if(pageName=='problem_detail')
-            window.location.href=`/OI/?search=${tag}`;
-        if(pageName=='problem_list'){
-            window.history.pushState(null,null,`/OI/?search=${tag}`);
-            show(search(JSON.parse(decodeURIComponent(tag))));
-        }
+            window.location.href=`/OI/?search=${rule}`;
+        if(pageName=='problem_list')
+            show(search(JSON.parse(decodeURIComponent(rule))));
+    }
+    var movetoPage=(pageId)=>{
+        nowsearch.page=pageId;
+        show(search(nowsearch));
     }
 </script>
 
@@ -125,15 +127,15 @@
                     
                     
                         <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
-                        <a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%22%5D%7D')" class="tag tag-alg">数学</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%2F%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%22%5D%7D')" class="tag tag-alg">组合数学</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%2F%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%2F%E5%AE%B9%E6%96%A5%E5%8E%9F%E7%90%86%22%5D%7D')" class="tag tag-alg">容斥原理</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%2F%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%2F%E7%BB%84%E5%90%88%E8%AE%A1%E6%95%B0%22%5D%7D')" class="tag tag-alg">组合计数</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%9D%A5%E6%BA%90%2FICPC%22%5D%7D')" class="tag tag-src">ICPC</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E5%9C%B0%E5%8C%BA%2F%E9%99%95%E8%A5%BF%22%5D%7D')" class="tag tag-place">陕西</a>&nbsp;<a href="javascript:directTag('%7B%22folders%22%3A%5B%22%E6%97%B6%E9%97%B4%2F2014%22%5D%7D')" class="tag tag-time">2014</a>&nbsp;
+                        <a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%22%5D%7D')" class="tag tag-alg">数学</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%2F%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%22%5D%7D')" class="tag tag-alg">组合数学</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%2F%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%2F%E5%AE%B9%E6%96%A5%E5%8E%9F%E7%90%86%22%5D%7D')" class="tag tag-alg">容斥原理</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%95%B0%E5%AD%A6%2F%E7%BB%84%E5%90%88%E6%95%B0%E5%AD%A6%2F%E7%BB%84%E5%90%88%E8%AE%A1%E6%95%B0%22%5D%7D')" class="tag tag-alg">组合计数</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%9D%A5%E6%BA%90%2FICPC%22%5D%7D')" class="tag tag-src">ICPC</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E5%9C%B0%E5%8C%BA%2F%E9%99%95%E8%A5%BF%22%5D%7D')" class="tag tag-place">陕西</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%97%B6%E9%97%B4%2F2014%22%5D%7D')" class="tag tag-time">2014</a>&nbsp;
                     
                 </p>
                 <p class="messages-display">
-                    <strong>算法难度等级：</strong>0
+                    <strong>算法难度等级：</strong>3
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <strong>思维难度等级：</strong>0
+                    <strong>思维难度等级：</strong>4
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <strong>实现难度等级：</strong>0
+                    <strong>实现难度等级：</strong>4
                 </p>
             </div>
             <br>
