@@ -39,7 +39,7 @@ problemList=JSON.parse(problemList);
 
 {
     ejs.renderFile("./src/templates/problem_list.html",
-        {isadmin: false, problemList, fs, Config, Tag},(err,HTML)=>{
+        {isadmin: false, problemList, fs, Config, Tag, eachPage: Config.eachPage},(err,HTML)=>{
         fs.writeFileSync("dist/index.html",
             Template({title: `题目列表`,
                     header: ``},HTML)

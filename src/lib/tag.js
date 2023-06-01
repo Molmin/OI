@@ -7,5 +7,5 @@ module.exports=(tag)=>{
     if(['缺题解','缺代码','缺中文题面'].includes(tag.split('/')[0]))tagtype='special';
     var search={folders: [tag]};
     var searchcode=encodeURIComponent(JSON.stringify(search));
-    return `<a href="javascript:directTag('${searchcode}')" class="tag tag-${tagtype}">${tagname}</a>`;
+    return `<a href="javascript:directSearch('${searchcode}')" class="tag tag-${tagtype}">${tagname}</a>`;
 }

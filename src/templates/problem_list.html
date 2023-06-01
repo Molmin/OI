@@ -26,6 +26,59 @@
     td:nth-child(3),#tags{
         text-align: right;
     }
+
+    .page-select-up,.page-select-down{
+        box-sizing: inherit;
+        display: block;
+    }
+    ul{
+        font-size: 14px;
+        text-align: center;
+        list-style: none;
+        margin: 0;
+    }
+    ul>li{
+        display: inline-block;
+        padding: 6px 10px;
+        transition-duration: 0.15s;
+        cursor: pointer;
+        color: grey;
+    }
+    .page-select-up>ul>li{
+        border-bottom: solid 2px transparent;
+    }
+    .page-select-down>ul>li{
+        border-top: solid 2px transparent;
+    }
+    ul>span{
+        padding: 6px;
+        color: grey;
+    }
+    ul>li:hover{
+        background-color: rgba(0,0,0,0.05);
+        color: var(--topan-colors-main);
+    }
+    .page-select-up>ul>li:hover{
+        border-bottom: solid 2px var(--topan-colors-main);
+    }
+    .page-select-down>ul>li:hover{
+        border-top: solid 2px var(--topan-colors-main);
+    }
+    ul>li.topan-tab-showed{
+        color: var(--topan-colors-stress);
+    }
+    .page-select-up>ul>li.topan-tab-showed{
+        border-bottom: solid 2px var(--topan-colors-stress);
+    }
+    .page-select-down>ul>li.topan-tab-showed{
+        border-top: solid 2px var(--topan-colors-stress);
+    }
+    .page-select-up>ul>li.topan-tab-showed:hover{
+        border-bottom: solid 2px var(--topan-colors-stress);
+    }
+    .page-select-down>ul>li.topan-tab-showed:hover{
+        border-top: solid 2px var(--topan-colors-stress);
+    }
 </style>
 <%- include('./tag.html') %>
 
@@ -34,6 +87,22 @@
         <div style="padding-right: 12px;">
             <div class="topan-section-shadow">
                 <p>共 <b id="count"><%= problemList.length %></b> 条结果</p>
+                <div class="page-select-up"><ul>
+                    <li class="topan-tab-showed">1</li><% 
+                    var minPageId=2, maxPageId=Math.min(11,Math.ceil(problemList.length/eachPage));
+                    for(var pageId=minPageId;pageId<=maxPageId;pageId++){
+                        %><li onclick="movetoPage(<%= pageId %>});"><%= pageId %></li><%
+                    }
+                    if(Math.ceil(problemList.length/eachPage)>11){
+                        %><span>...</span><%
+                    }
+                    if(Math.ceil(problemList.length/eachPage)>1){
+                        %><li onclick="movetoPage(2);">下一页 ›</li><%
+                    }
+                    if(Math.ceil(problemList.length/eachPage)>2){
+                        %><li onclick="movetoPage(<%= Math.ceil(problemList.length/eachPage) %>);">末页 »</li><%
+                    } %>
+                </ul></div>
                 <table>
                     <tr>
                         <th rowspan="2" id="pids">题目编号</th>
@@ -69,6 +138,22 @@
                         </tr>
                     <% }); %>
                 </table>
+                <div class="page-select-down"><ul>
+                    <li class="topan-tab-showed">1</li><% 
+                    var minPageId=2, maxPageId=Math.min(11,Math.ceil(problemList.length/eachPage));
+                    for(var pageId=minPageId;pageId<=maxPageId;pageId++){
+                        %><li onclick="movetoPage(<%= pageId %>});"><%= pageId %></li><%
+                    }
+                    if(Math.ceil(problemList.length/eachPage)>11){
+                        %><span>...</span><%
+                    }
+                    if(Math.ceil(problemList.length/eachPage)>1){
+                        %><li onclick="movetoPage(2);">下一页 ›</li><%
+                    }
+                    if(Math.ceil(problemList.length/eachPage)>2){
+                        %><li onclick="movetoPage(<%= Math.ceil(problemList.length/eachPage) %>);">末页 »</li><%
+                    } %>
+                </ul></div>
             </div>
         </div>
     </div>
@@ -86,7 +171,11 @@
     var pageName='problem_list';
     var UiContext=<%- JSON.stringify(UiContext) %>;
     var getSearch=()=>new URL(window.location.href).searchParams.get('search');
-    var show=(pids)=>{
+    var nowsearch={page: 1};
+    const eachPage=<%= eachPage %>;
+    var show=(data)=>{
+        $('#count').text(data.cnt);
+        var pids=data.pids;
         var HTML=`<tr><th rowspan="2" id="pids">题目编号</th><th rowspan="2" id="title">标题</th><th rowspan="2" id="tags">标签</th><th colspan="4">难度</th></tr><tr id="difficulties"><th>总计</th><th>算法</th><th>思维</th><th>实现</th></tr>`
         pids.forEach(id=>{
             var pdoc=UiContext[id];
@@ -102,21 +191,57 @@
                 </tr>
             `;
         });
+        if(!pids.length)
+            HTML+=`
+                <tr>
+                    <td colspan="7">没有符合条件的结果。</td>
+                </tr>
+            `;
         $('table').html(HTML);
-        $('#count').text(pids.length);
+        HTML=``;
+        var pageCount=data.pageCount,minPageId,maxPageId,pageId=data.pageId;
+        if(pageCount<=11)minPageId=1,maxPageId=pageCount;
+        else{
+            if(pageId>pageCount-5)minPageId=pageCount-10,maxPageId=pageCount;
+            else if(pageId<=5)minPageId=1,maxPageId=11;
+            else minPageId=pageId-5,maxPageId=pageId+5;
+        }
+        if(pageId>=3)HTML+=`<li onclick="movetoPage(1);">« 第一页</li>`;
+        if(pageId>=2)HTML+=`<li onclick="movetoPage(${pageId-1});">‹ 前一页</li>`;
+        if(minPageId>1)HTML+=`<span>...</span>`
+        for(var i=minPageId;i<=maxPageId;i++)
+            if(i==pageId)HTML+=`<li class="topan-tab-showed">${i}</li>`;
+            else HTML+=`<li onclick="movetoPage(${i});">${i}</li>`;
+        if(maxPageId<pageCount)HTML+=`<span>...</span>`;
+        if(pageId<=pageCount-1)HTML+=`<li onclick="movetoPage(${pageId+1});">下一页 ›</li>`;
+        if(pageId<=pageCount-2)HTML+=`<li onclick="movetoPage(1);">末页 »</li>`;
+        $('.page-select-up>ul').html(HTML);
+        $('.page-select-down>ul').html(HTML);
     };
     var search=(rules)=>{
         var res=new Array();
+        if(!rules.page)rules.page=1;
         UiContext.forEach((pdoc,pid)=>{
             var flag=true;
-            rules.folders.forEach(fold=>{
-                if(!`,${pdoc.tags},`.includes(`,${fold},`))flag=false;
-            });
+            if(rules.folders)
+                rules.folders.forEach(fold=>{
+                    if(!`,${pdoc.tags},`.includes(`,${fold},`))flag=false;
+                });
             if(flag)res.push(pid);
         });
-        return res;
+        var RES=new Array();
+        if(res.length&&(rules.page-1)*eachPage>=res.length)rules.page=1;
+        for(var i=(rules.page-1)*eachPage;i<rules.page*eachPage;i++)
+            if(i<res.length)RES.push(res[i]);
+        nowsearch=rules;
+        if(nowsearch.page==1)delete nowsearch.page;
+        if(JSON.stringify(nowsearch)=='{}')window.history.pushState(null,null,`/OI`);
+        else window.history.pushState(null,null,`/OI/?search=${encodeURIComponent(JSON.stringify(nowsearch))}`);
+        if(!rules.page)rules.page=1;
+        return {pids: RES, cnt: res.length, pageId: rules.page,
+            pageCount: Math.max(Math.ceil(res.length/eachPage),1)};
     }
-    if(getSearch()){
+    if(getSearch())
         show(search(JSON.parse(decodeURIComponent(getSearch()))));
-    }
+    else show(search({page: 1}));
 </script>

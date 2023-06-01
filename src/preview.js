@@ -14,7 +14,7 @@ router.get('/',(req,res)=>{
     var problemList=fs.readFileSync('data/problem.json','utf8');
     problemList=JSON.parse(problemList);
     ejs.renderFile("./src/templates/problem_list.html",
-        {isadmin: req.logined, fs, problemList, Config, Tag},(err,HTML)=>{
+        {isadmin: req.logined, fs, problemList, Config, Tag, eachPage: Config.eachPage},(err,HTML)=>{
         res.send(Template({title: `题目列表`,
                            header: ``,
                            preview: true,
