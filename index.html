@@ -92,10 +92,10 @@
         color: grey;
     }
     .page-select-up>ul>li{
-        border-bottom: solid 2px transparent;
+        border-bottom: solid 2px rgb(200, 200, 200);
     }
     .page-select-down>ul>li{
-        border-top: solid 2px transparent;
+        border-top: solid 2px rgb(200, 200, 200);
     }
     ul>span{
         padding: 6px;
@@ -652,7 +652,7 @@
             else HTML+=`<li onclick="movetoPage(${i});">${i}</li>`;
         if(maxPageId<pageCount)HTML+=`<span>...</span>`;
         if(pageId<=pageCount-1)HTML+=`<li onclick="movetoPage(${pageId+1});">下一页 ›</li>`;
-        if(pageId<=pageCount-2)HTML+=`<li onclick="movetoPage(1);">末页 »</li>`;
+        if(pageId<=pageCount-2)HTML+=`<li onclick="movetoPage(${pageCount});">末页 »</li>`;
         $('.page-select-up>ul').html(HTML);
         $('.page-select-down>ul').html(HTML);
     };

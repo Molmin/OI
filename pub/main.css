@@ -2,7 +2,7 @@
     font-family: font-firacode;
     src: url("./FiraCode-Regular.ttf");
 }
-code{
+code,pre.ace_editor{
     font-family: "font-firacode";
 }
 pre:not(.remove-style,.ace_editor){
