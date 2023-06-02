@@ -9,13 +9,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:false}));
 const cookieParser=require('cookie-parser');
 app.use(cookieParser());
-const YAML=require('yamljs');
-var Config=YAML.load('./data/config.yaml');
 var System=JSON.parse(fs.readFileSync('./data/system.json'));
 const Admin=require('./src/lib/admin.js');
 
 var password=parseInt(Math.random()*1000000);
-if(Config.password)password=Config.password;
+if(System.password)password=System.password;
 else console.log(`Password is: ${password}`);
 fs.writeFileSync("password",`${password}`,(err)=>{});
 
@@ -33,11 +31,11 @@ app.all('*',(req,res,next)=>{
 });
 
 app.get("/",(req,res)=>{
-    res.redirect(`/${Config.on}`);
+    res.redirect(`/${System.on}`);
 });
 app.use("/file",express.static(path.join(__dirname,'src/assets')));
-app.use(`/${Config.on}/pub`,express.static(path.join(__dirname,'src/assets/public')));
-app.use(`/${Config.on}`,require('./src/preview.js'));
+app.use(`/${System.on}/pub`,express.static(path.join(__dirname,'src/assets/public')));
+app.use(`/${System.on}`,require('./src/preview.js'));
 app.use(`/admin`,require('./src/admin.js'));
 
 app.listen(System.port,()=>{

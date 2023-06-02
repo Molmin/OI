@@ -3,8 +3,6 @@ const express=require('express'),
 const ejs=require('ejs');
 const fs=require('fs');
 const Template=require('./template.js');
-const YAML=require('yamljs');
-var Config=YAML.load('./data/config.yaml');
 var System=JSON.parse(fs.readFileSync('./data/system.json'));
 const highlightjs=require('highlight.js');
 const fileSize=require('./lib/filesize.js');
@@ -16,7 +14,7 @@ router.get('/',(req,res)=>{
     problemList=JSON.parse(problemList);
     System=JSON.parse(fs.readFileSync('./data/system.json'));
     ejs.renderFile("./src/templates/problem_list.html",
-        {isadmin: req.logined, fs, problemList, Config, Tag, eachPage: System.eachPage},(err,HTML)=>{
+        {isadmin: req.logined, fs, problemList, System, Tag},(err,HTML)=>{
         res.send(Template({title: `题目列表`,
                            header: ``,
                            preview: true,
@@ -38,10 +36,11 @@ router.get('/about',(req,res)=>{
 });
 
 router.get('/problem/:pid',(req,res)=>{
+    System=JSON.parse(fs.readFileSync('./data/system.json'));
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     prodata.pid=req.params.pid;
     ejs.renderFile("./src/templates/problem_detail.html",
-    {isadmin: req.logined, Config, prodata, fs, MarkdownIt, Tag},(err,HTML)=>{
+    {isadmin: req.logined, System, prodata, fs, MarkdownIt, Tag},(err,HTML)=>{
         res.send(Template({title: `#${prodata.pid}. ${prodata.title}`,
                            header: ``,
                            preview: true,
@@ -50,10 +49,11 @@ router.get('/problem/:pid',(req,res)=>{
     });
 });
 router.get('/problem/:pid/solution',(req,res)=>{
+    System=JSON.parse(fs.readFileSync('./data/system.json'));
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     prodata.pid=req.params.pid;
     ejs.renderFile("./src/templates/problem_solution.html",
-        {isadmin: req.logined, Config, prodata, MarkdownIt, fs, highlightjs},(err,HTML)=>{
+        {isadmin: req.logined, System, prodata, MarkdownIt, fs, highlightjs},(err,HTML)=>{
         res.send(Template({title: `题解与代码 - ${prodata.title}`,
                            header: ``,
                            preview: true,
@@ -62,10 +62,11 @@ router.get('/problem/:pid/solution',(req,res)=>{
     });
 });
 router.get('/problem/:pid/statements',(req,res)=>{
+    System=JSON.parse(fs.readFileSync('./data/system.json'));
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     prodata.pid=req.params.pid;
     ejs.renderFile("./src/templates/problem_statements_list.html",
-        {isadmin: req.logined, Config, prodata, MarkdownIt, fs},(err,HTML)=>{
+        {isadmin: req.logined, System, prodata, MarkdownIt, fs},(err,HTML)=>{
         res.send(Template({title: `题面列表 - ${prodata.title}`,
                            header: ``,
                            preview: true,
@@ -74,10 +75,11 @@ router.get('/problem/:pid/statements',(req,res)=>{
     });
 });
 router.get('/problem/:pid/comment',(req,res)=>{
+    System=JSON.parse(fs.readFileSync('./data/system.json'));
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     prodata.pid=req.params.pid;
     ejs.renderFile("./src/templates/problem_comment.html",
-        {isadmin: req.logined, Config, prodata, System},(err,HTML)=>{
+        {isadmin: req.logined, prodata, System},(err,HTML)=>{
         res.send(Template({title: `评论 - ${prodata.title}`,
                            header: ``,
                            preview: true,
@@ -86,10 +88,11 @@ router.get('/problem/:pid/comment',(req,res)=>{
     });
 });
 router.get('/problem/:pid/files',(req,res)=>{
+    System=JSON.parse(fs.readFileSync('./data/system.json'));
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     prodata.pid=req.params.pid;
     ejs.renderFile("./src/templates/problem_files.html",
-        {isadmin: req.logined, fileSize, Config, prodata, fs},(err,HTML)=>{
+        {isadmin: req.logined, fileSize, System, prodata, fs},(err,HTML)=>{
         res.send(Template({title: `文件 - ${prodata.title}`,
                            header: ``,
                            preview: true,

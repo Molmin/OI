@@ -3,8 +3,6 @@ const express=require('express'),
 const ejs=require('ejs');
 const fs=require('fs');
 const Template=require('./template.js');
-const YAML=require('yamljs');
-var Config=YAML.load('./data/config.yaml');
 var System=JSON.parse(fs.readFileSync('./data/system.json'));
 const Admin=require('./lib/admin.js');
 const URL=require('url');
@@ -71,7 +69,7 @@ router.post('/update/ghpage',(req,res)=>{
 
 router.get('/settings',(req,res)=>{
     System=JSON.parse(fs.readFileSync('./data/system.json'));
-    ejs.renderFile("./src/templates/settings.html",{System},(err,HTML)=>{
+    ejs.renderFile("./src/templates/settings.html",{System, fs},(err,HTML)=>{
         res.send(Template({title: `系统设置`,
                            header: ``,
                            preview: true,
@@ -118,7 +116,8 @@ router.get('/logout',(req,res)=>{
 });
 
 router.get('/create',(req,res)=>{
-    ejs.renderFile("./src/templates/problem_create.html",(err,HTML)=>{
+    System=JSON.parse(fs.readFileSync('./data/system.json'));
+    ejs.renderFile("./src/templates/problem_create.html",{System},(err,HTML)=>{
         res.send(Template({title: `创建题目`,
                            header: ``,
                            preview: true,
@@ -128,10 +127,11 @@ router.get('/create',(req,res)=>{
     });
 });
 router.get('/problem/:pid/config',(req,res)=>{
+    System=JSON.parse(fs.readFileSync('./data/system.json'));
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     prodata.pid=req.params.pid;
     ejs.renderFile("./src/templates/problem_config.html",
-        {isadmin: req.logined, Config, prodata},(err,HTML)=>{
+        {isadmin: req.logined, System, prodata},(err,HTML)=>{
         res.send(Template({title: `修改配置 - ${prodata.title}`,
                            header: ``,
                            preview: true,
@@ -183,10 +183,11 @@ router.post('/problem/:pid/delete',(req,res)=>{
 });
 
 router.get('/problem/:pid/statement/create',(req,res)=>{
+    System=JSON.parse(fs.readFileSync('./data/system.json'));
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     prodata.pid=req.params.pid;
     ejs.renderFile("./src/templates/problem_statement_create.html",
-        {isadmin: req.logined, Config, prodata},(err,HTML)=>{
+        {isadmin: req.logined, System, prodata},(err,HTML)=>{
         res.send(Template({title: `创建题面 - ${prodata.title}`,
                            header: ``,
                            preview: true,
@@ -204,10 +205,11 @@ router.post('/problem/:pid/statement/create',(req,res)=>{
     res.status(200).json({});
 });
 router.get('/problem/:pid/statement/:statementName/edit',(req,res)=>{
+    System=JSON.parse(fs.readFileSync('./data/system.json'));
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     prodata.pid=req.params.pid;
     ejs.renderFile("./src/templates/problem_statement_edit.html",
-        {isadmin: req.logined, Config, prodata, statementName: req.params.statementName, fs},(err,HTML)=>{
+        {isadmin: req.logined, System, prodata, statementName: req.params.statementName, fs},(err,HTML)=>{
         res.send(Template({title: `编辑题面 - ${prodata.title}`,
                            header: ``,
                            preview: true,
@@ -261,10 +263,11 @@ router.post('/problem/:pid/solution/:para/delete',(req,res)=>{
     res.json({});
 });
 router.get('/problem/:pid/solution/:para/edit',(req,res)=>{
+    System=JSON.parse(fs.readFileSync('./data/system.json'));
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     prodata.pid=req.params.pid;
     ejs.renderFile("./src/templates/problem_solution_edit.html",
-        {isadmin: req.logined, Config, fs, prodata, paraId: req.params.para},(err,HTML)=>{
+        {isadmin: req.logined, System, fs, prodata, paraId: req.params.para},(err,HTML)=>{
         res.send(Template({title: `编辑题解 - ${prodata.title}`,
                            header: ``,
                            preview: true,
@@ -284,10 +287,11 @@ router.post('/problem/:pid/solution/:para/edit',(req,res)=>{
     res.json({});
 });
 router.get('/problem/:pid/solution/:para/editcode',(req,res)=>{
+    System=JSON.parse(fs.readFileSync('./data/system.json'));
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     prodata.pid=req.params.pid;
     ejs.renderFile("./src/templates/problem_solution_editcode.html",
-        {isadmin: req.logined, Config, fs, prodata, paraId: req.params.para},(err,HTML)=>{
+        {isadmin: req.logined, System, fs, prodata, paraId: req.params.para},(err,HTML)=>{
         res.send(Template({title: `编辑附加代码 - ${prodata.title}`,
                            header: ``,
                            preview: true,
@@ -310,10 +314,11 @@ router.post('/problem/:pid/solution/:para/editcode',(req,res)=>{
     res.json({});
 });
 router.get('/problem/:pid/solution/:para/insert',(req,res)=>{
+    System=JSON.parse(fs.readFileSync('./data/system.json'));
     var prodata=JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`,'utf8'));
     prodata.pid=req.params.pid;
     ejs.renderFile("./src/templates/problem_solution_insert.html",
-        {isadmin: req.logined, Config, prodata, paraId: req.params.para},(err,HTML)=>{
+        {isadmin: req.logined, System, prodata, paraId: req.params.para},(err,HTML)=>{
         res.send(Template({title: `插入段 - ${prodata.title}`,
                            header: ``,
                            preview: true,

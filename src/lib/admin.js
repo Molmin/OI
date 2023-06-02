@@ -1,5 +1,4 @@
 const crypto=require('crypto');
-const YAML=require('yamljs');
 const fs=require('fs');
 const encode=(str)=>{
     // second time

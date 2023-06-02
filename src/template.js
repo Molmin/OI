@@ -1,14 +1,15 @@
-const YAML=require('yamljs');
-var Config=YAML.load('./data/config.yaml');
+const fs=require('fs');
+var System=JSON.parse(fs.readFileSync('./data/system.json'));
 
 module.exports=(config,HTML)=>{
+    System=JSON.parse(fs.readFileSync('./data/system.json'));
     return`
 <!DOCTYPE html>
 <html lang="zh-CN">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width">
-        <title id="title">${config.title} - ${Config.title}</title>
+        <title id="title">${config.title} - ${System.title}</title>
         <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
         <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
         <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
@@ -17,23 +18,23 @@ module.exports=(config,HTML)=>{
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-        <script src="/${Config.on}/pub/busuanzi.pure.mini.js"></script>
-        <script src="/${Config.on}/pub/main.js"></script>
-        <link rel="stylesheet" href="/${Config.on}/pub/main.css">
+        <script src="/${System.on}/pub/busuanzi.pure.mini.js"></script>
+        <script src="/${System.on}/pub/main.js"></script>
+        <link rel="stylesheet" href="/${System.on}/pub/main.css">
         ${config.header}
     </head>
     <body>
         <div class="topan-header">
             <div class="topan-header-home">
-                <a href="/${Config.on}">
+                <a href="/${System.on}">
                     <button class="topan-button-ordinary topan-button-commonly topan-button-header-round-left">
                         <i class="fa fa-home"></i>
                     </button>
                 </a>
             </div>
             <div class="topan-header-left">
-                <span class="topan-header-text">${Config.title}&nbsp;</span>
-                <a href="/${Config.on}/about">
+                <span class="topan-header-text">${System.title}&nbsp;</span>
+                <a href="/${System.on}/about">
                     <span class="topan-button-ordinary topan-button-commonly topan-button-header-block${config.onabout?"-showed":""}">
                         <i class="fa fa-solid fa-circle-info"></i>
                         <span>&nbsp;关于</span>

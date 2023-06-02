@@ -89,18 +89,18 @@
                 <p>共 <b id="count"><%= problemList.length %></b> 条结果</p>
                 <div class="page-select-up"><ul>
                     <li class="topan-tab-showed">1</li><% 
-                    var minPageId=2, maxPageId=Math.min(11,Math.ceil(problemList.length/eachPage));
+                    var minPageId=2, maxPageId=Math.min(11,Math.ceil(problemList.length/System.eachPage));
                     for(var pageId=minPageId;pageId<=maxPageId;pageId++){
                         %><li onclick="movetoPage(<%= pageId %>});"><%= pageId %></li><%
                     }
-                    if(Math.ceil(problemList.length/eachPage)>11){
+                    if(Math.ceil(problemList.length/System.eachPage)>11){
                         %><span>...</span><%
                     }
-                    if(Math.ceil(problemList.length/eachPage)>1){
+                    if(Math.ceil(problemList.length/System.eachPage)>1){
                         %><li onclick="movetoPage(2);">下一页 ›</li><%
                     }
-                    if(Math.ceil(problemList.length/eachPage)>2){
-                        %><li onclick="movetoPage(<%= Math.ceil(problemList.length/eachPage) %>);">末页 »</li><%
+                    if(Math.ceil(problemList.length/System.eachPage)>2){
+                        %><li onclick="movetoPage(<%= Math.ceil(problemList.length/System.eachPage) %>);">末页 »</li><%
                     } %>
                 </ul></div>
                 <table>
@@ -129,7 +129,7 @@
                         UiContext.push(detail); %>
                         <tr>
                             <td><%= pid %></td>
-                            <td><a href="/<%= Config.on %>/problem/<%= pid %>"><%= detail.title %></a></td>
+                            <td><a href="/<%= System.on %>/problem/<%= pid %>"><%= detail.title %></a></td>
                             <td><%- detail.taghtml %></td>
                             <td><%= detail.difficulty.algorithm+detail.difficulty.thinking+detail.difficulty.implementation %></td>
                             <td><%= detail.difficulty.algorithm %></td>
@@ -140,18 +140,18 @@
                 </table>
                 <div class="page-select-down"><ul>
                     <li class="topan-tab-showed">1</li><% 
-                    var minPageId=2, maxPageId=Math.min(11,Math.ceil(problemList.length/eachPage));
+                    var minPageId=2, maxPageId=Math.min(11,Math.ceil(problemList.length/System.eachPage));
                     for(var pageId=minPageId;pageId<=maxPageId;pageId++){
                         %><li onclick="movetoPage(<%= pageId %>});"><%= pageId %></li><%
                     }
-                    if(Math.ceil(problemList.length/eachPage)>11){
+                    if(Math.ceil(problemList.length/System.eachPage)>11){
                         %><span>...</span><%
                     }
-                    if(Math.ceil(problemList.length/eachPage)>1){
+                    if(Math.ceil(problemList.length/System.eachPage)>1){
                         %><li onclick="movetoPage(2);">下一页 ›</li><%
                     }
-                    if(Math.ceil(problemList.length/eachPage)>2){
-                        %><li onclick="movetoPage(<%= Math.ceil(problemList.length/eachPage) %>);">末页 »</li><%
+                    if(Math.ceil(problemList.length/System.eachPage)>2){
+                        %><li onclick="movetoPage(<%= Math.ceil(problemList.length/System.eachPage) %>);">末页 »</li><%
                     } %>
                 </ul></div>
             </div>
@@ -172,7 +172,7 @@
     var UiContext=<%- JSON.stringify(UiContext) %>;
     var getSearch=()=>new URL(window.location.href).searchParams.get('search');
     var nowsearch={page: 1};
-    const eachPage=<%= eachPage %>;
+    const eachPage=<%= System.eachPage %>;
     var show=(data)=>{
         $('#count').text(data.cnt);
         var pids=data.pids;
@@ -182,7 +182,7 @@
             HTML+=`
                 <tr>
                     <td>${pdoc.id}</td>
-                    <td><a href="/<%= Config.on %>/problem/${pdoc.id}">${pdoc.title}</a></td>
+                    <td><a href="/<%= System.on %>/problem/${pdoc.id}">${pdoc.title}</a></td>
                     <td>${pdoc.taghtml}</td>
                     <td>${pdoc.difficulty.algorithm+pdoc.difficulty.thinking+pdoc.difficulty.implementation}</td>
                     <td>${pdoc.difficulty.algorithm}</td>
@@ -214,7 +214,7 @@
             else HTML+=`<li onclick="movetoPage(${i});">${i}</li>`;
         if(maxPageId<pageCount)HTML+=`<span>...</span>`;
         if(pageId<=pageCount-1)HTML+=`<li onclick="movetoPage(${pageId+1});">下一页 ›</li>`;
-        if(pageId<=pageCount-2)HTML+=`<li onclick="movetoPage(1);">末页 »</li>`;
+        if(pageId<=pageCount-2)HTML+=`<li onclick="movetoPage(${pageCount});">末页 »</li>`;
         $('.page-select-up>ul').html(HTML);
         $('.page-select-down>ul').html(HTML);
     };
@@ -235,8 +235,8 @@
             if(i<res.length)RES.push(res[i]);
         nowsearch=rules;
         if(nowsearch.page==1)delete nowsearch.page;
-        if(JSON.stringify(nowsearch)=='{}')window.history.pushState(null,null,`/OI`);
-        else window.history.pushState(null,null,`/OI/?search=${encodeURIComponent(JSON.stringify(nowsearch))}`);
+        if(JSON.stringify(nowsearch)=='{}')window.history.pushState(null,null,`/<%= System.on %>`);
+        else window.history.pushState(null,null,`/<%= System.on %>/?search=${encodeURIComponent(JSON.stringify(nowsearch))}`);
         if(!rules.page)rules.page=1;
         return {pids: RES, cnt: res.length, pageId: rules.page,
             pageCount: Math.max(Math.ceil(res.length/eachPage),1)};

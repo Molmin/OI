@@ -38,7 +38,7 @@
                     statement: editor.getValue()
                 },
                 (data,status)=>{
-                    location.pathname=`/OI/problem/${data.pid}`;
+                    location.pathname=`/<%= System.on %>/problem/${data.pid}`;
                 }
             );
         });

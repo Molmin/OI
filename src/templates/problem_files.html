@@ -47,16 +47,16 @@
         <div style="padding-right: 0px;">
             <div class="topan-section-shadow">
                 <h2><%= prodata.title %></h2>
-                <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                <a class="topan-menu-option" href="/<%= System.on %>/problem/<%= prodata.pid %>"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
                 <% if(isadmin){ %>
                     <a class="topan-menu-option" href="/admin/problem/<%= prodata.pid %>/config"><i class="fa fa-solid fa-gear"></i>&nbsp;&nbsp;配置题目</a>
-                    <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>/statements"><i class="fa fa-solid fa-list"></i>&nbsp;&nbsp;题面列表</a>
+                    <a class="topan-menu-option" href="/<%= System.on %>/problem/<%= prodata.pid %>/statements"><i class="fa fa-solid fa-list"></i>&nbsp;&nbsp;题面列表</a>
                 <% } %>
-                <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                <a class="topan-menu-option" href="/<%= System.on %>/problem/<%= prodata.pid %>/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
                 <% if(isadmin){ %>
-                <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>/files"><i class="fa fa-regular fa-file-code"></i>&nbsp;&nbsp;文件</a>
+                <a class="topan-menu-option" href="/<%= System.on %>/problem/<%= prodata.pid %>/files"><i class="fa fa-regular fa-file-code"></i>&nbsp;&nbsp;文件</a>
                 <% } %>
-                <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
+                <a class="topan-menu-option" href="/<%= System.on %>/problem/<%= prodata.pid %>/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
             </div>
         </div>
     </div>
@@ -74,7 +74,7 @@
                         <tr>
                             <td>
                                 <input id="check-<%= index %>" type="checkbox">
-                                <a href="/<%= Config.on %>/problem/<%= prodata.pid %>/file/<%= filename %>"><i class="fa fa-solid fa-cloud-arrow-down"></i></a>
+                                <a href="/<%= System.on %>/problem/<%= prodata.pid %>/file/<%= filename %>"><i class="fa fa-solid fa-cloud-arrow-down"></i></a>
                             </td>
                             <td><%= filename %></td>
                             <td><%= fileSize(fs.statSync(`data/${prodata.pid}/${filename}`).size) %></td>
@@ -87,8 +87,8 @@
     <div class="column-two-fifth">
         <div style="padding-left: 20px;">
             <div class="topan-section-shadow">
-                <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>/file/userfile.zip"><i class="fa fa-solid fa-cloud-arrow-down"></i>&nbsp;&nbsp;下载选手文件（共个文件，<%=  %>）</a>
-                <a class="topan-menu-option" href="/<%= Config.on %>/problem/<%= prodata.pid %>/file/userfile.zip"><i class="fa fa-solid fa-cloud-arrow-down"></i>&nbsp;&nbsp;下载测试数据（共个文件，）</a>
+                <a class="topan-menu-option" href="/<%= System.on %>/problem/<%= prodata.pid %>/file/userfile.zip"><i class="fa fa-solid fa-cloud-arrow-down"></i>&nbsp;&nbsp;下载选手文件（共个文件，<%=  %>）</a>
+                <a class="topan-menu-option" href="/<%= System.on %>/problem/<%= prodata.pid %>/file/userfile.zip"><i class="fa fa-solid fa-cloud-arrow-down"></i>&nbsp;&nbsp;下载测试数据（共个文件，）</a>
                 <h3>上传文件</h3>
                 <p><input id="file" type="file"></p>
                 <p>

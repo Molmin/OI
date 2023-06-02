@@ -39,7 +39,7 @@
 <script>
     var directSearch=(rule)=>{
         if(pageName=='problem_detail')
-            window.location.href=`/OI/?search=${rule}`;
+            window.location.href=`/<%= System.on %>/?search=${rule}`;
         if(pageName=='problem_list')
             show(search(JSON.parse(decodeURIComponent(rule))));
     }

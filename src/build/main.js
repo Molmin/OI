@@ -9,9 +9,6 @@ const Tag=require('./../lib/tag.js');
 var System=JSON.parse(fs.readFileSync('./data/system.json'));
 var MarkdownIt=require('./../lib/markdown.js');
 
-const YAML=require('yamljs');
-var Config=YAML.load('./data/config.yaml');
-
 var deleteDir=(url)=>{
     if(fs.existsSync(url)){
         var files=[];
@@ -40,7 +37,7 @@ problemList=JSON.parse(problemList);
 
 {
     ejs.renderFile("./src/templates/problem_list.html",
-        {isadmin: false, problemList, fs, Config, Tag, eachPage: System.eachPage},(err,HTML)=>{
+        {isadmin: false, problemList, fs, System, Tag, eachPage: System.eachPage},(err,HTML)=>{
         fs.writeFileSync("dist/index.html",
             Template({title: `题目列表`,
                     header: ``},HTML)
@@ -65,7 +62,7 @@ problemList.forEach(pid=>{
     var prodata=JSON.parse(fs.readFileSync(`data/${pid}/config.json`,'utf8'));
     prodata.pid=pid;
     ejs.renderFile("./src/templates/problem_detail.html",
-        {isadmin: false, Config, prodata, fs, MarkdownIt, Tag},(err,HTML)=>{
+        {isadmin: false, System, prodata, fs, MarkdownIt, Tag},(err,HTML)=>{
         fs.writeFileSync(`dist/problem/${prodata.pid}.html`,
             Template({title: `#${prodata.pid}. ${prodata.title}`,
                       header: ``},HTML)
@@ -73,14 +70,14 @@ problemList.forEach(pid=>{
     });
     fs.mkdirSync(`dist/problem/${prodata.pid}`);
     ejs.renderFile("./src/templates/problem_solution.html",
-        {isadmin: false, Config, prodata, fs, MarkdownIt, highlightjs},(err,HTML)=>{
+        {isadmin: false, System, prodata, fs, MarkdownIt, highlightjs},(err,HTML)=>{
         fs.writeFileSync(`dist/problem/${prodata.pid}/solution.html`,
             Template({title: `题解与代码 - ${prodata.title}`,
                       header: ``},HTML)
         );
     });
     ejs.renderFile("./src/templates/problem_comment.html",
-        {isadmin: false, Config, prodata},(err,HTML)=>{
+        {isadmin: false, System, prodata},(err,HTML)=>{
         fs.writeFileSync(`dist/problem/${prodata.pid}/comment.html`,
             Template({title: `评论 - ${prodata.title}`,
                       header: ``},HTML)
