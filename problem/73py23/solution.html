@@ -56,7 +56,51 @@
     var Export=()=>console.log($('#exportcode').val());
 </script>
 
-<textarea style="display: none;" id="exportcode"></textarea>
+<textarea style="display: none;" id="exportcode">## 题解
+
+TODO
+
+时间复杂度 $\Theta(n)$。
+
+```cpp
+// 2023.06.06
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+int n;
+
+struct Edge{
+    int to,nxt;
+}edge[200001];
+int head[100001],cntEdge;
+void addEdge(int u,int v){
+    edge[++cntEdge]={v,head[u]},head[u]=cntEdge;
+}
+
+int dep[100001];
+double answer;
+void dfs(int id,int father){
+    dep[id]=dep[father]+1;
+    answer+=1.0/dep[id];
+    for(int i=head[id];i;i=edge[i].nxt)
+        if(edge[i].to!=father)
+            dfs(edge[i].to,id);
+}
+
+int main(){
+    scanf(&#34;%d&#34;,&amp;n);
+    for(int i=1;i&lt;n;i++){
+        int u,v;
+        scanf(&#34;%d%d&#34;,&amp;u,&amp;v);
+        addEdge(u,v);
+        addEdge(v,u);
+    }
+    dfs(1,0);
+    printf(&#34;%.6lf\n&#34;,answer);
+    return 0;
+}
+```</textarea>
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">
@@ -72,6 +116,61 @@
     </div>
     <div class="column-four-fifth">
         <div style="padding-left: 20px;">
+            
+                <div class="topan-section-shadow">
+                    <h2>
+                        题解
+                        
+                    </h2>
+                    
+                    <p>TODO</p>
+<p>时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mclose">)</span></span></span></span>。</p>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.06.06</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+
+<span class="hljs-type">int</span> n;
+
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">Edge</span>{
+    <span class="hljs-type">int</span> to,nxt;
+}edge[<span class="hljs-number">200001</span>];
+<span class="hljs-type">int</span> head[<span class="hljs-number">100001</span>],cntEdge;
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">addEdge</span><span class="hljs-params">(<span class="hljs-type">int</span> u,<span class="hljs-type">int</span> v)</span></span>{
+    edge[++cntEdge]={v,head[u]},head[u]=cntEdge;
+}
+
+<span class="hljs-type">int</span> dep[<span class="hljs-number">100001</span>];
+<span class="hljs-type">double</span> answer;
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">dfs</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> father)</span></span>{
+    dep[id]=dep[father]+<span class="hljs-number">1</span>;
+    answer+=<span class="hljs-number">1.0</span>/dep[id];
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=head[id];i;i=edge[i].nxt)
+        <span class="hljs-keyword">if</span>(edge[i].to!=father)
+            <span class="hljs-built_in">dfs</span>(edge[i].to,id);
+}
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;n);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;n;i++){
+        <span class="hljs-type">int</span> u,v;
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d&quot;</span>,&amp;u,&amp;v);
+        <span class="hljs-built_in">addEdge</span>(u,v);
+        <span class="hljs-built_in">addEdge</span>(v,u);
+    }
+    <span class="hljs-built_in">dfs</span>(<span class="hljs-number">1</span>,<span class="hljs-number">0</span>);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%.6lf\n&quot;</span>,answer);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre>
+                            </dl>
+                        </div>
+                    
+                </div>
             
         </div>
     </div>

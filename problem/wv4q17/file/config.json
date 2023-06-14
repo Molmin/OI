@@ -1,0 +1,25 @@
+{
+  "title": "Scores",
+  "difficulty": {
+    "algorithm": 0,
+    "thinking": 0,
+    "implementation": 0
+  },
+  "judge": {
+    "time": "500 ms",
+    "memory": "16 MiB"
+  },
+  "tags": "数据结构,数据结构/并查集,数学,数学/构造,来源/洛谷月赛,时间/2021",
+  "source": "[[LGR-091] 洛谷 9 月月赛 II & SWTR 7 Div.1](https://www.luogu.com.cn/contest/51773) [Problem A2](https://www.luogu.com.cn/problem/P7876)",
+  "statement": {
+    "简体中文": "statement_zh.md"
+  },
+  "solution": [
+    {
+      "title": "题解",
+      "file": "sol.md",
+      "author": "",
+      "code": "code.cpp"
+    }
+  ]
+}
