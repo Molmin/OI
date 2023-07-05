@@ -1,0 +1,376 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title id="title">题解与代码 - 蚯蚓 - OI Problems</title>
+        <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
+        <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
+        <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
+        <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script src="/OI/pub/busuanzi.pure.mini.js"></script>
+        <script src="/OI/pub/main.js"></script>
+        <link rel="stylesheet" href="/OI/pub/main.css">
+        
+    </head>
+    <body>
+        <div class="topan-header">
+            <div class="topan-header-home">
+                <a href="/OI">
+                    <button class="topan-button-ordinary topan-button-commonly topan-button-header-round-left">
+                        <i class="fa fa-home"></i>
+                    </button>
+                </a>
+            </div>
+            <div class="topan-header-left">
+                <span class="topan-header-text">OI Problems&nbsp;</span>
+                <a href="/OI/about">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
+                        <i class="fa fa-solid fa-circle-info"></i>
+                        <span>&nbsp;关于</span>
+                    </span>
+                </a>
+                
+                
+            </div>
+            <div class="topan-header-right">
+            </div>
+        </div>
+        <div class="topan-outer">
+            <div class="topan-page">
+                <div class="topan-mainpage-auto">
+                    <br>
+                    <style>
+    .options{
+        font-size: 16px;
+        font-weight: normal;
+    }
+</style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 算法一：优先队列（$\Theta(m\log m)$）
+
+首先，容易想到在 $q=0$ 时，我们只需要使用优先队列，每次取出最大的进行分割再放回去即可。
+
+那么当 $q &gt; 0$ 时，考虑怎么处理每次所有蚯蚓共同增加的长度 $q$。我们不可能每次都取出所有元素再一个一个地进行处理。所以我们考虑维护一个偏移量，表示整个集合要共同增加的量，每次取出时先求出原值再操作，然后减去偏移量放回即可。
+
+时间复杂度 $\Theta(m\log m)$。
+
+## 算法二：普通队列（$\Theta(m)$）
+
+本题中我们还有更加优秀的 $\Theta(m)$ 的做法。
+
+首先考虑 $q=0$ 的情形。这里作出 $p=\dfrac 12$ 时 $\left\lfloor px\right\rfloor$ 和 $x-\left\lfloor px\right\rfloor$ 的图像，会发现它们都是 **单调不降** 的。
+
+![](file://pic2.png =450x263) ![](file://pic3.png =400x290)
+
+::: note
+要证：若 $x \leq y$，$0 &lt; p &lt; 1$，则 $\left\lfloor px\right\rfloor \leq \left\lfloor py\right\rfloor$ 且 $x-\left\lfloor px\right\rfloor \leq y-\left\lfloor py\right\rfloor$。
+
+前一个结论易证，而对于后一个结论，易知
+
+$$
+\begin{aligned}
+              &amp; p(y-x) \leq y-x   \\
+\Rightarrow \ &amp;   x-px \leq y-px  \\
+\Rightarrow \ &amp; \left\lfloor x-px \right\rfloor \leq \left\lfloor y-px \right\rfloor. \\
+\end{aligned}
+$$
+
+注意到，$x,\ y$ 是整数，可得
+
+$$
+x - \left\lfloor px \right\rfloor \leq y - \left\lfloor py \right\rfloor.
+$$
+
+证毕。
+
+&gt; 参考文献：&lt;https://www.luogu.com.cn/paste/c4jthmhz&gt;（作者：[dbxxx](https://www.luogu.com.cn/user/120868)）
+:::
+
+考虑维护三个队列 $Q,\ Q_1,\ Q_2$。
+
+- 一开始将所有数按照 **从大到小** 的顺序加入队列 $Q$ 中。
+
+- 每次从三个队列的队头中取最大的弹出，分割成 $\left\lfloor px \right\rfloor$ 和 $x - \left\lfloor px \right\rfloor$ 两段分别加入 $Q_1$ 和 $Q_2$ 的队尾。
+
+- 易知每一步操作结束后三个队列的数都是 **单调不增** 的，得以保证下一次取出的必然是最大值。
+
+---
+
+再考虑 $q &gt; 0$ 的情况。同样，我们还是维护一个偏移量，但是此时我们需要重新证明上面的结论。
+
+::: note
+要证：若 $x \leq y$，$0 &lt; p &lt; 1$，则 $\left\lfloor p(x+q)\right\rfloor \leq \left\lfloor py\right\rfloor +q$ 且 $x+q-\left\lfloor p(x+q)\right\rfloor \leq y-\left\lfloor py\right\rfloor+q$。
+
+对于前一个结论，有
+
+$$
+\left\lfloor p(x+q)\right\rfloor = \left\lfloor px+pq\right\rfloor \leq \left\lfloor py+q\right\rfloor = \left\lfloor py\right\rfloor +q.
+$$
+
+对于后一个结论，根据 $q=0$ 时的结论，有
+
+$$
+x+q-\left\lfloor p(x+q)\right\rfloor \leq x-\left\lfloor px\right\rfloor+q \leq y-\left\lfloor py\right\rfloor+q.
+$$
+
+证毕。
+:::
+
+时间复杂度 $\Theta(m)$。
+
+```cpp
+// 2023.07.05
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+queue&lt;int&gt; Q,Q1,Q2;
+int n,m,q,u,v,t,a[100001];
+
+void debug(int x){
+    int n=Q.size();
+    for(int i=1;i&lt;=n;i++){
+        int v=Q.front();
+        printf(&#34;%lld &#34;,v+1ll*x*q);
+        Q.pop();Q.push(v);
+    }
+    printf(&#34;\n&#34;);
+    n=Q1.size();
+    for(int i=1;i&lt;=n;i++){
+        int v=Q1.front();
+        printf(&#34;%lld &#34;,v+1ll*x*q);
+        Q1.pop();Q1.push(v);
+    }
+    printf(&#34;\n&#34;);
+    n=Q2.size();
+    for(int i=1;i&lt;=n;i++){
+        int v=Q2.front();
+        printf(&#34;%lld &#34;,v+1ll*x*q);
+        Q2.pop();Q2.push(v);
+    }
+    printf(&#34;\n&#34;);
+}
+
+int main(){
+    scanf(&#34;%d%d%d%d%d%d&#34;,&amp;n,&amp;m,&amp;q,&amp;u,&amp;v,&amp;t);
+    for(int i=1;i&lt;=n;i++)
+        scanf(&#34;%d&#34;,a+i);
+    sort(a+1,a+1+n);
+    for(int i=n;i&gt;=1;i--)
+        Q.push(a[i]);
+    for(int i=1;i&lt;=m;i++){
+        int maxlen=-2e9,from;
+        if(!Q .empty()&amp;&amp;Q .front()&gt;maxlen)maxlen=Q .front(),from=0;
+        if(!Q1.empty()&amp;&amp;Q1.front()&gt;maxlen)maxlen=Q1.front(),from=1;
+        if(!Q2.empty()&amp;&amp;Q2.front()&gt;maxlen)maxlen=Q2.front(),from=2;
+        if(from==0)Q .pop();
+        if(from==1)Q1.pop();
+        if(from==2)Q2.pop();
+        long long reallength=maxlen+(i-1ll)*q;
+        if(!(i%t))printf(&#34;%lld &#34;,reallength);
+        Q1.push(int(reallength*u/v-(i-1ll)*q-q));
+        Q2.push(int(reallength-reallength*u/v-(i-1ll)*q-q));
+    }
+    printf(&#34;\n&#34;);
+    for(int i=1;i&lt;=n+m;i++){
+        int maxlen=-2e9,from;
+        if(!Q .empty()&amp;&amp;Q .front()&gt;maxlen)maxlen=Q .front(),from=0;
+        if(!Q1.empty()&amp;&amp;Q1.front()&gt;maxlen)maxlen=Q1.front(),from=1;
+        if(!Q2.empty()&amp;&amp;Q2.front()&gt;maxlen)maxlen=Q2.front(),from=2;
+        if(from==0)Q .pop();
+        if(from==1)Q1.pop();
+        if(from==2)Q2.pop();
+        long long reallength=maxlen+1ll*m*q;
+        if(!(i%t))printf(&#34;%lld &#34;,reallength);
+    }
+    printf(&#34;\n&#34;);
+    return 0;
+}
+```</textarea>
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2>蚯蚓</h2>
+                <a class="topan-menu-option" href="/OI/problem/al0slh"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/al0slh/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/al0slh/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            
+                <div class="topan-section-shadow">
+                    <h2>
+                        算法一：优先队列（<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>m</mi><mi>log</mi><mi>m</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(m\log m)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">m</span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mord mathit">m</span><span class="mclose">)</span></span></span></span>）
+                        
+                    </h2>
+                    
+                    <p>首先，容易想到在 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>q</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">q=0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.8388800000000001em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03588em;">q</span><span class="mrel">=</span><span class="mord mathrm">0</span></span></span></span> 时，我们只需要使用优先队列，每次取出最大的进行分割再放回去即可。</p>
+<p>那么当 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>q</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">q &gt; 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.8388800000000001em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03588em;">q</span><span class="mrel">&gt;</span><span class="mord mathrm">0</span></span></span></span> 时，考虑怎么处理每次所有蚯蚓共同增加的长度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>q</mi></mrow><annotation encoding="application/x-tex">q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03588em;">q</span></span></span></span>。我们不可能每次都取出所有元素再一个一个地进行处理。所以我们考虑维护一个偏移量，表示整个集合要共同增加的量，每次取出时先求出原值再操作，然后减去偏移量放回即可。</p>
+<p>时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>m</mi><mi>log</mi><mi>m</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(m\log m)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">m</span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mord mathit">m</span><span class="mclose">)</span></span></span></span>。</p>
+
+                    
+                </div>
+            
+                <br>
+                
+                <div class="topan-section-shadow">
+                    <h2>
+                        算法二：普通队列（<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>m</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(m)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">m</span><span class="mclose">)</span></span></span></span>）
+                        
+                    </h2>
+                    
+                    <p>本题中我们还有更加优秀的 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>m</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(m)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">m</span><span class="mclose">)</span></span></span></span> 的做法。</p>
+<p>首先考虑 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>q</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">q=0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.8388800000000001em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03588em;">q</span><span class="mrel">=</span><span class="mord mathrm">0</span></span></span></span> 的情形。这里作出 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi><mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow><annotation encoding="application/x-tex">p=\dfrac 12</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:1.32144em;"></span><span class="strut bottom" style="height:2.00744em;vertical-align:-0.686em;"></span><span class="base textstyle uncramped"><span class="mord mathit">p</span><span class="mrel">=</span><span class="mord reset-textstyle displaystyle textstyle uncramped"><span class="sizing reset-size5 size5 reset-textstyle textstyle uncramped nulldelimiter"></span><span class="mfrac"><span class="vlist"><span style="top:0.686em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle cramped"><span class="mord mathrm">2</span></span></span><span style="top:-0.22999999999999998em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle uncramped frac-line"></span></span><span style="top:-0.677em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle uncramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="sizing reset-size5 size5 reset-textstyle textstyle uncramped nulldelimiter"></span></span></span></span></span> 时 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow><mo fence="true">⌊</mo><mi>p</mi><mi>x</mi><mo fence="true">⌋</mo></mrow></mrow><annotation encoding="application/x-tex">\left\lfloor px\right\rfloor</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="minner textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌊</span><span class="mord mathit">p</span><span class="mord mathit">x</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌋</span></span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi><mo>−</mo><mrow><mo fence="true">⌊</mo><mi>p</mi><mi>x</mi><mo fence="true">⌋</mo></mrow></mrow><annotation encoding="application/x-tex">x-\left\lfloor px\right\rfloor</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathit">x</span><span class="mbin">−</span><span class="minner textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌊</span><span class="mord mathit">p</span><span class="mord mathit">x</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌋</span></span></span></span></span> 的图像，会发现它们都是 <strong>单调不降</strong> 的。</p>
+<p><img src="./file/pic2.png" alt="" width="450" height="263"> <img src="./file/pic3.png" alt="" width="400" height="290"></p>
+<blockquote class="topan-blockquote-note">
+<p>要证：若 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi><mo>≤</mo><mi>y</mi></mrow><annotation encoding="application/x-tex">x \leq y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.63597em;"></span><span class="strut bottom" style="height:0.8304100000000001em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit">x</span><span class="mrel">≤</span><span class="mord mathit" style="margin-right:0.03588em;">y</span></span></span></span>，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0</mn><mo>&lt;</mo><mi>p</mi><mo>&lt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">0 &lt; p &lt; 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.8388800000000001em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">0</span><span class="mrel">&lt;</span><span class="mord mathit">p</span><span class="mrel">&lt;</span><span class="mord mathrm">1</span></span></span></span>，则 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow><mo fence="true">⌊</mo><mi>p</mi><mi>x</mi><mo fence="true">⌋</mo></mrow><mo>≤</mo><mrow><mo fence="true">⌊</mo><mi>p</mi><mi>y</mi><mo fence="true">⌋</mo></mrow></mrow><annotation encoding="application/x-tex">\left\lfloor px\right\rfloor \leq \left\lfloor py\right\rfloor</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="minner textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌊</span><span class="mord mathit">p</span><span class="mord mathit">x</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌋</span></span><span class="mrel">≤</span><span class="minner textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌊</span><span class="mord mathit">p</span><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌋</span></span></span></span></span> 且 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi><mo>−</mo><mrow><mo fence="true">⌊</mo><mi>p</mi><mi>x</mi><mo fence="true">⌋</mo></mrow><mo>≤</mo><mi>y</mi><mo>−</mo><mrow><mo fence="true">⌊</mo><mi>p</mi><mi>y</mi><mo fence="true">⌋</mo></mrow></mrow><annotation encoding="application/x-tex">x-\left\lfloor px\right\rfloor \leq y-\left\lfloor py\right\rfloor</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathit">x</span><span class="mbin">−</span><span class="minner textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌊</span><span class="mord mathit">p</span><span class="mord mathit">x</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌋</span></span><span class="mrel">≤</span><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="mbin">−</span><span class="minner textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌊</span><span class="mord mathit">p</span><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌋</span></span></span></span></span>。</p>
+<p>前一个结论易证，而对于后一个结论，易知</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mtable><mtr><mtd><mrow></mrow></mtd><mtd><mrow><mrow></mrow><mi>p</mi><mo>(</mo><mi>y</mi><mo>−</mo><mi>x</mi><mo>)</mo><mo>≤</mo><mi>y</mi><mo>−</mo><mi>x</mi></mrow></mtd></mtr><mtr><mtd><mrow><mo>⇒</mo><mtext> </mtext></mrow></mtd><mtd><mrow><mrow></mrow><mi>x</mi><mo>−</mo><mi>p</mi><mi>x</mi><mo>≤</mo><mi>y</mi><mo>−</mo><mi>p</mi><mi>x</mi></mrow></mtd></mtr><mtr><mtd><mrow><mo>⇒</mo><mtext> </mtext></mrow></mtd><mtd><mrow><mrow></mrow><mrow><mo fence="true">⌊</mo><mi>x</mi><mo>−</mo><mi>p</mi><mi>x</mi><mo fence="true">⌋</mo></mrow><mo>≤</mo><mrow><mo fence="true">⌊</mo><mi>y</mi><mo>−</mo><mi>p</mi><mi>x</mi><mo fence="true">⌋</mo></mrow><mi mathvariant="normal">.</mi></mrow></mtd></mtr><mtr><mtd><mrow></mrow></mtd></mtr></mtable></mrow><annotation encoding="application/x-tex">\begin{aligned}
+              &amp; p(y-x) \leq y-x   \\
+\Rightarrow \ &amp;   x-px \leq y-px  \\
+\Rightarrow \ &amp; \left\lfloor x-px \right\rfloor \leq \left\lfloor y-px \right\rfloor. \\
+\end{aligned}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:2.6500000000000004em;"></span><span class="strut bottom" style="height:4.800000000000001em;vertical-align:-2.1500000000000004em;"></span><span class="base displaystyle textstyle uncramped"><span class="mord"><span class="mtable"><span class="col-align-r"><span class="vlist"><span style="top:-1.8100000000000003em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="mord displaystyle textstyle uncramped"></span></span><span style="top:-0.6100000000000001em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="mord displaystyle textstyle uncramped"><span class="mrel">⇒</span><span class="mord mspace"> </span></span></span><span style="top:0.5900000000000001em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="mord displaystyle textstyle uncramped"><span class="mrel">⇒</span><span class="mord mspace"> </span></span></span><span style="top:1.7900000000000003em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="mord displaystyle textstyle uncramped"></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="col-align-l"><span class="vlist"><span style="top:-1.8100000000000003em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="mord displaystyle textstyle uncramped"><span class="mord displaystyle textstyle uncramped"></span><span class="mord mathit">p</span><span class="mopen">(</span><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="mbin">−</span><span class="mord mathit">x</span><span class="mclose">)</span><span class="mrel">≤</span><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="mbin">−</span><span class="mord mathit">x</span></span></span><span style="top:-0.6100000000000001em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="mord displaystyle textstyle uncramped"><span class="mord displaystyle textstyle uncramped"></span><span class="mord mathit">x</span><span class="mbin">−</span><span class="mord mathit">p</span><span class="mord mathit">x</span><span class="mrel">≤</span><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="mbin">−</span><span class="mord mathit">p</span><span class="mord mathit">x</span></span></span><span style="top:0.5900000000000001em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="mord displaystyle textstyle uncramped"><span class="mord displaystyle textstyle uncramped"></span><span class="minner displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌊</span><span class="mord mathit">x</span><span class="mbin">−</span><span class="mord mathit">p</span><span class="mord mathit">x</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌋</span></span><span class="mrel">≤</span><span class="minner displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌊</span><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="mbin">−</span><span class="mord mathit">p</span><span class="mord mathit">x</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌋</span></span><span class="mord mathrm">.</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span>​</span></span></span></span></span></span></span></span></span></p>
+<p>注意到，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi><mo separator="true">,</mo><mtext> </mtext><mi>y</mi></mrow><annotation encoding="application/x-tex">x,\ y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit">x</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit" style="margin-right:0.03588em;">y</span></span></span></span> 是整数，可得</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi><mo>−</mo><mrow><mo fence="true">⌊</mo><mi>p</mi><mi>x</mi><mo fence="true">⌋</mo></mrow><mo>≤</mo><mi>y</mi><mo>−</mo><mrow><mo fence="true">⌊</mo><mi>p</mi><mi>y</mi><mo fence="true">⌋</mo></mrow><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">x - \left\lfloor px \right\rfloor \leq y - \left\lfloor py \right\rfloor.
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base displaystyle textstyle uncramped"><span class="mord mathit">x</span><span class="mbin">−</span><span class="minner displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌊</span><span class="mord mathit">p</span><span class="mord mathit">x</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌋</span></span><span class="mrel">≤</span><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="mbin">−</span><span class="minner displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌊</span><span class="mord mathit">p</span><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌋</span></span><span class="mord mathrm">.</span></span></span></span></span></p>
+<p>证毕。</p>
+<blockquote>
+<p>参考文献：<a href="https://www.luogu.com.cn/paste/c4jthmhz">https://www.luogu.com.cn/paste/c4jthmhz</a>（作者：<a href="https://www.luogu.com.cn/user/120868">dbxxx</a>）</p>
+</blockquote>
+</blockquote>
+<p>考虑维护三个队列 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>Q</mi><mo separator="true">,</mo><mtext> </mtext><msub><mi>Q</mi><mn>1</mn></msub><mo separator="true">,</mo><mtext> </mtext><msub><mi>Q</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">Q,\ Q_1,\ Q_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit">Q</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord"><span class="mord mathit">Q</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord"><span class="mord mathit">Q</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">2</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span>。</p>
+<ul>
+<li>
+<p>一开始将所有数按照 <strong>从大到小</strong> 的顺序加入队列 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>Q</mi></mrow><annotation encoding="application/x-tex">Q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit">Q</span></span></span></span> 中。</p>
+</li>
+<li>
+<p>每次从三个队列的队头中取最大的弹出，分割成 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow><mo fence="true">⌊</mo><mi>p</mi><mi>x</mi><mo fence="true">⌋</mo></mrow></mrow><annotation encoding="application/x-tex">\left\lfloor px \right\rfloor</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="minner textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌊</span><span class="mord mathit">p</span><span class="mord mathit">x</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌋</span></span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi><mo>−</mo><mrow><mo fence="true">⌊</mo><mi>p</mi><mi>x</mi><mo fence="true">⌋</mo></mrow></mrow><annotation encoding="application/x-tex">x - \left\lfloor px \right\rfloor</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathit">x</span><span class="mbin">−</span><span class="minner textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌊</span><span class="mord mathit">p</span><span class="mord mathit">x</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌋</span></span></span></span></span> 两段分别加入 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>Q</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">Q_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">Q</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>Q</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">Q_2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">Q</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">2</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 的队尾。</p>
+</li>
+<li>
+<p>易知每一步操作结束后三个队列的数都是 <strong>单调不增</strong> 的，得以保证下一次取出的必然是最大值。</p>
+</li>
+</ul>
+<hr>
+<p>再考虑 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>q</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">q &gt; 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.8388800000000001em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03588em;">q</span><span class="mrel">&gt;</span><span class="mord mathrm">0</span></span></span></span> 的情况。同样，我们还是维护一个偏移量，但是此时我们需要重新证明上面的结论。</p>
+<blockquote class="topan-blockquote-note">
+<p>要证：若 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi><mo>≤</mo><mi>y</mi></mrow><annotation encoding="application/x-tex">x \leq y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.63597em;"></span><span class="strut bottom" style="height:0.8304100000000001em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit">x</span><span class="mrel">≤</span><span class="mord mathit" style="margin-right:0.03588em;">y</span></span></span></span>，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0</mn><mo>&lt;</mo><mi>p</mi><mo>&lt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">0 &lt; p &lt; 1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.8388800000000001em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">0</span><span class="mrel">&lt;</span><span class="mord mathit">p</span><span class="mrel">&lt;</span><span class="mord mathrm">1</span></span></span></span>，则 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow><mo fence="true">⌊</mo><mi>p</mi><mo>(</mo><mi>x</mi><mo>+</mo><mi>q</mi><mo>)</mo><mo fence="true">⌋</mo></mrow><mo>≤</mo><mrow><mo fence="true">⌊</mo><mi>p</mi><mi>y</mi><mo fence="true">⌋</mo></mrow><mo>+</mo><mi>q</mi></mrow><annotation encoding="application/x-tex">\left\lfloor p(x+q)\right\rfloor \leq \left\lfloor py\right\rfloor +q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="minner textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌊</span><span class="mord mathit">p</span><span class="mopen">(</span><span class="mord mathit">x</span><span class="mbin">+</span><span class="mord mathit" style="margin-right:0.03588em;">q</span><span class="mclose">)</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌋</span></span><span class="mrel">≤</span><span class="minner textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌊</span><span class="mord mathit">p</span><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌋</span></span><span class="mbin">+</span><span class="mord mathit" style="margin-right:0.03588em;">q</span></span></span></span> 且 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi><mo>+</mo><mi>q</mi><mo>−</mo><mrow><mo fence="true">⌊</mo><mi>p</mi><mo>(</mo><mi>x</mi><mo>+</mo><mi>q</mi><mo>)</mo><mo fence="true">⌋</mo></mrow><mo>≤</mo><mi>y</mi><mo>−</mo><mrow><mo fence="true">⌊</mo><mi>p</mi><mi>y</mi><mo fence="true">⌋</mo></mrow><mo>+</mo><mi>q</mi></mrow><annotation encoding="application/x-tex">x+q-\left\lfloor p(x+q)\right\rfloor \leq y-\left\lfloor py\right\rfloor+q</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathit">x</span><span class="mbin">+</span><span class="mord mathit" style="margin-right:0.03588em;">q</span><span class="mbin">−</span><span class="minner textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌊</span><span class="mord mathit">p</span><span class="mopen">(</span><span class="mord mathit">x</span><span class="mbin">+</span><span class="mord mathit" style="margin-right:0.03588em;">q</span><span class="mclose">)</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌋</span></span><span class="mrel">≤</span><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="mbin">−</span><span class="minner textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌊</span><span class="mord mathit">p</span><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌋</span></span><span class="mbin">+</span><span class="mord mathit" style="margin-right:0.03588em;">q</span></span></span></span>。</p>
+<p>对于前一个结论，有</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow><mo fence="true">⌊</mo><mi>p</mi><mo>(</mo><mi>x</mi><mo>+</mo><mi>q</mi><mo>)</mo><mo fence="true">⌋</mo></mrow><mo>=</mo><mrow><mo fence="true">⌊</mo><mi>p</mi><mi>x</mi><mo>+</mo><mi>p</mi><mi>q</mi><mo fence="true">⌋</mo></mrow><mo>≤</mo><mrow><mo fence="true">⌊</mo><mi>p</mi><mi>y</mi><mo>+</mo><mi>q</mi><mo fence="true">⌋</mo></mrow><mo>=</mo><mrow><mo fence="true">⌊</mo><mi>p</mi><mi>y</mi><mo fence="true">⌋</mo></mrow><mo>+</mo><mi>q</mi><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">\left\lfloor p(x+q)\right\rfloor = \left\lfloor px+pq\right\rfloor \leq \left\lfloor py+q\right\rfloor = \left\lfloor py\right\rfloor +q.
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base displaystyle textstyle uncramped"><span class="minner displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌊</span><span class="mord mathit">p</span><span class="mopen">(</span><span class="mord mathit">x</span><span class="mbin">+</span><span class="mord mathit" style="margin-right:0.03588em;">q</span><span class="mclose">)</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌋</span></span><span class="mrel">=</span><span class="minner displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌊</span><span class="mord mathit">p</span><span class="mord mathit">x</span><span class="mbin">+</span><span class="mord mathit">p</span><span class="mord mathit" style="margin-right:0.03588em;">q</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌋</span></span><span class="mrel">≤</span><span class="minner displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌊</span><span class="mord mathit">p</span><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="mbin">+</span><span class="mord mathit" style="margin-right:0.03588em;">q</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌋</span></span><span class="mrel">=</span><span class="minner displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌊</span><span class="mord mathit">p</span><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌋</span></span><span class="mbin">+</span><span class="mord mathit" style="margin-right:0.03588em;">q</span><span class="mord mathrm">.</span></span></span></span></span></p>
+<p>对于后一个结论，根据 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>q</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">q=0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.8388800000000001em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03588em;">q</span><span class="mrel">=</span><span class="mord mathrm">0</span></span></span></span> 时的结论，有</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi><mo>+</mo><mi>q</mi><mo>−</mo><mrow><mo fence="true">⌊</mo><mi>p</mi><mo>(</mo><mi>x</mi><mo>+</mo><mi>q</mi><mo>)</mo><mo fence="true">⌋</mo></mrow><mo>≤</mo><mi>x</mi><mo>−</mo><mrow><mo fence="true">⌊</mo><mi>p</mi><mi>x</mi><mo fence="true">⌋</mo></mrow><mo>+</mo><mi>q</mi><mo>≤</mo><mi>y</mi><mo>−</mo><mrow><mo fence="true">⌊</mo><mi>p</mi><mi>y</mi><mo fence="true">⌋</mo></mrow><mo>+</mo><mi>q</mi><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">x+q-\left\lfloor p(x+q)\right\rfloor \leq x-\left\lfloor px\right\rfloor+q \leq y-\left\lfloor py\right\rfloor+q.
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base displaystyle textstyle uncramped"><span class="mord mathit">x</span><span class="mbin">+</span><span class="mord mathit" style="margin-right:0.03588em;">q</span><span class="mbin">−</span><span class="minner displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌊</span><span class="mord mathit">p</span><span class="mopen">(</span><span class="mord mathit">x</span><span class="mbin">+</span><span class="mord mathit" style="margin-right:0.03588em;">q</span><span class="mclose">)</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌋</span></span><span class="mrel">≤</span><span class="mord mathit">x</span><span class="mbin">−</span><span class="minner displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌊</span><span class="mord mathit">p</span><span class="mord mathit">x</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌋</span></span><span class="mbin">+</span><span class="mord mathit" style="margin-right:0.03588em;">q</span><span class="mrel">≤</span><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="mbin">−</span><span class="minner displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌊</span><span class="mord mathit">p</span><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">⌋</span></span><span class="mbin">+</span><span class="mord mathit" style="margin-right:0.03588em;">q</span><span class="mord mathrm">.</span></span></span></span></span></p>
+<p>证毕。</p>
+</blockquote>
+<p>时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>m</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(m)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">m</span><span class="mclose">)</span></span></span></span>。</p>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.07.05</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+
+queue&lt;<span class="hljs-type">int</span>&gt; Q,Q1,Q2;
+<span class="hljs-type">int</span> n,m,q,u,v,t,a[<span class="hljs-number">100001</span>];
+
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">debug</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span></span>{
+    <span class="hljs-type">int</span> n=Q.<span class="hljs-built_in">size</span>();
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++){
+        <span class="hljs-type">int</span> v=Q.<span class="hljs-built_in">front</span>();
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lld &quot;</span>,v+<span class="hljs-number">1ll</span>*x*q);
+        Q.<span class="hljs-built_in">pop</span>();Q.<span class="hljs-built_in">push</span>(v);
+    }
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\n&quot;</span>);
+    n=Q1.<span class="hljs-built_in">size</span>();
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++){
+        <span class="hljs-type">int</span> v=Q1.<span class="hljs-built_in">front</span>();
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lld &quot;</span>,v+<span class="hljs-number">1ll</span>*x*q);
+        Q1.<span class="hljs-built_in">pop</span>();Q1.<span class="hljs-built_in">push</span>(v);
+    }
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\n&quot;</span>);
+    n=Q2.<span class="hljs-built_in">size</span>();
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++){
+        <span class="hljs-type">int</span> v=Q2.<span class="hljs-built_in">front</span>();
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lld &quot;</span>,v+<span class="hljs-number">1ll</span>*x*q);
+        Q2.<span class="hljs-built_in">pop</span>();Q2.<span class="hljs-built_in">push</span>(v);
+    }
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\n&quot;</span>);
+}
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d%d%d%d%d&quot;</span>,&amp;n,&amp;m,&amp;q,&amp;u,&amp;v,&amp;t);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,a+i);
+    <span class="hljs-built_in">sort</span>(a+<span class="hljs-number">1</span>,a+<span class="hljs-number">1</span>+n);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=n;i&gt;=<span class="hljs-number">1</span>;i--)
+        Q.<span class="hljs-built_in">push</span>(a[i]);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=m;i++){
+        <span class="hljs-type">int</span> maxlen=<span class="hljs-number">-2e9</span>,from;
+        <span class="hljs-keyword">if</span>(!Q .<span class="hljs-built_in">empty</span>()&amp;&amp;Q .<span class="hljs-built_in">front</span>()&gt;maxlen)maxlen=Q .<span class="hljs-built_in">front</span>(),from=<span class="hljs-number">0</span>;
+        <span class="hljs-keyword">if</span>(!Q1.<span class="hljs-built_in">empty</span>()&amp;&amp;Q1.<span class="hljs-built_in">front</span>()&gt;maxlen)maxlen=Q1.<span class="hljs-built_in">front</span>(),from=<span class="hljs-number">1</span>;
+        <span class="hljs-keyword">if</span>(!Q2.<span class="hljs-built_in">empty</span>()&amp;&amp;Q2.<span class="hljs-built_in">front</span>()&gt;maxlen)maxlen=Q2.<span class="hljs-built_in">front</span>(),from=<span class="hljs-number">2</span>;
+        <span class="hljs-keyword">if</span>(from==<span class="hljs-number">0</span>)Q .<span class="hljs-built_in">pop</span>();
+        <span class="hljs-keyword">if</span>(from==<span class="hljs-number">1</span>)Q1.<span class="hljs-built_in">pop</span>();
+        <span class="hljs-keyword">if</span>(from==<span class="hljs-number">2</span>)Q2.<span class="hljs-built_in">pop</span>();
+        <span class="hljs-type">long</span> <span class="hljs-type">long</span> reallength=maxlen+(i<span class="hljs-number">-1ll</span>)*q;
+        <span class="hljs-keyword">if</span>(!(i%t))<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lld &quot;</span>,reallength);
+        Q1.<span class="hljs-built_in">push</span>(<span class="hljs-built_in">int</span>(reallength*u/v-(i<span class="hljs-number">-1ll</span>)*q-q));
+        Q2.<span class="hljs-built_in">push</span>(<span class="hljs-built_in">int</span>(reallength-reallength*u/v-(i<span class="hljs-number">-1ll</span>)*q-q));
+    }
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\n&quot;</span>);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n+m;i++){
+        <span class="hljs-type">int</span> maxlen=<span class="hljs-number">-2e9</span>,from;
+        <span class="hljs-keyword">if</span>(!Q .<span class="hljs-built_in">empty</span>()&amp;&amp;Q .<span class="hljs-built_in">front</span>()&gt;maxlen)maxlen=Q .<span class="hljs-built_in">front</span>(),from=<span class="hljs-number">0</span>;
+        <span class="hljs-keyword">if</span>(!Q1.<span class="hljs-built_in">empty</span>()&amp;&amp;Q1.<span class="hljs-built_in">front</span>()&gt;maxlen)maxlen=Q1.<span class="hljs-built_in">front</span>(),from=<span class="hljs-number">1</span>;
+        <span class="hljs-keyword">if</span>(!Q2.<span class="hljs-built_in">empty</span>()&amp;&amp;Q2.<span class="hljs-built_in">front</span>()&gt;maxlen)maxlen=Q2.<span class="hljs-built_in">front</span>(),from=<span class="hljs-number">2</span>;
+        <span class="hljs-keyword">if</span>(from==<span class="hljs-number">0</span>)Q .<span class="hljs-built_in">pop</span>();
+        <span class="hljs-keyword">if</span>(from==<span class="hljs-number">1</span>)Q1.<span class="hljs-built_in">pop</span>();
+        <span class="hljs-keyword">if</span>(from==<span class="hljs-number">2</span>)Q2.<span class="hljs-built_in">pop</span>();
+        <span class="hljs-type">long</span> <span class="hljs-type">long</span> reallength=maxlen+<span class="hljs-number">1ll</span>*m*q;
+        <span class="hljs-keyword">if</span>(!(i%t))<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lld &quot;</span>,reallength);
+    }
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\n&quot;</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
+        </div>
+    </div>
+</div>
+                    <br>
+                </div>
+                <footer class="topan-footer">
+                    <p></p>
+                    <p style="text-align: center; color: #555; font-size: 12px;">
+                        Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
+                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>&nbsp;&nbsp;&nbsp;
+                        <i class="fa fa-solid fa-eye"></i> 访客数量：<span id="busuanzi_value_site_pv">0</span>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>
+    

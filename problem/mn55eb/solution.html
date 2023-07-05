@@ -58,7 +58,11 @@
 
 <textarea style="display: none;" id="exportcode">## 题解
 
-TODO
+即求区间众数，**强制在线**。
+
+考虑分块，若询问区间的左端点和右端点所在块相同或者块相邻，就暴力计算。时间复杂度 $\Theta(\sqrt{n})$。
+
+若所在块相隔了至少一个块，容易发现答案要么是两个块中间夹着的块
 
 时间复杂度 $\Theta(n)$。
 
@@ -187,7 +191,9 @@ int main(){
                         
                     </h2>
                     
-                    <p>TODO</p>
+                    <p>即求区间众数，<strong>强制在线</strong>。</p>
+<p>考虑分块，若询问区间的左端点和右端点所在块相同或者块相邻，就暴力计算。时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><msqrt><mrow><mi>n</mi></mrow></msqrt><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(\sqrt{n})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8002800000000001em;"></span><span class="strut bottom" style="height:1.05028em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="sqrt mord"><span class="sqrt-sign" style="top:0.03971999999999998em;"><span class="style-wrap reset-textstyle textstyle uncramped">√</span></span><span class="vlist"><span style="top:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="mord textstyle cramped"><span class="mord mathit">n</span></span></span><span style="top:-0.72028em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="reset-textstyle textstyle uncramped sqrt-line"></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span>​</span></span></span><span class="mclose">)</span></span></span></span>。</p>
+<p>若所在块相隔了至少一个块，容易发现答案要么是两个块中间夹着的块</p>
 <p>时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mclose">)</span></span></span></span>。</p>
 
                     

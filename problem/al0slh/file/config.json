@@ -1,0 +1,30 @@
+{
+  "title": "蚯蚓",
+  "difficulty": {
+    "algorithm": 0,
+    "thinking": 0,
+    "implementation": 0
+  },
+  "judge": {
+    "time": "1 s",
+    "memory": "512 MiB"
+  },
+  "tags": "NOIP",
+  "source": "NOIP 2016 提高组第 5 题",
+  "statement": {
+    "简体中文": "statement_zh.md"
+  },
+  "solution": [
+    {
+      "title": "算法一：优先队列（$\\Theta(m\\log m)$）",
+      "file": "sol1.md",
+      "author": ""
+    },
+    {
+      "title": "算法二：普通队列（$\\Theta(m)$）",
+      "file": "sol2.md",
+      "author": "",
+      "code": "code.cpp"
+    }
+  ]
+}
