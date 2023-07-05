@@ -1,15 +1,15 @@
 {
   "title": "蚯蚓",
   "difficulty": {
-    "algorithm": 0,
-    "thinking": 0,
-    "implementation": 0
+    "algorithm": 3,
+    "thinking": 5,
+    "implementation": 3
   },
   "judge": {
     "time": "1 s",
     "memory": "512 MiB"
   },
-  "tags": "NOIP",
+  "tags": "数据结构,数据结构/队列,数据结构/队列/优先队列,来源/NOIP-S,时间/2016",
   "source": "NOIP 2016 提高组第 5 题",
   "statement": {
     "简体中文": "statement_zh.md"
