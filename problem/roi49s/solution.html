@@ -1,0 +1,259 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title id="title">题解与代码 - 生日礼物 - OI Problems</title>
+        <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
+        <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
+        <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
+        <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script src="/OI/pub/busuanzi.pure.mini.js"></script>
+        <script src="/OI/pub/main.js"></script>
+        <link rel="stylesheet" href="/OI/pub/main.css">
+        
+    </head>
+    <body>
+        <div class="topan-header">
+            <div class="topan-header-home">
+                <a href="/OI">
+                    <button class="topan-button-ordinary topan-button-commonly topan-button-header-round-left">
+                        <i class="fa fa-home"></i>
+                    </button>
+                </a>
+            </div>
+            <div class="topan-header-left">
+                <span class="topan-header-text">OI Problems&nbsp;</span>
+                <a href="/OI/about">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
+                        <i class="fa fa-solid fa-circle-info"></i>
+                        <span>&nbsp;关于</span>
+                    </span>
+                </a>
+                
+                
+            </div>
+            <div class="topan-header-right">
+            </div>
+        </div>
+        <div class="topan-outer">
+            <div class="topan-page">
+                <div class="topan-mainpage-auto">
+                    <br>
+                    <style>
+    .options{
+        font-size: 16px;
+        font-weight: normal;
+    }
+</style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 贪心 &amp; 优先队列 &amp; 链表
+
+容易发现连续的同号段可以合并在一起，与原问题等价。于是此时整个序列就变成正负交替的序列了。（注意 $0$ 也可以忽略掉。）
+
+考虑最优的选法：显然最优解选择的每一段两端都必须是正数。
+
+再考虑一种贪心做法：只选值为正数的段。
+
+考虑以上两种选法的区别：
+
+- 可能从贪心做法中删除了一些原来选择的段。
+
+- 也可能将贪心做法中原来的两个相邻但不相连的段合并了。
+
+容易证明这两种操作的影响都是使得答案减少了删除或添加的那个段的绝对值，并且总段数变少 $1$。所以我们肯定贪心地选择对绝对值最小的段进行操作，具体算法如下：
+
+- 每次选取绝对值最小的段，将答案减去其最小值，将该段与左右两段合并并重新加入优先队列中，在从原数列中删除左右两段。
+
+- 必须保证每次选取的数不能已经被删除。
+
+- 若选取到最左端或最右端的段，直接删除即可。
+
+- 重复以上操作直到段数不超过 $m$。
+
+```cpp
+// 2023.07.05
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+int n,m,a[100001],pre[100001],nxt[100001];
+bool vis[100001];
+priority_queue&lt;
+    pair&lt;int,int&gt;,
+    vector&lt;pair&lt;int,int&gt; &gt;,
+    greater&lt;pair&lt;int,int&gt; &gt;
+&gt; Q;
+
+void deleteinList(int x){
+    vis[x]=true;
+    pre[nxt[x]]=pre[x];
+    nxt[pre[x]]=nxt[x];
+}
+
+int main(){
+    scanf(&#34;%d%d&#34;,&amp;n,&amp;m);
+    int tmp=0;
+    for(int i=1;i&lt;=n;i++){
+        int x; scanf(&#34;%d&#34;,&amp;x);
+        if(x==0)continue;
+        if(!tmp||1ll*a[tmp]*x&lt;0)a[++tmp]=x;
+        else a[tmp]+=x;
+    }
+    n=tmp;
+    int total=0,sum=0;
+    for(int i=1;i&lt;=n;i++)
+        if(a[i]&gt;0)total++,sum+=a[i];
+    for(int i=1;i&lt;=n;i++)
+        pre[i]=i-1,nxt[i]=i+1,Q.push({abs(a[i]),i});
+    while(total&gt;m){
+        while(vis[Q.top().second])Q.pop();
+        int x=Q.top().second; Q.pop();
+        if(a[x]&gt;0||(a[x]&lt;0&amp;&amp;pre[x]!=0&amp;&amp;nxt[x]!=n+1)){
+            total--,sum-=abs(a[x]);
+            a[x]=a[pre[x]]+a[nxt[x]]+a[x];
+            Q.push({abs(a[x]),x});
+            deleteinList(pre[x]);
+            deleteinList(nxt[x]);
+        }
+        else deleteinList(x);
+    }
+    printf(&#34;%d\n&#34;,sum);
+    return 0;
+}
+```</textarea>
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2>生日礼物</h2>
+                <a class="topan-menu-option" href="/OI/problem/roi49s"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/roi49s/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/roi49s/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            
+                <div class="topan-section-shadow">
+                    <h2>
+                        贪心 &amp; 优先队列 &amp; 链表
+                        
+                    </h2>
+                    
+                    <p>容易发现连续的同号段可以合并在一起，与原问题等价。于是此时整个序列就变成正负交替的序列了。（注意 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">0</span></span></span></span> 也可以忽略掉。）</p>
+<p>考虑最优的选法：显然最优解选择的每一段两端都必须是正数。</p>
+<p>再考虑一种贪心做法：只选值为正数的段。</p>
+<p>考虑以上两种选法的区别：</p>
+<ul>
+<li>
+<p>可能从贪心做法中删除了一些原来选择的段。</p>
+</li>
+<li>
+<p>也可能将贪心做法中原来的两个相邻但不相连的段合并了。</p>
+</li>
+</ul>
+<p>容易证明这两种操作的影响都是使得答案减少了删除或添加的那个段的绝对值，并且总段数变少 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">1</span></span></span></span>。所以我们肯定贪心地选择对绝对值最小的段进行操作，具体算法如下：</p>
+<ul>
+<li>
+<p>每次选取绝对值最小的段，将答案减去其最小值，将该段与左右两段合并并重新加入优先队列中，在从原数列中删除左右两段。</p>
+</li>
+<li>
+<p>必须保证每次选取的数不能已经被删除。</p>
+</li>
+<li>
+<p>若选取到最左端或最右端的段，直接删除即可。</p>
+</li>
+<li>
+<p>重复以上操作直到段数不超过 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">m</span></span></span></span>。</p>
+</li>
+</ul>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.07.05</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+
+<span class="hljs-type">int</span> n,m,a[<span class="hljs-number">100001</span>],pre[<span class="hljs-number">100001</span>],nxt[<span class="hljs-number">100001</span>];
+<span class="hljs-type">bool</span> vis[<span class="hljs-number">100001</span>];
+priority_queue&lt;
+    pair&lt;<span class="hljs-type">int</span>,<span class="hljs-type">int</span>&gt;,
+    vector&lt;pair&lt;<span class="hljs-type">int</span>,<span class="hljs-type">int</span>&gt; &gt;,
+    greater&lt;pair&lt;<span class="hljs-type">int</span>,<span class="hljs-type">int</span>&gt; &gt;
+&gt; Q;
+
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">deleteinList</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span></span>{
+    vis[x]=<span class="hljs-literal">true</span>;
+    pre[nxt[x]]=pre[x];
+    nxt[pre[x]]=nxt[x];
+}
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d&quot;</span>,&amp;n,&amp;m);
+    <span class="hljs-type">int</span> tmp=<span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++){
+        <span class="hljs-type">int</span> x; <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;x);
+        <span class="hljs-keyword">if</span>(x==<span class="hljs-number">0</span>)<span class="hljs-keyword">continue</span>;
+        <span class="hljs-keyword">if</span>(!tmp||<span class="hljs-number">1ll</span>*a[tmp]*x&lt;<span class="hljs-number">0</span>)a[++tmp]=x;
+        <span class="hljs-keyword">else</span> a[tmp]+=x;
+    }
+    n=tmp;
+    <span class="hljs-type">int</span> total=<span class="hljs-number">0</span>,sum=<span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-keyword">if</span>(a[i]&gt;<span class="hljs-number">0</span>)total++,sum+=a[i];
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        pre[i]=i<span class="hljs-number">-1</span>,nxt[i]=i+<span class="hljs-number">1</span>,Q.<span class="hljs-built_in">push</span>({<span class="hljs-built_in">abs</span>(a[i]),i});
+    <span class="hljs-keyword">while</span>(total&gt;m){
+        <span class="hljs-keyword">while</span>(vis[Q.<span class="hljs-built_in">top</span>().second])Q.<span class="hljs-built_in">pop</span>();
+        <span class="hljs-type">int</span> x=Q.<span class="hljs-built_in">top</span>().second; Q.<span class="hljs-built_in">pop</span>();
+        <span class="hljs-keyword">if</span>(a[x]&gt;<span class="hljs-number">0</span>||(a[x]&lt;<span class="hljs-number">0</span>&amp;&amp;pre[x]!=<span class="hljs-number">0</span>&amp;&amp;nxt[x]!=n+<span class="hljs-number">1</span>)){
+            total--,sum-=<span class="hljs-built_in">abs</span>(a[x]);
+            a[x]=a[pre[x]]+a[nxt[x]]+a[x];
+            Q.<span class="hljs-built_in">push</span>({<span class="hljs-built_in">abs</span>(a[x]),x});
+            <span class="hljs-built_in">deleteinList</span>(pre[x]);
+            <span class="hljs-built_in">deleteinList</span>(nxt[x]);
+        }
+        <span class="hljs-keyword">else</span> <span class="hljs-built_in">deleteinList</span>(x);
+    }
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d\n&quot;</span>,sum);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
+        </div>
+    </div>
+</div>
+                    <br>
+                </div>
+                <footer class="topan-footer">
+                    <p></p>
+                    <p style="text-align: center; color: #555; font-size: 12px;">
+                        Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
+                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>&nbsp;&nbsp;&nbsp;
+                        <i class="fa fa-solid fa-eye"></i> 访客数量：<span id="busuanzi_value_site_pv">0</span>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>
+    
