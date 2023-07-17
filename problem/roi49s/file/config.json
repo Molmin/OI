@@ -1,15 +1,15 @@
 {
   "title": "生日礼物",
   "difficulty": {
-    "algorithm": 0,
-    "thinking": 0,
-    "implementation": 0
+    "algorithm": 3,
+    "thinking": 5,
+    "implementation": 3
   },
   "judge": {
     "time": "1 s",
     "memory": "256 MiB"
   },
-  "tags": "来源/POJ Challenge",
+  "tags": "基础算法/贪心,数据结构,数据结构/优先队列,数据结构/链表,来源/POJ Challenge,时间/2011",
   "source": "[2011.04.10 POJ Challenge](http://poj.openjudge.cn/challenge02/) [Problem B](http://poj.openjudge.cn/challenge02/B/) ([BZOJ 2288](https://hydro.ac/d/bzoj/p/2288))",
   "statement": {
     "简体中文": "statement_zh.md"

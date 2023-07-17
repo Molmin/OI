@@ -1,0 +1,26 @@
+{
+  "title": "New Year and Conference",
+  "difficulty": {
+    "algorithm": 0,
+    "thinking": 0,
+    "implementation": 0
+  },
+  "judge": {
+    "time": "2 s",
+    "memory": "1 GiB"
+  },
+  "tags": "来源/CodeForces,缺题解",
+  "source": "[Hello 2020](https://codeforces.com/contest/1284) [Problem D](https://codeforces.com/contest/1284/problem/D)",
+  "statement": {
+    "简体中文": "statement_zh.md",
+    "English": "statement_en.md"
+  },
+  "solution": [
+    {
+      "title": "sol",
+      "file": "sol",
+      "author": "",
+      "code": "code.cpp"
+    }
+  ]
+}

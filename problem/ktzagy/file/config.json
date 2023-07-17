@@ -1,0 +1,25 @@
+{
+  "title": "Messenger Simulator",
+  "difficulty": {
+    "algorithm": 0,
+    "thinking": 0,
+    "implementation": 0
+  },
+  "judge": {
+    "time": "3 s",
+    "memory": "256 MiB"
+  },
+  "tags": "来源/CodeForces,缺题解",
+  "source": "[Educational Codeforces Round 80 (Rated for Div. 2)](https://codeforces.com/contest/1288) [Problem E](https://codeforces.com/contest/1288/problem/E)",
+  "statement": {
+    "简体中文": "statement_zh.md"
+  },
+  "solution": [
+    {
+      "title": "1",
+      "file": "sol",
+      "author": "",
+      "code": "code.cpp"
+    }
+  ]
+}

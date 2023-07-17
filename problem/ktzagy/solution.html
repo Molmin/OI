@@ -1,0 +1,242 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title id="title">题解与代码 - Messenger Simulator - OI Problems</title>
+        <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
+        <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
+        <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
+        <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script src="/OI/pub/busuanzi.pure.mini.js"></script>
+        <script src="/OI/pub/main.js"></script>
+        <link rel="stylesheet" href="/OI/pub/main.css">
+        
+    </head>
+    <body>
+        <div class="topan-header">
+            <div class="topan-header-home">
+                <a href="/OI">
+                    <button class="topan-button-ordinary topan-button-commonly topan-button-header-round-left">
+                        <i class="fa fa-home"></i>
+                    </button>
+                </a>
+            </div>
+            <div class="topan-header-left">
+                <span class="topan-header-text">OI Problems&nbsp;</span>
+                <a href="/OI/about">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
+                        <i class="fa fa-solid fa-circle-info"></i>
+                        <span>&nbsp;关于</span>
+                    </span>
+                </a>
+                
+                
+            </div>
+            <div class="topan-header-right">
+            </div>
+        </div>
+        <div class="topan-outer">
+            <div class="topan-page">
+                <div class="topan-mainpage-auto">
+                    <br>
+                    <style>
+    .options{
+        font-size: 16px;
+        font-weight: normal;
+    }
+</style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 1
+
+TODO
+
+时间复杂度 $\Theta(n)$。
+
+```cpp
+// 2023.07.04
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+int n,m,pos[300001],minpos[300001],maxpos[300001];
+
+namespace SegmentTree{
+    int a[2400001],tag[2400001];
+    void pushdown(int id,int l,int r){
+        if(tag[id]){
+            a[id&lt;&lt;1]+=((l+r&gt;&gt;1)-l+1)*tag[id];
+            a[(id&lt;&lt;1)+1]+=(r-(l+r&gt;&gt;1))*tag[id];
+            tag[id&lt;&lt;1]+=tag[id];
+            tag[(id&lt;&lt;1)+1]+=tag[id];
+            tag[id]=0;
+        }
+    }
+    void pushup(int id){
+        a[id]=a[id&lt;&lt;1]+a[(id&lt;&lt;1)+1];
+    }
+    void update(int id,int l,int r,int x,int val){
+        if(l==x&amp;&amp;r==x)a[id]+=val;
+        else{
+            pushdown(id,l,r);
+            int mid=l+r&gt;&gt;1;
+            if(x&lt;=mid)update(id&lt;&lt;1,l,mid,x,val);
+            else update((id&lt;&lt;1)+1,mid+1,r,x,val);
+            pushup(id);
+        }
+    }
+    int query(int id,int l,int r,int ql,int qr){
+        if(ql&lt;=l&amp;&amp;r&lt;=qr)return a[id];
+        pushdown(id,l,r);
+        int mid=l+r&gt;&gt;1,res=0;
+        if(ql&lt;=mid)res+=query(id&lt;&lt;1,l,mid,ql,qr);
+        if(qr&gt;mid)res+=query((id&lt;&lt;1)+1,mid+1,r,ql,qr);
+        return res;
+    }
+}
+
+int main(){
+    scanf(&#34;%d%d&#34;,&amp;n,&amp;m);
+    int treelength=n+m;
+    for(int i=1;i&lt;=n;i++)
+        pos[i]=i+m,minpos[i]=maxpos[i]=i;
+    for(int i=1;i&lt;=n;i++)
+        SegmentTree::update(1,1,treelength,pos[i],1);
+    while(m--){
+        int x; scanf(&#34;%d&#34;,&amp;x);
+        maxpos[x]=max(maxpos[x],SegmentTree::query(1,1,treelength,1,pos[x]));
+        SegmentTree::update(1,1,treelength,pos[x],-1);
+        pos[x]=m+1;
+        SegmentTree::update(1,1,treelength,pos[x],1);
+        minpos[x]=1;
+    }
+    for(int i=1;i&lt;=n;i++)
+        maxpos[i]=max(maxpos[i],SegmentTree::query(1,1,treelength,1,pos[i]));
+    for(int i=1;i&lt;=n;i++)
+        printf(&#34;%d %d\n&#34;,minpos[i],maxpos[i]);
+    return 0;
+}
+```</textarea>
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2>Messenger Simulator</h2>
+                <a class="topan-menu-option" href="/OI/problem/ktzagy"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/ktzagy/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/ktzagy/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            
+                <div class="topan-section-shadow">
+                    <h2>
+                        1
+                        
+                    </h2>
+                    
+                    <p>TODO</p>
+<p>时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mclose">)</span></span></span></span>。</p>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.07.04</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+
+<span class="hljs-type">int</span> n,m,pos[<span class="hljs-number">300001</span>],minpos[<span class="hljs-number">300001</span>],maxpos[<span class="hljs-number">300001</span>];
+
+<span class="hljs-keyword">namespace</span> SegmentTree{
+    <span class="hljs-type">int</span> a[<span class="hljs-number">2400001</span>],tag[<span class="hljs-number">2400001</span>];
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">pushdown</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r)</span></span>{
+        <span class="hljs-keyword">if</span>(tag[id]){
+            a[id&lt;&lt;<span class="hljs-number">1</span>]+=((l+r&gt;&gt;<span class="hljs-number">1</span>)-l+<span class="hljs-number">1</span>)*tag[id];
+            a[(id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>]+=(r-(l+r&gt;&gt;<span class="hljs-number">1</span>))*tag[id];
+            tag[id&lt;&lt;<span class="hljs-number">1</span>]+=tag[id];
+            tag[(id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>]+=tag[id];
+            tag[id]=<span class="hljs-number">0</span>;
+        }
+    }
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">pushup</span><span class="hljs-params">(<span class="hljs-type">int</span> id)</span></span>{
+        a[id]=a[id&lt;&lt;<span class="hljs-number">1</span>]+a[(id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>];
+    }
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">update</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r,<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> val)</span></span>{
+        <span class="hljs-keyword">if</span>(l==x&amp;&amp;r==x)a[id]+=val;
+        <span class="hljs-keyword">else</span>{
+            <span class="hljs-built_in">pushdown</span>(id,l,r);
+            <span class="hljs-type">int</span> mid=l+r&gt;&gt;<span class="hljs-number">1</span>;
+            <span class="hljs-keyword">if</span>(x&lt;=mid)<span class="hljs-built_in">update</span>(id&lt;&lt;<span class="hljs-number">1</span>,l,mid,x,val);
+            <span class="hljs-keyword">else</span> <span class="hljs-built_in">update</span>((id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r,x,val);
+            <span class="hljs-built_in">pushup</span>(id);
+        }
+    }
+    <span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">query</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r,<span class="hljs-type">int</span> ql,<span class="hljs-type">int</span> qr)</span></span>{
+        <span class="hljs-keyword">if</span>(ql&lt;=l&amp;&amp;r&lt;=qr)<span class="hljs-keyword">return</span> a[id];
+        <span class="hljs-built_in">pushdown</span>(id,l,r);
+        <span class="hljs-type">int</span> mid=l+r&gt;&gt;<span class="hljs-number">1</span>,res=<span class="hljs-number">0</span>;
+        <span class="hljs-keyword">if</span>(ql&lt;=mid)res+=<span class="hljs-built_in">query</span>(id&lt;&lt;<span class="hljs-number">1</span>,l,mid,ql,qr);
+        <span class="hljs-keyword">if</span>(qr&gt;mid)res+=<span class="hljs-built_in">query</span>((id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r,ql,qr);
+        <span class="hljs-keyword">return</span> res;
+    }
+}
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d&quot;</span>,&amp;n,&amp;m);
+    <span class="hljs-type">int</span> treelength=n+m;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        pos[i]=i+m,minpos[i]=maxpos[i]=i;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        SegmentTree::<span class="hljs-built_in">update</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,treelength,pos[i],<span class="hljs-number">1</span>);
+    <span class="hljs-keyword">while</span>(m--){
+        <span class="hljs-type">int</span> x; <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;x);
+        maxpos[x]=<span class="hljs-built_in">max</span>(maxpos[x],SegmentTree::<span class="hljs-built_in">query</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,treelength,<span class="hljs-number">1</span>,pos[x]));
+        SegmentTree::<span class="hljs-built_in">update</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,treelength,pos[x],<span class="hljs-number">-1</span>);
+        pos[x]=m+<span class="hljs-number">1</span>;
+        SegmentTree::<span class="hljs-built_in">update</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,treelength,pos[x],<span class="hljs-number">1</span>);
+        minpos[x]=<span class="hljs-number">1</span>;
+    }
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        maxpos[i]=<span class="hljs-built_in">max</span>(maxpos[i],SegmentTree::<span class="hljs-built_in">query</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,treelength,<span class="hljs-number">1</span>,pos[i]));
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d %d\n&quot;</span>,minpos[i],maxpos[i]);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
+        </div>
+    </div>
+</div>
+                    <br>
+                </div>
+                <footer class="topan-footer">
+                    <p></p>
+                    <p style="text-align: center; color: #555; font-size: 12px;">
+                        Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
+                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>&nbsp;&nbsp;&nbsp;
+                        <i class="fa fa-solid fa-eye"></i> 访客数量：<span id="busuanzi_value_site_pv">0</span>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>
+    

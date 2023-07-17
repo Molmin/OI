@@ -2,7 +2,7 @@
   "title": "蚯蚓",
   "difficulty": {
     "algorithm": 3,
-    "thinking": 5,
+    "thinking": 6,
     "implementation": 3
   },
   "judge": {

@@ -1,0 +1,25 @@
+{
+  "title": "令人感伤的红雨",
+  "difficulty": {
+    "algorithm": 0,
+    "thinking": 0,
+    "implementation": 0
+  },
+  "judge": {
+    "time": "2.5 s",
+    "memory": "500 MiB"
+  },
+  "tags": "来源/洛谷,来源/洛谷/洛谷公开赛,缺题解",
+  "source": "洛谷公开赛 [「Wdoi」Windy Simple Round 3](https://www.luogu.com.cn/contest/35209) [Problem D](https://www.luogu.com.cn/problem/P8010?contestId=35209)",
+  "statement": {
+    "简体中文": "statement_zh.md"
+  },
+  "solution": [
+    {
+      "title": "sol",
+      "file": "sol",
+      "author": "",
+      "code": "code.cpp"
+    }
+  ]
+}

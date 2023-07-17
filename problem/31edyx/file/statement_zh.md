@@ -23,7 +23,7 @@ Each of the following $t$ lines of the input contains integer $n$ ($2\leq n\leq 
 
 ## 输出格式
 
-Print $t$ lines: the $i$-th of them must contain the answer to the $i$ -th test as an irreducible fraction "$p\texttt{/}q$", where $p,\ q$ are integers, $q>0$.
+Print $t$ lines: the $i$-th of them must contain the answer to the $i$ -th test as an irreducible fraction `p/q`, where $p,\ q$ are integers, $q>0$.
 
 ## 样例输入输出
 
