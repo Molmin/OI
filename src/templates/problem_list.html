@@ -115,7 +115,7 @@
                     <li class="topan-tab-showed">1</li><% 
                     var minPageId=2, maxPageId=Math.min(11,Math.ceil(problemList.length/System.eachPage));
                     for(var pageId=minPageId;pageId<=maxPageId;pageId++){
-                        %><li onclick="movetoPage(<%= pageId %>});"><%= pageId %></li><%
+                        %><li onclick="movetoPage(<%= pageId %>);"><%= pageId %></li><%
                     }
                     if(Math.ceil(problemList.length/System.eachPage)>11){
                         %><span>...</span><%

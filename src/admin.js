@@ -8,6 +8,7 @@ const Admin = require('./lib/admin.js');
 const URL = require('url');
 const deletedir = require('./lib/deletedir.js');
 const logger = require('./lib/logger.js');
+const { backupFile, newOperationId } = require('./lib/backup.js');
 
 router.all('*', (req, res, next) => {
     if (req._parsedUrl.pathname.startsWith('/login') || Admin.checkloginByReq(req)) next();
@@ -170,12 +171,16 @@ router.post('/problem/:pid/edit', (req, res) => {
         prodata.judge = problemConfig.judge;
         prodata.tags = problemConfig.tags;
         prodata.source = problemConfig.source;
+        var opId = newOperationId();
+        backupFile(opId, `${req.params.pid}/config.json`);
         fs.writeFileSync(`data/${req.params.pid}/config.json`, JSON.stringify(prodata, null, "  "));
-        logger.log(req, `edited a problem (${req.params.pid})`);
+        logger.log(req, `edited a problem (${req.params.pid})`, opId);
         res.status(200).json({ pid });
     }
 });
 router.post('/problem/:pid/delete', (req, res) => {
+    var opId = newOperationId();
+    backupFile(opId, `${req.params.pid}`, true);
     deletedir(`data/${req.params.pid}`);
     var problemList = fs.readFileSync('data/problem.json', 'utf8');
     var tmp = JSON.parse(problemList);
@@ -183,7 +188,7 @@ router.post('/problem/:pid/delete', (req, res) => {
     tmp.splice(i, 1);
     problemList = JSON.stringify(tmp, null, "  ");
     fs.writeFileSync('data/problem.json', problemList);
-    logger.log(req, `deleted a problem (${req.params.pid})`);
+    logger.log(req, `deleted a problem (${req.params.pid})`, opId);
     res.json({});
 });
 
@@ -205,9 +210,12 @@ router.post('/problem/:pid/statement/create', (req, res) => {
     var prodata = JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`, 'utf8'));
     if (prodata.statement[req.body.name]) req.body.name += ' (1)';
     prodata.statement[req.body.name] = req.body.file;
+    var opId = newOperationId();
+    backupFile(opId, `${req.params.pid}/${req.body.file}`);
+    backupFile(opId, `${req.params.pid}/config.json`);
     fs.writeFileSync(`data/${req.params.pid}/${req.body.file}`, req.body.code);
     fs.writeFileSync(`data/${req.params.pid}/config.json`, JSON.stringify(prodata, null, "  "));
-    logger.log(req, `created a statement (${req.params.pid}/${req.body.file})`);
+    logger.log(req, `created a statement (${req.params.pid}/${req.body.file})`, opId);
     res.status(200).json({});
 });
 router.get('/problem/:pid/statement/:statementName/edit', (req, res) => {
@@ -239,34 +247,44 @@ router.post('/problem/:pid/statement/:statementName/delete', (req, res) => {
         res.status(200).json({});
         return;
     }
+    var opId = newOperationId();
+    backupFile(opId, `${req.params.pid}/${prodata.statement[key]}`);
+    backupFile(opId, `${req.params.pid}/config.json`);
     fs.unlinkSync(`data/${req.params.pid}/${prodata.statement[key]}`, err => { });
     delete prodata.statement[key];
     fs.writeFileSync(`data/${req.params.pid}/config.json`, JSON.stringify(prodata, null, "  "));
-    logger.log(req, `deleted a statement (${req.params.pid}/${prodata.statement[key]})`);
+    logger.log(req, `deleted a statement (${req.params.pid}/${prodata.statement[key]})`, opIdd);
     res.status(200).json({});
 });
 router.post('/problem/:pid/statement/:statementName/edit', (req, res) => {
     var prodata = JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`, 'utf8'));
     var key = req.params.statementName;
+    var opId = newOperationId();
+    backupFile(opId, `${req.params.pid}/${prodata.statement[key]}`);
+    backupFile(opId, `${req.params.pid}/config.json`);
     fs.unlinkSync(`data/${req.params.pid}/${prodata.statement[key]}`, err => { });
     delete prodata.statement[key];
     if (prodata.statement[req.body.name]) req.body.name += ' (1)';
     prodata.statement[req.body.name] = req.body.file;
     fs.writeFileSync(`data/${req.params.pid}/${req.body.file}`, req.body.newCode);
     fs.writeFileSync(`data/${req.params.pid}/config.json`, JSON.stringify(prodata, null, "  "));
-    logger.log(req, `edited a statement (${req.params.pid}/${prodata.statement[key]})`);
+    logger.log(req, `edited a statement (${req.params.pid}/${prodata.statement[key]})`, opId);
     res.status(200).json({});
 });
 
 router.post('/problem/:pid/solution/:para/delete', (req, res) => {
     var prodata = JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`, 'utf8')),
         tmp = prodata.solution[req.params.para];
+    var opId = newOperationId();
+    backupFile(opId, `${req.params.pid}/config.json`);
+    backupFile(opId, `${req.params.pid}/${prodata.solution[req.params.para].file}`);
     fs.unlinkSync(`data/${req.params.pid}/${prodata.solution[req.params.para].file}`);
     if (prodata.solution[req.params.para].code)
-        fs.unlinkSync(`data/${req.params.pid}/${prodata.solution[req.params.para].code}`);
+        fs.unlinkSync(`data/${req.params.pid}/${prodata.solution[req.params.para].code}`),
+            backupFile(opId, `${req.params.pid}/${prodata.solution[req.params.para].code}`);
     prodata.solution.splice(req.params.para, 1);
     fs.writeFileSync(`data/${req.params.pid}/config.json`, JSON.stringify(prodata, null, "  "));
-    logger.log(req, `deleted a section of solutions (${req.params.pid}/${tmp.file}${tmp.code ? `,${tmp / code}` : ''})`);
+    logger.log(req, `deleted a section of solutions (${req.params.pid}/${tmp.file}${tmp.code ? `,${tmp / code}` : ''})`, opId);
     res.json({});
 });
 router.get('/problem/:pid/solution/:para/edit', (req, res) => {
@@ -285,13 +303,16 @@ router.get('/problem/:pid/solution/:para/edit', (req, res) => {
 });
 router.post('/problem/:pid/solution/:para/edit', (req, res) => {
     var prodata = JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`, 'utf8'));
+    var opId = newOperationId();
+    backupFile(opId, `${req.params.pid}/config.json`);
+    backupFile(opId, `${req.params.pid}/${prodata.solution[req.params.para].file}`);
     fs.unlinkSync(`data/${req.params.pid}/${prodata.solution[req.params.para].file}`);
     fs.writeFileSync(`data/${req.params.pid}/${req.body.filename}`, req.body.code);
     prodata.solution[req.params.para].title = req.body.title;
     prodata.solution[req.params.para].file = req.body.filename;
     prodata.solution[req.params.para].author = req.body.author;
     fs.writeFileSync(`data/${req.params.pid}/config.json`, JSON.stringify(prodata, null, "  "));
-    logger.log(req, `edited a section of solutions (${req.params.pid}/${prodata.solution[req.params.para].file})`);
+    logger.log(req, `edited a section of solutions (${req.params.pid}/${prodata.solution[req.params.para].file})`, opId);
     res.json({});
 });
 router.get('/problem/:pid/solution/:para/editcode', (req, res) => {
@@ -311,15 +332,18 @@ router.get('/problem/:pid/solution/:para/editcode', (req, res) => {
 router.post('/problem/:pid/solution/:para/editcode', (req, res) => {
     var prodata = JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`, 'utf8')),
         tmp = prodata.solution[req.params.para];
+    var opId = newOperationId();
+    backupFile(opId, `${req.params.pid}/config.json`);
     if (prodata.solution[req.params.para].code)
         fs.unlinkSync(`data/${req.params.pid}/${prodata.solution[req.params.para].code}`),
+            backupFile(opId, `${req.params.pid}/${prodata.solution[req.params.para].code}`),
             delete prodata.solution[req.params.para].code;
     if (req.body.code.length > 0) {
         prodata.solution[req.params.para].code = req.body.filename;
         fs.writeFileSync(`data/${req.params.pid}/${req.body.filename}`, req.body.code);
     }
     fs.writeFileSync(`data/${req.params.pid}/config.json`, JSON.stringify(prodata, null, "  "));
-    logger.log(req, `edited a code of solutions (${req.params.pid}/${tmp.file},/${tmp.code})`);
+    logger.log(req, `edited a code of solutions (${req.params.pid}/${tmp.file},/${tmp.code})`, opId);
     res.json({});
 });
 router.get('/problem/:pid/solution/:para/insert', (req, res) => {
