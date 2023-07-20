@@ -1,0 +1,327 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title id="title">题解与代码 - Pair - OI Problems</title>
+        <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
+        <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
+        <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
+        <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script src="/OI/pub/busuanzi.pure.mini.js"></script>
+        <script src="/OI/pub/main.js"></script>
+        <link rel="stylesheet" href="/OI/pub/main.css">
+        
+    </head>
+    <body>
+        <div class="topan-header">
+            <div class="topan-header-home">
+                <a href="/OI">
+                    <button class="topan-button-ordinary topan-button-commonly topan-button-header-round-left">
+                        <i class="fa fa-home"></i>
+                    </button>
+                </a>
+            </div>
+            <div class="topan-header-left">
+                <span class="topan-header-text">OI Problems&nbsp;</span>
+                <a href="/OI/about">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
+                        <i class="fa fa-solid fa-circle-info"></i>
+                        <span>&nbsp;关于</span>
+                    </span>
+                </a>
+                
+                
+            </div>
+            <div class="topan-header-right">
+            </div>
+        </div>
+        <div class="topan-outer">
+            <div class="topan-page">
+                <div class="topan-mainpage-auto">
+                    <br>
+                    <style>
+    .options{
+        font-size: 16px;
+        font-weight: normal;
+    }
+</style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 总体思路
+
+首先记 $c_i=h-a_i$，则 $a_i$ 与 $b_j$ 能匹配等价于 $c_i \leq b_j$。考虑建图，$a_i$ 对应结点 $1\sim n$，$b_i$ 对应结点 $n+1\sim n+m$，若 $a_i$ 与 $b_j$ 能匹配就将它们连边。
+
+考虑将 $b$ 和 $c$ 都从小到大排序，那么此时问题转化为考虑 $b_i$ 与 $c_j$ 的匹配。注意到 $b$ 和 $c$ 有序，所以 $b$ 连边的结点是 $c$ 的一个前缀。那么考虑转化这个问题：对于 $b_{i+1}$ 连向结点 $c_j$，若 $b_i$ 也连向 $c_j$，就忽略这条边，而是从 $b_{i+1}$ 向 $b_i$ 连一条边。容易发现此时整个图是一棵树。
+
+## 做法
+
+若一段数符合条件，那么其任意一段前缀的和都不能为负数，并且容易发现这两个条件是等价的。于是我们只需要维护这个值就可以了。
+
+容易发现这样的做法不需要用到树上信息，所以我们没有任何必要建出这棵树。
+
+考虑到可能存在不在树上的点，所以我们需要建立一个总根 $0$，这个总根引出的一些代码细节需要特别注意。
+
+```cpp
+// 2023.07.20
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+int n,m,h,a[150001],b[150001],lastby[150001];
+
+struct Node{
+    int value,id;
+    bool operator&lt;(Node tmp)const{
+        return value&lt;tmp.value;
+    }
+}c[150001];
+
+namespace SegmentTree{
+    int val[610001],lazy[610001];
+    void pushup(int id){
+        val[id]=min(val[id&lt;&lt;1],val[(id&lt;&lt;1)+1]);
+    }
+    void pushdown(int id){
+        if(lazy[id]){
+            lazy[id&lt;&lt;1]+=lazy[id];
+            val[id&lt;&lt;1]+=lazy[id];
+            lazy[(id&lt;&lt;1)+1]+=lazy[id];
+            val[(id&lt;&lt;1)+1]+=lazy[id];
+            lazy[id]=0;
+        }
+    }
+
+    void build(int id,int l,int r){
+        if(l==r){
+            if(l)val[id]=m-l+1;
+            return;
+        }
+        int mid=l+r&gt;&gt;1;
+        build(id&lt;&lt;1,l,mid);
+        build((id&lt;&lt;1)+1,mid+1,r);
+        pushup(id);
+    }
+
+    void updateAdd(int id,int l,int r,int x,int y,int v){
+        if(y==0)x=0; // 防止右端点为 0
+        if(x&lt;=l&amp;&amp;r&lt;=y){
+            lazy[id]+=v,val[id]+=v;
+            return;
+        }
+        int mid=l+r&gt;&gt;1;
+        pushdown(id);
+        if(x&lt;=mid)updateAdd(id&lt;&lt;1,l,mid,x,y,v);
+        if(mid&lt;y)updateAdd((id&lt;&lt;1)+1,mid+1,r,x,y,v);
+        pushup(id);
+    }
+
+    int queryMin(int id,int l,int r,int x,int y){
+        if(x&lt;=l&amp;&amp;r&lt;=y)return val[id];
+        int mid=l+r&gt;&gt;1,res=0x7fffffff;
+        pushdown(id);
+        if(x&lt;=mid)res=min(res,queryMin(id&lt;&lt;1,l,mid,x,y));
+        if(mid&lt;y)res=min(res,queryMin((id&lt;&lt;1)+1,mid+1,r,x,y));
+        return res;
+    }
+}
+
+int main(){
+    scanf(&#34;%d%d%d&#34;,&amp;n,&amp;m,&amp;h);
+    for(int i=1;i&lt;=m;i++)
+        scanf(&#34;%d&#34;,b+i);
+    for(int i=1;i&lt;=n;i++)
+        scanf(&#34;%d&#34;,a+i);
+    sort(b+1,b+1+m);
+    for(int i=1;i&lt;=n;i++)
+        c[i]={h-a[i],i};
+    sort(c+1,c+1+n);
+    if(b[1]&lt;c[1].value)
+        return printf(&#34;0\n&#34;),0;
+
+    int tmp=1;
+    for(int i=1;i&lt;=m;i++)
+        while(tmp&lt;=n&amp;&amp;c[tmp].value&lt;=b[i])
+            lastby[c[tmp++].id]=i;
+    SegmentTree::build(1,0,m);
+    for(int i=1;i&lt;=m;i++)
+        SegmentTree::updateAdd(1,0,m,1,lastby[i],-1);
+    int answer=0;
+    answer+=SegmentTree::queryMin(1,0,m,0,m)&gt;=0;
+    for(int i=m+1;i&lt;=n;i++){
+        SegmentTree::updateAdd(1,0,m,1,lastby[i-m],1);
+        SegmentTree::updateAdd(1,0,m,1,lastby[i],-1);
+        answer+=SegmentTree::queryMin(1,0,m,0,m)&gt;=0;
+    }
+    printf(&#34;%d\n&#34;,answer);
+    return 0;
+}
+```</textarea>
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2>Pair</h2>
+                <a class="topan-menu-option" href="/OI/problem/k3tyq8"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/k3tyq8/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/k3tyq8/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            
+                <div class="topan-section-shadow">
+                    <h2>
+                        总体思路
+                        
+                    </h2>
+                    
+                    <p>首先记 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>c</mi><mi>i</mi></msub><mo>=</mo><mi>h</mi><mo>−</mo><msub><mi>a</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">c_i=h-a_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">c</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mrel">=</span><span class="mord mathit">h</span><span class="mbin">−</span><span class="mord"><span class="mord mathit">a</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span>，则 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>a</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">a_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">a</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 与 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>b</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">b_j</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.980548em;vertical-align:-0.286108em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">b</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit" style="margin-right:0.05724em;">j</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 能匹配等价于 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>c</mi><mi>i</mi></msub><mo>≤</mo><msub><mi>b</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">c_i \leq b_j</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.980548em;vertical-align:-0.286108em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">c</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mrel">≤</span><span class="mord"><span class="mord mathit">b</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit" style="margin-right:0.05724em;">j</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span>。考虑建图，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>a</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">a_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">a</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 对应结点 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mo>∼</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">1\sim n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">1</span><span class="mrel">∼</span><span class="mord mathit">n</span></span></span></span>，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>b</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">b_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">b</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 对应结点 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mo>+</mo><mn>1</mn><mo>∼</mo><mi>n</mi><mo>+</mo><mi>m</mi></mrow><annotation encoding="application/x-tex">n+1\sim n+m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord mathit">n</span><span class="mbin">+</span><span class="mord mathrm">1</span><span class="mrel">∼</span><span class="mord mathit">n</span><span class="mbin">+</span><span class="mord mathit">m</span></span></span></span>，若 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>a</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">a_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">a</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 与 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>b</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">b_j</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.980548em;vertical-align:-0.286108em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">b</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit" style="margin-right:0.05724em;">j</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 能匹配就将它们连边。</p>
+<p>考虑将 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.69444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">b</span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">c</span></span></span></span> 都从小到大排序，那么此时问题转化为考虑 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>b</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">b_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">b</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 与 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>c</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">c_j</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.716668em;vertical-align:-0.286108em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">c</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit" style="margin-right:0.05724em;">j</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 的匹配。注意到 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.69444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">b</span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">c</span></span></span></span> 有序，所以 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>b</mi></mrow><annotation encoding="application/x-tex">b</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.69444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">b</span></span></span></span> 连边的结点是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>c</mi></mrow><annotation encoding="application/x-tex">c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">c</span></span></span></span> 的一个前缀。那么考虑转化这个问题：对于 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>b</mi><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">b_{i+1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.902771em;vertical-align:-0.208331em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">b</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord scriptstyle cramped"><span class="mord mathit">i</span><span class="mbin">+</span><span class="mord mathrm">1</span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 连向结点 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>c</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">c_j</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.716668em;vertical-align:-0.286108em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">c</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit" style="margin-right:0.05724em;">j</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span>，若 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>b</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">b_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">b</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 也连向 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>c</mi><mi>j</mi></msub></mrow><annotation encoding="application/x-tex">c_j</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.716668em;vertical-align:-0.286108em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">c</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit" style="margin-right:0.05724em;">j</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span>，就忽略这条边，而是从 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>b</mi><mrow><mi>i</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">b_{i+1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.902771em;vertical-align:-0.208331em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">b</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord scriptstyle cramped"><span class="mord mathit">i</span><span class="mbin">+</span><span class="mord mathrm">1</span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 向 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>b</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">b_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">b</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 连一条边。容易发现此时整个图是一棵树。</p>
+
+                    
+                </div>
+            
+                <br>
+                
+                <div class="topan-section-shadow">
+                    <h2>
+                        做法
+                        
+                    </h2>
+                    
+                    <p>若一段数符合条件，那么其任意一段前缀的和都不能为负数，并且容易发现这两个条件是等价的。于是我们只需要维护这个值就可以了。</p>
+<p>容易发现这样的做法不需要用到树上信息，所以我们没有任何必要建出这棵树。</p>
+<p>考虑到可能存在不在树上的点，所以我们需要建立一个总根 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">0</span></span></span></span>，这个总根引出的一些代码细节需要特别注意。</p>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.07.20</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+
+<span class="hljs-type">int</span> n,m,h,a[<span class="hljs-number">150001</span>],b[<span class="hljs-number">150001</span>],lastby[<span class="hljs-number">150001</span>];
+
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">Node</span>{
+    <span class="hljs-type">int</span> value,id;
+    <span class="hljs-type">bool</span> <span class="hljs-keyword">operator</span>&lt;(Node tmp)<span class="hljs-type">const</span>{
+        <span class="hljs-keyword">return</span> value&lt;tmp.value;
+    }
+}c[<span class="hljs-number">150001</span>];
+
+<span class="hljs-keyword">namespace</span> SegmentTree{
+    <span class="hljs-type">int</span> val[<span class="hljs-number">610001</span>],lazy[<span class="hljs-number">610001</span>];
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">pushup</span><span class="hljs-params">(<span class="hljs-type">int</span> id)</span></span>{
+        val[id]=<span class="hljs-built_in">min</span>(val[id&lt;&lt;<span class="hljs-number">1</span>],val[(id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>]);
+    }
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">pushdown</span><span class="hljs-params">(<span class="hljs-type">int</span> id)</span></span>{
+        <span class="hljs-keyword">if</span>(lazy[id]){
+            lazy[id&lt;&lt;<span class="hljs-number">1</span>]+=lazy[id];
+            val[id&lt;&lt;<span class="hljs-number">1</span>]+=lazy[id];
+            lazy[(id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>]+=lazy[id];
+            val[(id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>]+=lazy[id];
+            lazy[id]=<span class="hljs-number">0</span>;
+        }
+    }
+
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">build</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r)</span></span>{
+        <span class="hljs-keyword">if</span>(l==r){
+            <span class="hljs-keyword">if</span>(l)val[id]=m-l+<span class="hljs-number">1</span>;
+            <span class="hljs-keyword">return</span>;
+        }
+        <span class="hljs-type">int</span> mid=l+r&gt;&gt;<span class="hljs-number">1</span>;
+        <span class="hljs-built_in">build</span>(id&lt;&lt;<span class="hljs-number">1</span>,l,mid);
+        <span class="hljs-built_in">build</span>((id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r);
+        <span class="hljs-built_in">pushup</span>(id);
+    }
+
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">updateAdd</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r,<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> y,<span class="hljs-type">int</span> v)</span></span>{
+        <span class="hljs-keyword">if</span>(y==<span class="hljs-number">0</span>)x=<span class="hljs-number">0</span>; <span class="hljs-comment">// 防止右端点为 0</span>
+        <span class="hljs-keyword">if</span>(x&lt;=l&amp;&amp;r&lt;=y){
+            lazy[id]+=v,val[id]+=v;
+            <span class="hljs-keyword">return</span>;
+        }
+        <span class="hljs-type">int</span> mid=l+r&gt;&gt;<span class="hljs-number">1</span>;
+        <span class="hljs-built_in">pushdown</span>(id);
+        <span class="hljs-keyword">if</span>(x&lt;=mid)<span class="hljs-built_in">updateAdd</span>(id&lt;&lt;<span class="hljs-number">1</span>,l,mid,x,y,v);
+        <span class="hljs-keyword">if</span>(mid&lt;y)<span class="hljs-built_in">updateAdd</span>((id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r,x,y,v);
+        <span class="hljs-built_in">pushup</span>(id);
+    }
+
+    <span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">queryMin</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r,<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> y)</span></span>{
+        <span class="hljs-keyword">if</span>(x&lt;=l&amp;&amp;r&lt;=y)<span class="hljs-keyword">return</span> val[id];
+        <span class="hljs-type">int</span> mid=l+r&gt;&gt;<span class="hljs-number">1</span>,res=<span class="hljs-number">0x7fffffff</span>;
+        <span class="hljs-built_in">pushdown</span>(id);
+        <span class="hljs-keyword">if</span>(x&lt;=mid)res=<span class="hljs-built_in">min</span>(res,<span class="hljs-built_in">queryMin</span>(id&lt;&lt;<span class="hljs-number">1</span>,l,mid,x,y));
+        <span class="hljs-keyword">if</span>(mid&lt;y)res=<span class="hljs-built_in">min</span>(res,<span class="hljs-built_in">queryMin</span>((id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r,x,y));
+        <span class="hljs-keyword">return</span> res;
+    }
+}
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d%d&quot;</span>,&amp;n,&amp;m,&amp;h);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=m;i++)
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,b+i);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,a+i);
+    <span class="hljs-built_in">sort</span>(b+<span class="hljs-number">1</span>,b+<span class="hljs-number">1</span>+m);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        c[i]={h-a[i],i};
+    <span class="hljs-built_in">sort</span>(c+<span class="hljs-number">1</span>,c+<span class="hljs-number">1</span>+n);
+    <span class="hljs-keyword">if</span>(b[<span class="hljs-number">1</span>]&lt;c[<span class="hljs-number">1</span>].value)
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;0\n&quot;</span>),<span class="hljs-number">0</span>;
+
+    <span class="hljs-type">int</span> tmp=<span class="hljs-number">1</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=m;i++)
+        <span class="hljs-keyword">while</span>(tmp&lt;=n&amp;&amp;c[tmp].value&lt;=b[i])
+            lastby[c[tmp++].id]=i;
+    SegmentTree::<span class="hljs-built_in">build</span>(<span class="hljs-number">1</span>,<span class="hljs-number">0</span>,m);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=m;i++)
+        SegmentTree::<span class="hljs-built_in">updateAdd</span>(<span class="hljs-number">1</span>,<span class="hljs-number">0</span>,m,<span class="hljs-number">1</span>,lastby[i],<span class="hljs-number">-1</span>);
+    <span class="hljs-type">int</span> answer=<span class="hljs-number">0</span>;
+    answer+=SegmentTree::<span class="hljs-built_in">queryMin</span>(<span class="hljs-number">1</span>,<span class="hljs-number">0</span>,m,<span class="hljs-number">0</span>,m)&gt;=<span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=m+<span class="hljs-number">1</span>;i&lt;=n;i++){
+        SegmentTree::<span class="hljs-built_in">updateAdd</span>(<span class="hljs-number">1</span>,<span class="hljs-number">0</span>,m,<span class="hljs-number">1</span>,lastby[i-m],<span class="hljs-number">1</span>);
+        SegmentTree::<span class="hljs-built_in">updateAdd</span>(<span class="hljs-number">1</span>,<span class="hljs-number">0</span>,m,<span class="hljs-number">1</span>,lastby[i],<span class="hljs-number">-1</span>);
+        answer+=SegmentTree::<span class="hljs-built_in">queryMin</span>(<span class="hljs-number">1</span>,<span class="hljs-number">0</span>,m,<span class="hljs-number">0</span>,m)&gt;=<span class="hljs-number">0</span>;
+    }
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d\n&quot;</span>,answer);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
+        </div>
+    </div>
+</div>
+                    <br>
+                </div>
+                <footer class="topan-footer">
+                    <p></p>
+                    <p style="text-align: center; color: #555; font-size: 12px;">
+                        Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
+                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>&nbsp;&nbsp;&nbsp;
+                        <i class="fa fa-solid fa-eye"></i> 访客数量：<span id="busuanzi_value_site_pv">0</span>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>
+    

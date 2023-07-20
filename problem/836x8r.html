@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title id="title">#836x8r. 联合权值（link） - OI Problems</title>
+        <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
+        <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
+        <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
+        <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script src="/OI/pub/busuanzi.pure.mini.js"></script>
+        <script src="/OI/pub/main.js"></script>
+        <link rel="stylesheet" href="/OI/pub/main.css">
+        
+    </head>
+    <body>
+        <div class="topan-header">
+            <div class="topan-header-home">
+                <a href="/OI">
+                    <button class="topan-button-ordinary topan-button-commonly topan-button-header-round-left">
+                        <i class="fa fa-home"></i>
+                    </button>
+                </a>
+            </div>
+            <div class="topan-header-left">
+                <span class="topan-header-text">OI Problems&nbsp;</span>
+                <a href="/OI/about">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
+                        <i class="fa fa-solid fa-circle-info"></i>
+                        <span>&nbsp;关于</span>
+                    </span>
+                </a>
+                
+                
+            </div>
+            <div class="topan-header-right">
+            </div>
+        </div>
+        <div class="topan-outer">
+            <div class="topan-page">
+                <div class="topan-mainpage-auto">
+                    <br>
+                    <style>
+    .messages-display{
+        color: #888;
+    }
+</style>
+<style>
+    .tag{
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 90%;
+        color: white;
+        background: var(--tag-color);
+        display: inline-block;
+        line-height: 17.25px;
+    }
+    .tag:hover{
+        color: white !important;
+        background: var(--tag-color-hover);
+    }
+    .tag:hover::after{
+        width: 0 !important;
+    }
+    .tag-alg{
+        --tag-color: #14558f;
+        --tag-color-hover: #5388a7;
+    }
+    .tag-time{
+        --tag-color: #1c830e;
+        --tag-color-hover: #60af55;
+    }
+    .tag-src{
+        --tag-color: #be9420;
+        --tag-color-hover: #f0bb65;
+    }
+    .tag-special{
+        --tag-color: #6926c0;
+        --tag-color-hover: #8f5dd1;
+    }
+    .tag-place{
+        --tag-color: #c33e85;
+        --tag-color-hover: #e071ad;
+    }
+</style>
+<script>
+    var directSearch=(rule)=>{
+        if(pageName=='problem_detail')
+            window.location.href=`/OI/?search=${rule}`;
+        if(pageName=='problem_list')
+            show(search(JSON.parse(decodeURIComponent(rule))));
+    }
+    var movetoPage=(pageId)=>{
+        nowsearch.page=pageId;
+        show(search(nowsearch));
+    }
+</script>
+
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                
+                <a class="topan-menu-option" href="/OI/problem/836x8r/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/836x8r/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            <div class="topan-section-shadow">
+                <h2>#836x8r. 联合权值（link）</h2>
+                <p class="messages-display">
+                    
+                    <strong><i class="fa fa-solid fa-clock"></i> 时间限制：</strong>200 ms
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    
+                    
+                    <strong><i class="fa fa-solid fa-database"></i> 空间限制：</strong>128 MiB
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    
+                    
+                        <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
+                        <a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E7%BC%BA%E9%A2%98%E8%A7%A3%22%5D%7D')" class="tag tag-special">缺题解</a>&nbsp;
+                    
+                </p>
+                <p class="messages-display">
+                    <strong>算法难度等级：</strong>0
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <strong>思维难度等级：</strong>0
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <strong>实现难度等级：</strong>0
+                </p>
+            </div>
+            <br>
+            
+            
+                <div class="topan-section-shadow">
+                    <h2>题目描述</h2>
+<p>无向连通图 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>G</mi></mrow><annotation encoding="application/x-tex">G</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.68333em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">G</span></span></span></span> 有 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">n</span></span></span></span> 个点， <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">m</span></span></span></span> 条边。点从 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">1</span></span></span></span> 到 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">n</span></span></span></span> 编号，编号为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.65952em;"></span><span class="strut bottom" style="height:0.65952em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">i</span></span></span></span> 的点权值为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>W</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">W_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit" style="margin-right:0.13889em;">W</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.13889em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 。每条边长度都为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">1</span></span></span></span> 。对于图 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>G</mi></mrow><annotation encoding="application/x-tex">G</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.68333em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">G</span></span></span></span> 上的三元组 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><mi>u</mi><mo separator="true">,</mo><mi>v</mi><mo separator="true">,</mo><mi>w</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">(u,v,w)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">(</span><span class="mord mathit">u</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.03588em;">v</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.02691em;">w</span><span class="mclose">)</span></span></span></span> ，如果 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>u</mi><mo>−</mo><mi>w</mi><mo>−</mo><mi>v</mi></mrow><annotation encoding="application/x-tex">u-w-v</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.58333em;"></span><span class="strut bottom" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord mathit">u</span><span class="mbin">−</span><span class="mord mathit" style="margin-right:0.02691em;">w</span><span class="mbin">−</span><span class="mord mathit" style="margin-right:0.03588em;">v</span></span></span></span> 是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><mi>u</mi><mo separator="true">,</mo><mi>v</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">(u,v)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">(</span><span class="mord mathit">u</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.03588em;">v</span><span class="mclose">)</span></span></span></span> 之间的一条最短路（这里 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>w</mi></mrow><annotation encoding="application/x-tex">w</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.02691em;">w</span></span></span></span> 指和 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>u</mi><mo separator="true">,</mo><mi>v</mi></mrow><annotation encoding="application/x-tex">u,v</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit">u</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.03588em;">v</span></span></span></span> 之间均有直接连边），则它将产生 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>W</mi><mi>u</mi></msub><mo>×</mo><msub><mi>W</mi><mi>v</mi></msub></mrow><annotation encoding="application/x-tex">W_u \times W_v</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit" style="margin-right:0.13889em;">W</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.13889em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">u</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">×</span><span class="mord"><span class="mord mathit" style="margin-right:0.13889em;">W</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.13889em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit" style="margin-right:0.03588em;">v</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 的联合权值。换句话说，就是产生权值当且仅当 (u,w)之间有边，(w,v)之间有边，且(u,v)之间没边。</p>
+<p>请问图 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>G</mi></mrow><annotation encoding="application/x-tex">G</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.68333em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">G</span></span></span></span> 上所有可产生联合权值的三元组中，联合权值最大的是多少？所有联合权值之和是多少？</p>
+<h2>输入格式</h2>
+<p>输入文件的第一行为三个整数 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mo separator="true">,</mo><mi>m</mi><mo separator="true">,</mo><mi>t</mi></mrow><annotation encoding="application/x-tex">n,m,t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.61508em;"></span><span class="strut bottom" style="height:0.80952em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit">n</span><span class="mpunct">,</span><span class="mord mathit">m</span><span class="mpunct">,</span><span class="mord mathit">t</span></span></span></span> 。其中 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.61508em;"></span><span class="strut bottom" style="height:0.61508em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">t</span></span></span></span> 是数据类型。</p>
+<p>接下来 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">m</span></span></span></span> 行，每行两个正整数 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>u</mi><mo separator="true">,</mo><mi>v</mi></mrow><annotation encoding="application/x-tex">u,v</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit">u</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.03588em;">v</span></span></span></span> ，表示图中的一条边。数据保证不存在重边或自环的情况。</p>
+<p>输入数据的最后一行是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">n</span></span></span></span> 个正整数，表示 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>W</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>W</mi><mn>2</mn></msub><mo separator="true">,</mo><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mo separator="true">,</mo><msub><mi>W</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">W_1,W_2,...,W_n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit" style="margin-right:0.13889em;">W</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.13889em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mpunct">,</span><span class="mord"><span class="mord mathit" style="margin-right:0.13889em;">W</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.13889em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">2</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mpunct">,</span><span class="mord mathrm">.</span><span class="mord mathrm">.</span><span class="mord mathrm">.</span><span class="mpunct">,</span><span class="mord"><span class="mord mathit" style="margin-right:0.13889em;">W</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.13889em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">n</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 。</p>
+<h2>输出格式</h2>
+<p>输出文件共包含两行两个整数。第一行，若 t\not=2 ，则你需要输出最大的联合权值（无则输出 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord">−</span><span class="mord mathrm">1</span></span></span></span> ），否则输出 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">0</span></span></span></span> ；第二行，若 t\not=1 ，则你需要输出联合权值的总和，否则输出 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">0</span></span></span></span> 。</p>
+<p>换句话说，就是 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">t=1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">t</span><span class="mrel">=</span><span class="mord mathrm">1</span></span></span></span> 时只需要求最大值，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">t=2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">t</span><span class="mrel">=</span><span class="mord mathrm">2</span></span></span></span> 时只需要求和，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">t=3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">t</span><span class="mrel">=</span><span class="mord mathrm">3</span></span></span></span> 时两个都要求。</p>
+<pre><code class="hljs language-input1">4 4 3
+1 2
+1 3
+2 3
+2 4
+100 1 100 1
+</code></pre>
+<pre><code class="hljs language-output1">100
+400
+</code></pre>
+<h2>样例 3</h2>
+<p>见附件 <a href="./836x8r/file/link2.in">link2.in</a> 和 <a href="./836x8r/file/link2.ans">link2.ans</a>。</p>
+<h2>数据范围</h2>
+<p>对于20%的数据，满足n≤100。</p>
+<p>对于40%的数据，满足n≤1000。</p>
+<p>对于另20%的数据，满足<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">t=1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">t</span><span class="mrel">=</span><span class="mord mathrm">1</span></span></span></span>。</p>
+<p>对于另20%的数据，满足<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">t=2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">t</span><span class="mrel">=</span><span class="mord mathrm">2</span></span></span></span>。</p>
+<p>对于100%的数据，满足1≤n,m≤30000,1≤t≤3,1≤W_i≤100。</p>
+
+                </div>
+            
+        </div>
+    </div>
+</div>
+
+<script>
+    var pageName='problem_detail';
+</script>
+                    <br>
+                </div>
+                <footer class="topan-footer">
+                    <p></p>
+                    <p style="text-align: center; color: #555; font-size: 12px;">
+                        Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
+                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>&nbsp;&nbsp;&nbsp;
+                        <i class="fa fa-solid fa-eye"></i> 访客数量：<span id="busuanzi_value_site_pv">0</span>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>
+    
