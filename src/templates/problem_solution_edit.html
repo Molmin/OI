@@ -1,14 +1,14 @@
 <script src="/file/ace/ace.js"></script>
 <script src="/file/ace/ext-language_tools.js"></script>
 <script>
-    $(document).ready(()=>{
+    $(document).ready(() => {
         editor = ace.edit("code");
         theme = "clouds"
         language = "markdown"
         editor.setTheme("ace/theme/" + theme);
         editor.session.setMode("ace/mode/" + language);
         editor.setFontSize(18);
-        editor.setReadOnly(false); 
+        editor.setReadOnly(false);
         editor.setOption("wrap", "free")
         ace.require("ace/ext/language_tools");
         editor.setOptions({
@@ -16,7 +16,7 @@
             enableSnippets: true,
             enableLiveAutocompletion: true
         });
-        $("#confirm").click(()=>{
+        $("#confirm").click(() => {
             $.post(
                 "/admin/problem/<%= prodata.pid %>/solution/<%= paraId %>/edit",
                 {
@@ -25,17 +25,17 @@
                     filename: $('#filename').val(),
                     author: $('#author').val()
                 },
-                (data,status)=>{
-                    location.pathname=`/<%= System.on %>/problem/<%= prodata.pid %>/solution`;
+                (data, status) => {
+                    location.pathname = `/<%= System.on %>/problem/<%= prodata.pid %>/solution`;
                 }
             );
         });
-        $("#delete").click(()=>{
+        $("#delete").click(() => {
             $.post(
                 "/admin/problem/<%= prodata.pid %>/solution/<%= paraId %>/delete",
                 {},
-                (data,status)=>{
-                    location.pathname=`/<%= System.on %>/problem/<%= prodata.pid %>/solution`;
+                (data, status) => {
+                    location.pathname = `/<%= System.on %>/problem/<%= prodata.pid %>/solution`;
                 }
             );
         });
@@ -43,7 +43,7 @@
 </script>
 
 <style>
-    .solution-config>input{
+    .solution-config>input {
         width: 200px;
     }
 </style>

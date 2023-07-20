@@ -1,5 +1,5 @@
 <style>
-    .options{
+    .options {
         font-size: 16px;
         font-weight: normal;
     }
@@ -9,7 +9,7 @@ prodata.solution.forEach((sol,index)=>
     exportCode+=`${index?'\n\n':''}## ${sol.title}\n\n${fs.readFileSync(`data/${prodata.pid}/${sol.file}`,'utf8')}${sol.code?'\n\n```cpp\n'+fs.readFileSync(`data/${prodata.pid}/${sol.code}`,'utf8')+'\n```':''}`
 ); %>
 <script>
-    var Export=()=>console.log($('#exportcode').val());
+    var Export = () => console.log($('#exportcode').val());
 </script>
 
 <textarea style="display: none;" id="exportcode"><%= exportCode %></textarea>

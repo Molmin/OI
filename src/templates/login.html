@@ -1,20 +1,20 @@
 <script>
-    $(document).ready(()=>{
-        $("#user-login").click(()=>{
+    $(document).ready(() => {
+        $("#user-login").click(() => {
             $.post("/admin/login/try",
                 {
                     password: $('#login-password').val()
                 },
-                (data,status)=>{
-                    if(data.error!=undefined)$('#login-error').text(data.error);
-                    else location.pathname="";
+                (data, status) => {
+                    if (data.error != undefined) $('#login-error').text(data.error);
+                    else location.pathname = "";
                 }
             );
         });
     });
 </script>
 <style>
-    #login-password{
+    #login-password {
         width: 250px;
     }
 </style>

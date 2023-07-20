@@ -1,14 +1,14 @@
 <script src="/file/ace/ace.js"></script>
 <script src="/file/ace/ext-language_tools.js"></script>
 <script>
-    $(document).ready(()=>{
+    $(document).ready(() => {
         editor = ace.edit("code");
         theme = "clouds"
         language = "markdown"
         editor.setTheme("ace/theme/" + theme);
         editor.session.setMode("ace/mode/" + language);
         editor.setFontSize(18);
-        editor.setReadOnly(false); 
+        editor.setReadOnly(false);
         editor.setOption("wrap", "free")
         ace.require("ace/ext/language_tools");
         editor.setOptions({
@@ -16,8 +16,8 @@
             enableSnippets: true,
             enableLiveAutocompletion: true
         });
-        $("#pro-create").click(()=>{
-            var prodata={
+        $("#pro-create").click(() => {
+            var prodata = {
                 title: $('#pro-title').val(),
                 difficulty: {
                     algorithm: Number($('#pro-difficulty-algorithm').val()),
@@ -37,8 +37,8 @@
                     prodata: JSON.stringify(prodata),
                     statement: editor.getValue()
                 },
-                (data,status)=>{
-                    location.pathname=`/<%= System.on %>/problem/${data.pid}`;
+                (data, status) => {
+                    location.pathname = `/<%= System.on %>/problem/${data.pid}`;
                 }
             );
         });
@@ -46,7 +46,7 @@
 </script>
 
 <style>
-    .pro-config>input{
+    .pro-config>input {
         width: 100px;
     }
 </style>

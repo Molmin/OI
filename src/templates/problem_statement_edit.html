@@ -1,14 +1,14 @@
 <script src="/file/ace/ace.js"></script>
 <script src="/file/ace/ext-language_tools.js"></script>
 <script>
-    $(document).ready(()=>{
+    $(document).ready(() => {
         editor = ace.edit("code");
         theme = "clouds"
         language = "markdown"
         editor.setTheme("ace/theme/" + theme);
         editor.session.setMode("ace/mode/" + language);
         editor.setFontSize(18);
-        editor.setReadOnly(false); 
+        editor.setReadOnly(false);
         editor.setOption("wrap", "free")
         ace.require("ace/ext/language_tools");
         editor.setOptions({
@@ -16,7 +16,7 @@
             enableSnippets: true,
             enableLiveAutocompletion: true
         });
-        $("#statement-edit").click(()=>{
+        $("#statement-edit").click(() => {
             $.post(
                 "/admin/problem/<%= prodata.pid %>/statement/<%= statementName %>/edit",
                 {
@@ -24,28 +24,28 @@
                     file: $('#statement-file').val(),
                     name: $('#statement-name').val()
                 },
-                (data,status)=>{
-                    location.pathname=`/<%= System.on %>/problem/<%= prodata.pid %>`;
+                (data, status) => {
+                    location.pathname = `/<%= System.on %>/problem/<%= prodata.pid %>`;
                 }
             );
         });
-        $("#statement-delete").click(()=>{
+        $("#statement-delete").click(() => {
             $.post(
                 "/admin/problem/<%= prodata.pid %>/statement/<%= statementName %>/delete",
                 {},
-                (data,status)=>{
-                    location.pathname=`/<%= System.on %>/problem/<%= prodata.pid %>`;
+                (data, status) => {
+                    location.pathname = `/<%= System.on %>/problem/<%= prodata.pid %>`;
                 }
             );
         });
-        $(".statement-fixLaTeX").click(()=>
-            editor.setValue(editor.getValue().replace(/\$ ([\u0000-\u00ff]*?) \$/g,'$$$1$$'))
+        $(".statement-fixLaTeX").click(() =>
+            editor.setValue(editor.getValue().replace(/\$ ([\u0000-\u00ff]*?) \$/g, '$$$1$$'))
         );
     });
 </script>
 
 <style>
-    .statement-config>input{
+    .statement-config>input {
         width: 200px;
     }
 </style>

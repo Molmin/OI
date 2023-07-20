@@ -1,5 +1,5 @@
 <style>
-    .tag{
+    .tag {
         padding: 2px 6px;
         border-radius: 3px;
         font-size: 90%;
@@ -8,43 +8,51 @@
         display: inline-block;
         line-height: 17.25px;
     }
-    .tag:hover{
+
+    .tag:hover {
         color: white !important;
         background: var(--tag-color-hover);
     }
-    .tag:hover::after{
+
+    .tag:hover::after {
         width: 0 !important;
     }
-    .tag-alg{
+
+    .tag-alg {
         --tag-color: #14558f;
         --tag-color-hover: #5388a7;
     }
-    .tag-time{
+
+    .tag-time {
         --tag-color: #1c830e;
         --tag-color-hover: #60af55;
     }
-    .tag-src{
+
+    .tag-src {
         --tag-color: #be9420;
         --tag-color-hover: #f0bb65;
     }
-    .tag-special{
+
+    .tag-special {
         --tag-color: #6926c0;
         --tag-color-hover: #8f5dd1;
     }
-    .tag-place{
+
+    .tag-place {
         --tag-color: #c33e85;
         --tag-color-hover: #e071ad;
     }
 </style>
+
 <script>
-    var directSearch=(rule)=>{
-        if(pageName=='problem_detail')
-            window.location.href=`/<%= System.on %>/?search=${rule}`;
-        if(pageName=='problem_list')
+    var directSearch = (rule) => {
+        if (pageName == 'problem_detail')
+            window.location.href = `/<%= System.on %>/?search=${rule}`;
+        if (pageName == 'problem_list')
             show(search(JSON.parse(decodeURIComponent(rule))));
     }
-    var movetoPage=(pageId)=>{
-        nowsearch.page=pageId;
+    var movetoPage = (pageId) => {
+        nowsearch.page = pageId;
         show(search(nowsearch));
     }
 </script>

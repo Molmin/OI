@@ -1,7 +1,7 @@
 <script>
-    $(document).ready(()=>{
-        $("#confirm").click(()=>{
-            var prodata={
+    $(document).ready(() => {
+        $("#confirm").click(() => {
+            var prodata = {
                 title: $('#pro-title').val(),
                 difficulty: {
                     algorithm: Number($('#pro-difficulty-algorithm').val()),
@@ -17,18 +17,18 @@
             };
             $.post(
                 "/admin/problem/<%= prodata.pid %>/edit",
-                {prodata: JSON.stringify(prodata)},
-                (data,status)=>{
-                    location.pathname=`/<%= System.on %>/problem/<%= prodata.pid %>`;
+                { prodata: JSON.stringify(prodata) },
+                (data, status) => {
+                    location.pathname = `/<%= System.on %>/problem/<%= prodata.pid %>`;
                 }
             );
         });
-        $("#delete").click(()=>{
+        $("#delete").click(() => {
             $.post(
                 "/admin/problem/<%= prodata.pid %>/delete",
                 {},
-                (data,status)=>{
-                    location.pathname=`/<%= System.on %>`;
+                (data, status) => {
+                    location.pathname = `/<%= System.on %>`;
                 }
             );
         });
@@ -36,7 +36,7 @@
 </script>
 
 <style>
-    .pro-config>input{
+    .pro-config>input {
         width: 100px;
     }
 </style>

@@ -1,33 +1,41 @@
 <script src="/file/ace/ace.js"></script>
 <script src="/file/ace/ext-language_tools.js"></script>
 <style>
-    #system-port,#system-dir{
+    #system-port,
+    #system-dir {
         width: 150px;
     }
-    #system-title{
+
+    #system-title {
         width: 200px;
     }
-    #system-eachPage{
+
+    #system-eachPage {
         width: 100px;
     }
-    #system-db-repo,#system-ghpage-repo{
+
+    #system-db-repo,
+    #system-ghpage-repo {
         width: 250px;
     }
-    #system-db-branch,#system-ghpage-branch{
+
+    #system-db-branch,
+    #system-ghpage-branch {
         width: 100px;
     }
-    .tip{
+
+    .tip {
         color: grey;
         font-size: 85%;
     }
 </style>
 <script>
-    $(document).ready(()=>{
-        var editor_commentHtml=ace.edit("system-comment");
+    $(document).ready(() => {
+        var editor_commentHtml = ace.edit("system-comment");
         editor_commentHtml.setTheme("ace/theme/clouds");
         editor_commentHtml.session.setMode("ace/mode/html");
         editor_commentHtml.setFontSize(18);
-        editor_commentHtml.setReadOnly(false); 
+        editor_commentHtml.setReadOnly(false);
         editor_commentHtml.setOption("wrap", "free")
         ace.require("ace/ext/language_tools");
         editor_commentHtml.setOptions({
@@ -35,11 +43,11 @@
             enableSnippets: true,
             enableLiveAutocompletion: true
         });
-        var editor_about=ace.edit("system-about");
+        var editor_about = ace.edit("system-about");
         editor_about.setTheme("ace/theme/clouds");
         editor_about.session.setMode("ace/mode/markdown");
         editor_about.setFontSize(18);
-        editor_about.setReadOnly(false); 
+        editor_about.setReadOnly(false);
         editor_about.setOption("wrap", "free")
         ace.require("ace/ext/language_tools");
         editor_about.setOptions({

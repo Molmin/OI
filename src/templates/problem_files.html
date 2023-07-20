@@ -1,32 +1,37 @@
 <style>
-    table{
+    table {
         width: 100%;
     }
-    th:nth-child(1){
+
+    th:nth-child(1) {
         width: 48px;
     }
-    th:nth-child(2),td:nth-child(2){
+
+    th:nth-child(2),
+    td:nth-child(2) {
         text-align: left;
     }
-    th:nth-child(3),td:nth-child(3){
+
+    th:nth-child(3),
+    td:nth-child(3) {
         text-align: right;
     }
 </style>
 
 <script>
-    $(document).ready(()=>{
-        $('#file-upload').click(()=>{
-            if(!$("#headimage-input").val()){
+    $(document).ready(() => {
+        $('#file-upload').click(() => {
+            if (!$("#headimage-input").val()) {
                 alert("Please upload pictures first.");
                 return;
             }
-            var uploadfile=$("#headimage-input")[0].files[0];
-            if(uploadfile.size>=5*1024*1024){
+            var uploadfile = $("#headimage-input")[0].files[0];
+            if (uploadfile.size >= 5 * 1024 * 1024) {
                 alert("Picture size must be less than 5 MiB.");
                 return;
             }
-            var formdata=new FormData();
-            formdata.append("headimage_upload",uploadfile);
+            var formdata = new FormData();
+            formdata.append("headimage_upload", uploadfile);
             $.ajax({
                 url: "/i/changeheadimage",
                 type: 'POST',
@@ -34,7 +39,7 @@
                 cache: false,
                 contentType: false,
                 processData: false,
-                success: function(data){
+                success: function (data) {
                     alert(data.message);
                 }
             });

@@ -1,9 +1,9 @@
-const fs=require('fs');
-var System=JSON.parse(fs.readFileSync('./data/system.json'));
+const fs = require('fs');
+var System = JSON.parse(fs.readFileSync('./data/system.json'));
 
-module.exports=(config,HTML)=>{
-    System=JSON.parse(fs.readFileSync('./data/system.json'));
-    return`
+module.exports = (config, HTML) => {
+    System = JSON.parse(fs.readFileSync('./data/system.json'));
+    return `
 <!DOCTYPE html>
 <html lang="zh-CN">
     <head>
@@ -35,26 +35,26 @@ module.exports=(config,HTML)=>{
             <div class="topan-header-left">
                 <span class="topan-header-text">${System.title}&nbsp;</span>
                 <a href="/${System.on}/about">
-                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block${config.onabout?"-showed":""}">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block${config.onabout ? "-showed" : ""}">
                         <i class="fa fa-solid fa-circle-info"></i>
                         <span>&nbsp;关于</span>
                     </span>
                 </a>
-                ${config.preview?`
+                ${config.preview ? `
                     <a href="/admin">
-                        <span class="topan-button-ordinary topan-button-commonly topan-button-header-block${config.onadmin?"-showed":""}">
+                        <span class="topan-button-ordinary topan-button-commonly topan-button-header-block${config.onadmin ? "-showed" : ""}">
                             <i class="fa fa-solid fa-wrench"></i>
                             <span>&nbsp;后台</span>
                         </span>
                     </a>
-                `:""}
-                ${config.isadmin?`
+                `: ""}
+                ${config.isadmin ? `
                     <a href="/admin/logout">
                         <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
                             <i class="fa fa-solid fa-right-from-bracket"></i>
                         </span>
                     </a>
-                `:''}
+                `: ''}
             </div>
             <div class="topan-header-right">
             </div>

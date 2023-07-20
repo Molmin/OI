@@ -1,39 +1,43 @@
 <style>
-    pre{
+    pre {
         white-space: pre-wrap;
         word-wrap: break-word;
     }
-    #update-ghpage-error,#update-database-error{
+
+    #update-ghpage-error,
+    #update-database-error {
         color: red;
     }
-    #update-ghpage-success,#update-database-success{
+
+    #update-ghpage-success,
+    #update-database-success {
         color: green;
     }
 </style>
 
 <script>
-    $(document).ready(()=>{
-        $('#update-ghpage-success').text(''),$('#update-ghpage-error').text('');
-        $("#update-ghpage").click(()=>{
-            $('#update-ghpage-success').text("正在同步中……"),$('#update-ghpage-error').text('');
+    $(document).ready(() => {
+        $('#update-ghpage-success').text(''), $('#update-ghpage-error').text('');
+        $("#update-ghpage").click(() => {
+            $('#update-ghpage-success').text("正在同步中……"), $('#update-ghpage-error').text('');
             $.post(
                 "/admin/update/ghpage",
-                {message: $('#update-ghpage-message').val()},
-                (data,status)=>{
-                    if(data.error)$('#update-ghpage-success').text(''),$('#update-ghpage-error').text(data.error);
-                    else $('#update-ghpage-success').text(data.message),$('#update-ghpage-error').text('');
+                { message: $('#update-ghpage-message').val() },
+                (data, status) => {
+                    if (data.error) $('#update-ghpage-success').text(''), $('#update-ghpage-error').text(data.error);
+                    else $('#update-ghpage-success').text(data.message), $('#update-ghpage-error').text('');
                 }
             );
         });
-        $('#update-database-success').text(''),$('#update-database-error').text('');
-        $("#update-database").click(()=>{
-            $('#update-database-success').text("正在同步中……"),$('#update-database-error').text('');
+        $('#update-database-success').text(''), $('#update-database-error').text('');
+        $("#update-database").click(() => {
+            $('#update-database-success').text("正在同步中……"), $('#update-database-error').text('');
             $.post(
                 "/admin/update/db",
-                {message: $('#update-database-message').val()},
-                (data,status)=>{
-                    if(data.error)$('#update-database-success').text(''),$('#update-database-error').text(data.error);
-                    else $('#update-database-success').text(data.message),$('#update-database-error').text('');
+                { message: $('#update-database-message').val() },
+                (data, status) => {
+                    if (data.error) $('#update-database-success').text(''), $('#update-database-error').text(data.error);
+                    else $('#update-database-success').text(data.message), $('#update-database-error').text('');
                 }
             );
         });
