@@ -1,0 +1,341 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title id="title">题解与代码 - 奖牌（medal） - OI Problems</title>
+        <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
+        <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
+        <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
+        <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script src="/OI/pub/busuanzi.pure.mini.js"></script>
+        <script src="/OI/pub/main.js"></script>
+        <link rel="stylesheet" href="/OI/pub/main.css">
+        
+    </head>
+    <body>
+        <div class="topan-header">
+            <div class="topan-header-home">
+                <a href="/OI">
+                    <button class="topan-button-ordinary topan-button-commonly topan-button-header-round-left">
+                        <i class="fa fa-home"></i>
+                    </button>
+                </a>
+            </div>
+            <div class="topan-header-left">
+                <span class="topan-header-text">OI Problems&nbsp;</span>
+                <a href="/OI/about">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
+                        <i class="fa fa-solid fa-circle-info"></i>
+                        <span>&nbsp;关于</span>
+                    </span>
+                </a>
+                
+                
+            </div>
+            <div class="topan-header-right">
+            </div>
+        </div>
+        <div class="topan-outer">
+            <div class="topan-page">
+                <div class="topan-mainpage-auto">
+                    <br>
+                    <style>
+    .options {
+        font-size: 16px;
+        font-weight: normal;
+    }
+</style>
+
+<script>
+    var Export = () => console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 80 分做法：动态规划
+
+假设我们知道所有人的获奖情况，则不妨令 **金牌的选手都取最高分，铜牌的选手都取最低分**。那么我们只需要枚举金牌最后一名和铜牌的第一名就可以确定奖牌分数线（此时分数线是 **金牌最后一名能获得的最高分** 和 **铜牌第一名能获得的最低分**）。
+
+考虑动态规划，记 $f_{i,j,k}$ 表示前 $i$ 个人中有 $j$ 人取得金牌，$k$ 人取得银牌时获奖方案数。又因为已知分数线，所以我们可以轻松地得到状态转移方程，时间复杂度 $\Theta(n^3)$。
+
+我们只需要 $\Theta(n^5m^2)$ 预处理，再 $\Theta(1)$ 回答询问即可。
+
+## 100 分做法：分类讨论 &amp; 组合数
+
+对于每一次询问（时间复杂度 $\Theta(q)$），我们同样地需要枚举金牌最后一名和铜牌的第一名（时间复杂度 $\Theta(n^2)$）。接着容易计算出剩下的 $n-2$ 个人能否取得金牌、取得银牌以及取得铜牌，而根据这三个信息，可以将每个人都赋予一个状态，且一共有 $2^3-1=7$ 种状态。
+
+此时问题已经被转化为给定 $7$ 种状态的人数以及金牌、银牌和铜牌的总数，求可能的得奖情况数。容易发现我们可以将只能取得单种奖牌的人都直接从奖牌总数中直接去掉。
+
+接着考虑枚举 **只能得金牌和银牌的 $s$ 人** 中得到金牌的数目 $x$ 以及 **只能得金牌和铜牌的 $t$ 人** 中得到金牌的数目 $y$（时间复杂度 $\Theta(n^2)$），这时有 $\dbinom sx\dbinom ty$ 种方案。
+
+这时候因为只能取得金牌的已经被删去，所以我们可以求出 **能取得金银铜的 $m$ 人** 中取得金牌的数目，要从这 $m$ 人中选出 $G-x-y$（其中 $G$ 为总金牌人数）人取得金牌，有 $\dbinom m{g-x-y}$ 种方案。
+
+此时我们已经确定取得金牌的人，那么剩下的人全部分配银牌和铜牌。而 **只能得金牌和银牌的 $s$ 人** 中已经有了 $s-x$ 个银牌，故我们要从剩下 $n+(s-x)$（其中 $n$ 为只能得银牌和铜牌的人数）人中选出 $S-(s-x)$（其中 $S$ 为总银牌人数）人作为银牌，共 $\dbinom{n+s-x}{S-s+x}$ 种方案。
+
+综上，我们可以求得总方案数（四个组合数相乘）。时间复杂度 $\Theta(n^4q)$。
+
+```cpp
+// 2023.07.22
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+const int mod=1e9+7;
+const int CAN_GET_GOLD=1&lt;&lt;0,
+          CAN_GET_SILVER=1&lt;&lt;1,
+          CAN_GET_BRONZE=1&lt;&lt;2;
+
+int n,m,q,cnt[81][10001],maxScore[81],minScore[81];
+
+int C[101][101];
+void initC(int n){
+    for(int i=0;i&lt;=n;i++){
+        C[i][0]=1;
+        for(int j=1;j&lt;=i;j++)
+            C[i][j]=(C[i-1][j-1]+C[i-1][j])%mod;
+    }
+}
+
+int main(){
+    initC(100);
+    scanf(&#34;%d%d%d&#34;,&amp;n,&amp;m,&amp;q);
+    for(int i=1;i&lt;=n;i++){
+        minScore[i]=10000;
+        for(int j=1;j&lt;=m;j++){
+            int x; scanf(&#34;%d&#34;,&amp;x);
+            cnt[i][x]=true;
+            maxScore[i]=max(maxScore[i],x);
+            minScore[i]=min(minScore[i],x);
+        }
+        for(int j=1;j&lt;=10000;j++)
+            cnt[i][j]+=cnt[i][j-1];
+    }
+    while(q--){
+        int gold_sum,silver_sum,bronze_sum;
+        scanf(&#34;%d%d%d&#34;,&amp;gold_sum,&amp;silver_sum,&amp;bronze_sum);
+        long long answer=0;
+        gold_sum--,bronze_sum--; // 排除枚举的 i 和 j
+        for(int i=1;i&lt;=n;i++)
+            for(int j=1;j&lt;=n;j++){
+                // 枚举 i 作为金牌最低分，j 作为铜牌最高分
+                if(i==j)continue;
+                if(maxScore[i]&lt;minScore[j]
+                    ||(maxScore[i]==minScore[j]&amp;&amp;j&gt;=i))continue;
+                int cntStatus[1&lt;&lt;3]={};
+                for(int k=1;k&lt;=n;k++){
+                    if(k==i||k==j)continue;
+                    int status=0;
+                    if(maxScore[k]&gt;maxScore[i]
+                        ||(maxScore[k]==maxScore[i]&amp;&amp;k&gt;i))
+                        status|=CAN_GET_GOLD;
+                    if(minScore[k]&lt;minScore[j]
+                        ||(minScore[k]==minScore[j]&amp;&amp;k&lt;j))
+                        status|=CAN_GET_BRONZE;
+                    int silver_max=maxScore[i],
+                        silver_min=minScore[j];
+                    if(k&gt;i)silver_max--;
+                    if(k&lt;j)silver_min++;
+                    if(cnt[k][silver_max]-cnt[k][silver_min-1]&gt;0)
+                        status|=CAN_GET_SILVER;
+                    cntStatus[status]++;
+                }
+
+                int gold=gold_sum-cntStatus[CAN_GET_GOLD],
+                    silver=silver_sum-cntStatus[CAN_GET_SILVER],
+                    bronze=bronze_sum-cntStatus[CAN_GET_BRONZE];
+                if(gold&lt;0||silver&lt;0||bronze&lt;0)continue;
+                int can_gold_silver=cntStatus[CAN_GET_GOLD|CAN_GET_SILVER],
+                    can_gold_bronze=cntStatus[CAN_GET_GOLD|CAN_GET_BRONZE],
+                    can_silver_bronze=cntStatus[CAN_GET_SILVER|CAN_GET_BRONZE],
+                    can_all=cntStatus[CAN_GET_GOLD|CAN_GET_SILVER|CAN_GET_BRONZE];
+                for(int x=0;x&lt;=gold;x++){
+                    // 枚举能拿金银的人拿金的数量
+                    if(!(can_gold_silver-x&lt;=silver))continue;
+                    if(x&gt;can_gold_silver)break;
+                    for(int y=0;x+y&lt;=gold;y++){
+                        // 枚举能拿金铜的人拿金的数量
+                        if(!(can_gold_bronze-y&lt;=bronze))continue;
+                        if(y&gt;can_gold_bronze)break;
+                        int needGold=gold-x-y,
+                            needSilver=silver-(can_gold_silver-x);
+                        if(needGold&gt;can_all)continue;
+                        answer+=1ll*C[can_gold_silver][x]
+                            *C[can_gold_bronze][y]%mod
+                            *C[can_all][needGold]%mod
+                            *C[can_silver_bronze+(can_all-needGold)][needSilver]%mod;
+                    }
+                }
+            }
+        printf(&#34;%lld\n&#34;,answer%mod);
+    }
+    return 0;
+}
+```</textarea>
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2>奖牌（medal）</h2>
+                <a class="topan-menu-option" href="/OI/problem/f9cq6k"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/f9cq6k/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/f9cq6k/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            
+                <div class="topan-section-shadow">
+                    <h2>
+                        80 分做法：动态规划
+                        
+                    </h2>
+                    
+                    <p>假设我们知道所有人的获奖情况，则不妨令 <strong>金牌的选手都取最高分，铜牌的选手都取最低分</strong>。那么我们只需要枚举金牌最后一名和铜牌的第一名就可以确定奖牌分数线（此时分数线是 <strong>金牌最后一名能获得的最高分</strong> 和 <strong>铜牌第一名能获得的最低分</strong>）。</p>
+<p>考虑动态规划，记 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>f</mi><mrow><mi>i</mi><mo separator="true">,</mo><mi>j</mi><mo separator="true">,</mo><mi>k</mi></mrow></msub></mrow><annotation encoding="application/x-tex">f_{i,j,k}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.980548em;vertical-align:-0.286108em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit" style="margin-right:0.10764em;">f</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.10764em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord scriptstyle cramped"><span class="mord mathit">i</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.05724em;">j</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.03148em;">k</span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 表示前 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.65952em;"></span><span class="strut bottom" style="height:0.65952em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">i</span></span></span></span> 个人中有 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>j</mi></mrow><annotation encoding="application/x-tex">j</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.65952em;"></span><span class="strut bottom" style="height:0.85396em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.05724em;">j</span></span></span></span> 人取得金牌，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.69444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03148em;">k</span></span></span></span> 人取得银牌时获奖方案数。又因为已知分数线，所以我们可以轻松地得到状态转移方程，时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><msup><mi>n</mi><mn>3</mn></msup><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n^3)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord"><span class="mord mathit">n</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">3</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mclose">)</span></span></span></span>。</p>
+<p>我们只需要 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><msup><mi>n</mi><mn>5</mn></msup><msup><mi>m</mi><mn>2</mn></msup><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n^5m^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord"><span class="mord mathit">n</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">5</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mord"><span class="mord mathit">m</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">2</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mclose">)</span></span></span></span> 预处理，再 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mn>1</mn><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathrm">1</span><span class="mclose">)</span></span></span></span> 回答询问即可。</p>
+
+                    
+                </div>
+            
+                <br>
+                
+                <div class="topan-section-shadow">
+                    <h2>
+                        100 分做法：分类讨论 &amp; 组合数
+                        
+                    </h2>
+                    
+                    <p>对于每一次询问（时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>q</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(q)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit" style="margin-right:0.03588em;">q</span><span class="mclose">)</span></span></span></span>），我们同样地需要枚举金牌最后一名和铜牌的第一名（时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><msup><mi>n</mi><mn>2</mn></msup><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord"><span class="mord mathit">n</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">2</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mclose">)</span></span></span></span>）。接着容易计算出剩下的 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mo>−</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">n-2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord mathit">n</span><span class="mbin">−</span><span class="mord mathrm">2</span></span></span></span> 个人能否取得金牌、取得银牌以及取得铜牌，而根据这三个信息，可以将每个人都赋予一个状态，且一共有 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msup><mn>2</mn><mn>3</mn></msup><mo>−</mo><mn>1</mn><mo>=</mo><mn>7</mn></mrow><annotation encoding="application/x-tex">2^3-1=7</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:0.897438em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathrm">2</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">3</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">−</span><span class="mord mathrm">1</span><span class="mrel">=</span><span class="mord mathrm">7</span></span></span></span> 种状态。</p>
+<p>此时问题已经被转化为给定 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>7</mn></mrow><annotation encoding="application/x-tex">7</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">7</span></span></span></span> 种状态的人数以及金牌、银牌和铜牌的总数，求可能的得奖情况数。容易发现我们可以将只能取得单种奖牌的人都直接从奖牌总数中直接去掉。</p>
+<p>接着考虑枚举 <strong>只能得金牌和银牌的 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi></mrow><annotation encoding="application/x-tex">s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">s</span></span></span></span> 人</strong> 中得到金牌的数目 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">x</span></span></span></span> 以及 <strong>只能得金牌和铜牌的 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>t</mi></mrow><annotation encoding="application/x-tex">t</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.61508em;"></span><span class="strut bottom" style="height:0.61508em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">t</span></span></span></span> 人</strong> 中得到金牌的数目 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>y</mi></mrow><annotation encoding="application/x-tex">y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03588em;">y</span></span></span></span>（时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><msup><mi>n</mi><mn>2</mn></msup><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord"><span class="mord mathit">n</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">2</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mclose">)</span></span></span></span>），这时有 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow><mo fence="true">(</mo><mfrac linethickness="0px"><mi>s</mi><mi>x</mi></mfrac><mo fence="true">)</mo></mrow><mrow><mo fence="true">(</mo><mfrac linethickness="0px"><mi>t</mi><mi>y</mi></mfrac><mo fence="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">\dbinom sx\dbinom ty</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:1.45em;"></span><span class="strut bottom" style="height:2.40003em;vertical-align:-0.95003em;"></span><span class="base textstyle uncramped"><span class="mord reset-textstyle displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mfrac"><span class="vlist"><span style="top:0.686em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle cramped"><span class="mord mathit">x</span></span></span><span style="top:-0.6769999999999998em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle uncramped"><span class="mord mathit">s</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size3">)</span></span></span><span class="mord reset-textstyle displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mfrac"><span class="vlist"><span style="top:0.6860000000000002em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle cramped"><span class="mord mathit" style="margin-right:0.03588em;">y</span></span></span><span style="top:-0.677em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle uncramped"><span class="mord mathit">t</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size3">)</span></span></span></span></span></span> 种方案。</p>
+<p>这时候因为只能取得金牌的已经被删去，所以我们可以求出 <strong>能取得金银铜的 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">m</span></span></span></span> 人</strong> 中取得金牌的数目，要从这 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>m</mi></mrow><annotation encoding="application/x-tex">m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">m</span></span></span></span> 人中选出 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>G</mi><mo>−</mo><mi>x</mi><mo>−</mo><mi>y</mi></mrow><annotation encoding="application/x-tex">G-x-y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.8777699999999999em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit">G</span><span class="mbin">−</span><span class="mord mathit">x</span><span class="mbin">−</span><span class="mord mathit" style="margin-right:0.03588em;">y</span></span></span></span>（其中 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>G</mi></mrow><annotation encoding="application/x-tex">G</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.68333em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">G</span></span></span></span> 为总金牌人数）人取得金牌，有 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow><mo fence="true">(</mo><mfrac linethickness="0px"><mi>m</mi><mrow><mi>g</mi><mo>−</mo><mi>x</mi><mo>−</mo><mi>y</mi></mrow></mfrac><mo fence="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">\dbinom m{g-x-y}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:1.45em;"></span><span class="strut bottom" style="height:2.40003em;vertical-align:-0.95003em;"></span><span class="base textstyle uncramped"><span class="mord reset-textstyle displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mfrac"><span class="vlist"><span style="top:0.6860000000000002em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle cramped"><span class="mord textstyle cramped"><span class="mord mathit" style="margin-right:0.03588em;">g</span><span class="mbin">−</span><span class="mord mathit">x</span><span class="mbin">−</span><span class="mord mathit" style="margin-right:0.03588em;">y</span></span></span></span><span style="top:-0.677em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle uncramped"><span class="mord mathit">m</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size3">)</span></span></span></span></span></span> 种方案。</p>
+<p>此时我们已经确定取得金牌的人，那么剩下的人全部分配银牌和铜牌。而 <strong>只能得金牌和银牌的 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi></mrow><annotation encoding="application/x-tex">s</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">s</span></span></span></span> 人</strong> 中已经有了 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>s</mi><mo>−</mo><mi>x</mi></mrow><annotation encoding="application/x-tex">s-x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.58333em;"></span><span class="strut bottom" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord mathit">s</span><span class="mbin">−</span><span class="mord mathit">x</span></span></span></span> 个银牌，故我们要从剩下 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mo>+</mo><mo>(</mo><mi>s</mi><mo>−</mo><mi>x</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">n+(s-x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathit">n</span><span class="mbin">+</span><span class="mopen">(</span><span class="mord mathit">s</span><span class="mbin">−</span><span class="mord mathit">x</span><span class="mclose">)</span></span></span></span>（其中 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">n</span></span></span></span> 为只能得银牌和铜牌的人数）人中选出 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi><mo>−</mo><mo>(</mo><mi>s</mi><mo>−</mo><mi>x</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">S-(s-x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.05764em;">S</span><span class="mbin">−</span><span class="mopen">(</span><span class="mord mathit">s</span><span class="mbin">−</span><span class="mord mathit">x</span><span class="mclose">)</span></span></span></span>（其中 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>S</mi></mrow><annotation encoding="application/x-tex">S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.68333em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.05764em;">S</span></span></span></span> 为总银牌人数）人作为银牌，共 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow><mo fence="true">(</mo><mfrac linethickness="0px"><mrow><mi>n</mi><mo>+</mo><mi>s</mi><mo>−</mo><mi>x</mi></mrow><mrow><mi>S</mi><mo>−</mo><mi>s</mi><mo>+</mo><mi>x</mi></mrow></mfrac><mo fence="true">)</mo></mrow></mrow><annotation encoding="application/x-tex">\dbinom{n+s-x}{S-s+x}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:1.45em;"></span><span class="strut bottom" style="height:2.40003em;vertical-align:-0.95003em;"></span><span class="base textstyle uncramped"><span class="mord reset-textstyle displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size3">(</span></span><span class="mfrac"><span class="vlist"><span style="top:0.686em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle cramped"><span class="mord textstyle cramped"><span class="mord mathit" style="margin-right:0.05764em;">S</span><span class="mbin">−</span><span class="mord mathit">s</span><span class="mbin">+</span><span class="mord mathit">x</span></span></span></span><span style="top:-0.6770000000000002em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle textstyle uncramped"><span class="mord textstyle uncramped"><span class="mord mathit">n</span><span class="mbin">+</span><span class="mord mathit">s</span><span class="mbin">−</span><span class="mord mathit">x</span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size3">)</span></span></span></span></span></span> 种方案。</p>
+<p>综上，我们可以求得总方案数（四个组合数相乘）。时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><msup><mi>n</mi><mn>4</mn></msup><mi>q</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n^4q)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord"><span class="mord mathit">n</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">4</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mord mathit" style="margin-right:0.03588em;">q</span><span class="mclose">)</span></span></span></span>。</p>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.07.22</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+<span class="hljs-type">const</span> <span class="hljs-type">int</span> mod=<span class="hljs-number">1e9</span>+<span class="hljs-number">7</span>;
+<span class="hljs-type">const</span> <span class="hljs-type">int</span> CAN_GET_GOLD=<span class="hljs-number">1</span>&lt;&lt;<span class="hljs-number">0</span>,
+          CAN_GET_SILVER=<span class="hljs-number">1</span>&lt;&lt;<span class="hljs-number">1</span>,
+          CAN_GET_BRONZE=<span class="hljs-number">1</span>&lt;&lt;<span class="hljs-number">2</span>;
+
+<span class="hljs-type">int</span> n,m,q,cnt[<span class="hljs-number">81</span>][<span class="hljs-number">10001</span>],maxScore[<span class="hljs-number">81</span>],minScore[<span class="hljs-number">81</span>];
+
+<span class="hljs-type">int</span> C[<span class="hljs-number">101</span>][<span class="hljs-number">101</span>];
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">initC</span><span class="hljs-params">(<span class="hljs-type">int</span> n)</span></span>{
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;i&lt;=n;i++){
+        C[i][<span class="hljs-number">0</span>]=<span class="hljs-number">1</span>;
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">1</span>;j&lt;=i;j++)
+            C[i][j]=(C[i<span class="hljs-number">-1</span>][j<span class="hljs-number">-1</span>]+C[i<span class="hljs-number">-1</span>][j])%mod;
+    }
+}
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">initC</span>(<span class="hljs-number">100</span>);
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d%d&quot;</span>,&amp;n,&amp;m,&amp;q);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++){
+        minScore[i]=<span class="hljs-number">10000</span>;
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">1</span>;j&lt;=m;j++){
+            <span class="hljs-type">int</span> x; <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;x);
+            cnt[i][x]=<span class="hljs-literal">true</span>;
+            maxScore[i]=<span class="hljs-built_in">max</span>(maxScore[i],x);
+            minScore[i]=<span class="hljs-built_in">min</span>(minScore[i],x);
+        }
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">1</span>;j&lt;=<span class="hljs-number">10000</span>;j++)
+            cnt[i][j]+=cnt[i][j<span class="hljs-number">-1</span>];
+    }
+    <span class="hljs-keyword">while</span>(q--){
+        <span class="hljs-type">int</span> gold_sum,silver_sum,bronze_sum;
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d%d&quot;</span>,&amp;gold_sum,&amp;silver_sum,&amp;bronze_sum);
+        <span class="hljs-type">long</span> <span class="hljs-type">long</span> answer=<span class="hljs-number">0</span>;
+        gold_sum--,bronze_sum--; <span class="hljs-comment">// 排除枚举的 i 和 j</span>
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">1</span>;j&lt;=n;j++){
+                <span class="hljs-comment">// 枚举 i 作为金牌最低分，j 作为铜牌最高分</span>
+                <span class="hljs-keyword">if</span>(i==j)<span class="hljs-keyword">continue</span>;
+                <span class="hljs-keyword">if</span>(maxScore[i]&lt;minScore[j]
+                    ||(maxScore[i]==minScore[j]&amp;&amp;j&gt;=i))<span class="hljs-keyword">continue</span>;
+                <span class="hljs-type">int</span> cntStatus[<span class="hljs-number">1</span>&lt;&lt;<span class="hljs-number">3</span>]={};
+                <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> k=<span class="hljs-number">1</span>;k&lt;=n;k++){
+                    <span class="hljs-keyword">if</span>(k==i||k==j)<span class="hljs-keyword">continue</span>;
+                    <span class="hljs-type">int</span> status=<span class="hljs-number">0</span>;
+                    <span class="hljs-keyword">if</span>(maxScore[k]&gt;maxScore[i]
+                        ||(maxScore[k]==maxScore[i]&amp;&amp;k&gt;i))
+                        status|=CAN_GET_GOLD;
+                    <span class="hljs-keyword">if</span>(minScore[k]&lt;minScore[j]
+                        ||(minScore[k]==minScore[j]&amp;&amp;k&lt;j))
+                        status|=CAN_GET_BRONZE;
+                    <span class="hljs-type">int</span> silver_max=maxScore[i],
+                        silver_min=minScore[j];
+                    <span class="hljs-keyword">if</span>(k&gt;i)silver_max--;
+                    <span class="hljs-keyword">if</span>(k&lt;j)silver_min++;
+                    <span class="hljs-keyword">if</span>(cnt[k][silver_max]-cnt[k][silver_min<span class="hljs-number">-1</span>]&gt;<span class="hljs-number">0</span>)
+                        status|=CAN_GET_SILVER;
+                    cntStatus[status]++;
+                }
+
+                <span class="hljs-type">int</span> gold=gold_sum-cntStatus[CAN_GET_GOLD],
+                    silver=silver_sum-cntStatus[CAN_GET_SILVER],
+                    bronze=bronze_sum-cntStatus[CAN_GET_BRONZE];
+                <span class="hljs-keyword">if</span>(gold&lt;<span class="hljs-number">0</span>||silver&lt;<span class="hljs-number">0</span>||bronze&lt;<span class="hljs-number">0</span>)<span class="hljs-keyword">continue</span>;
+                <span class="hljs-type">int</span> can_gold_silver=cntStatus[CAN_GET_GOLD|CAN_GET_SILVER],
+                    can_gold_bronze=cntStatus[CAN_GET_GOLD|CAN_GET_BRONZE],
+                    can_silver_bronze=cntStatus[CAN_GET_SILVER|CAN_GET_BRONZE],
+                    can_all=cntStatus[CAN_GET_GOLD|CAN_GET_SILVER|CAN_GET_BRONZE];
+                <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> x=<span class="hljs-number">0</span>;x&lt;=gold;x++){
+                    <span class="hljs-comment">// 枚举能拿金银的人拿金的数量</span>
+                    <span class="hljs-keyword">if</span>(!(can_gold_silver-x&lt;=silver))<span class="hljs-keyword">continue</span>;
+                    <span class="hljs-keyword">if</span>(x&gt;can_gold_silver)<span class="hljs-keyword">break</span>;
+                    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> y=<span class="hljs-number">0</span>;x+y&lt;=gold;y++){
+                        <span class="hljs-comment">// 枚举能拿金铜的人拿金的数量</span>
+                        <span class="hljs-keyword">if</span>(!(can_gold_bronze-y&lt;=bronze))<span class="hljs-keyword">continue</span>;
+                        <span class="hljs-keyword">if</span>(y&gt;can_gold_bronze)<span class="hljs-keyword">break</span>;
+                        <span class="hljs-type">int</span> needGold=gold-x-y,
+                            needSilver=silver-(can_gold_silver-x);
+                        <span class="hljs-keyword">if</span>(needGold&gt;can_all)<span class="hljs-keyword">continue</span>;
+                        answer+=<span class="hljs-number">1ll</span>*C[can_gold_silver][x]
+                            *C[can_gold_bronze][y]%mod
+                            *C[can_all][needGold]%mod
+                            *C[can_silver_bronze+(can_all-needGold)][needSilver]%mod;
+                    }
+                }
+            }
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lld\n&quot;</span>,answer%mod);
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
+        </div>
+    </div>
+</div>
+                    <br>
+                </div>
+                <footer class="topan-footer">
+                    <p></p>
+                    <p style="text-align: center; color: #555; font-size: 12px;">
+                        Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
+                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>&nbsp;&nbsp;&nbsp;
+                        <i class="fa fa-solid fa-eye"></i> 访客数量：<span id="busuanzi_value_site_pv">0</span>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>
+    

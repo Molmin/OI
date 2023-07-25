@@ -1,0 +1,369 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title id="title">题解与代码 - 游戏（game） - OI Problems</title>
+        <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
+        <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
+        <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
+        <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script src="/OI/pub/busuanzi.pure.mini.js"></script>
+        <script src="/OI/pub/main.js"></script>
+        <link rel="stylesheet" href="/OI/pub/main.css">
+        
+    </head>
+    <body>
+        <div class="topan-header">
+            <div class="topan-header-home">
+                <a href="/OI">
+                    <button class="topan-button-ordinary topan-button-commonly topan-button-header-round-left">
+                        <i class="fa fa-home"></i>
+                    </button>
+                </a>
+            </div>
+            <div class="topan-header-left">
+                <span class="topan-header-text">OI Problems&nbsp;</span>
+                <a href="/OI/about">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
+                        <i class="fa fa-solid fa-circle-info"></i>
+                        <span>&nbsp;关于</span>
+                    </span>
+                </a>
+                
+                
+            </div>
+            <div class="topan-header-right">
+            </div>
+        </div>
+        <div class="topan-outer">
+            <div class="topan-page">
+                <div class="topan-mainpage-auto">
+                    <br>
+                    <style>
+    .options {
+        font-size: 16px;
+        font-weight: normal;
+    }
+</style>
+
+<script>
+    var Export = () => console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 碰撞时间计算
+
+先考虑如何计算两辆车相撞时间。只需按照两辆车速度的正负分为相遇和追及两种情况讨论即可。
+
+```cpp
+namespace System{
+    Frac calcTime(int x,int y){
+        if(x&gt;y)swap(x,y);
+        if((a[x].v&gt;0&amp;&amp;a[y].v&gt;0)||(a[x].v&lt;0&amp;&amp;a[y].v&lt;0)){
+            if(a[x].v&gt;a[y].v)return makeFrac(a[y].p-a[x].p,a[x].v-a[y].v);
+            else return makeFrac(l+a[x].p-a[y].p,a[y].v-a[x].v);
+        }
+        else{
+            if(a[x].v&gt;0)return makeFrac(a[y].p-a[x].p,a[x].v-a[y].v);
+            else return makeFrac(l+a[x].p-a[y].p,a[y].v-a[x].v);
+        }
+    }
+}
+```
+
+## 一些观察与思考
+
+**考虑从第一次相撞的两辆赛车入手。** 容易知道第一次相撞一定是相邻的两个。（这是因为若不与相邻两个相撞，就永远在它们两个之间。）所以只需枚举相邻的两辆车计算出相撞时间即可。
+
+设第一次 $r_1$ 出局，**接着考虑第二次相撞**。显然，该情形等价于 $1,\ 2,\ \cdots,\ r_1-1,\ r_1+1,\ r_1+2,\ \cdots,\ n$ 这 $n-1$ 辆车的第一次相撞。（这是因为第二次相撞与 $r_1$ 无关。）
+
+同样，我们需要计算出相邻两项的相撞时间，即 $1-2,\ 2-3,\ \cdots,\ (r_1-2)-(r_1-1),\ (r_1-1)-(r_1+1),\ (r_1+1)-(r_1+2),\ (r_1+2,\ r_1+3),\ \cdots,\ (n-1)-n,\ n-1$ 的相撞时间。类似的，我们写出第一次相撞时要计算的碰撞时间：$1-2,\ 2-3,\ \cdots,\ (r_1-2)-(r_1-1),\ (r_1-1)-r_1,\ r_1-(r_1+1),\ (r_1+1)-(r_1+2),\ (r_1+2,\ r_1+3),\ \cdots,\ (n-1)-n,\ n-1$。观察发现只是将 $(r_1-1)-r_1,\ r_1-(r_1+1)$ 变成了 $(r_1-1)-(r_1+1)$，**其结构与链表极其类似**。
+
+## 解法
+
+考虑建出一个循环链表，将相邻两辆赛车的相撞时间等数据加入待选目标中。
+
+每次（设为第 $i$ 次）从待选目标中选出时间最小的，此时会有赛车 $r_i$ 出局，这时候将 $pre_{r_i}-r_i$ 和 $r_i-nxt_{r_i}$ 从待选目标中删去，再加入 $pre_{r_i}-nxt_{r_i}$ 即可。并且将链表中的 $r_i$ 删去即可。
+
+```cpp
+// 2023.07.22
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+struct Frac{
+    int x,y;
+    bool operator&lt;(Frac tmp)const{
+        return 1ll*x*tmp.y&lt;1ll*tmp.x*y;
+    }
+    bool operator==(Frac tmp)const{
+        return 1ll*x*tmp.y==1ll*tmp.x*y;
+    }
+};
+Frac makeFrac(int x,int y){
+    return {x/__gcd(x,y),y/__gcd(x,y)};
+}
+
+int n,l;
+struct Car{
+    int p,v,a;
+    bool operator&lt;(Car tmp)const{
+        return p&lt;tmp.p;
+    }
+}a[200001];
+
+struct BOMB{
+    Frac time;
+    int u,v;
+    bool operator&lt;(BOMB tmp)const{
+        if(time==tmp.time)return u&lt;tmp.u;
+        else return time&lt;tmp.time;
+    }
+};
+
+set&lt;BOMB&gt; S;
+
+namespace System{
+    Frac calcTime(int x,int y){
+        if(x&gt;y)swap(x,y);
+        if((a[x].v&gt;0&amp;&amp;a[y].v&gt;0)||(a[x].v&lt;0&amp;&amp;a[y].v&lt;0)){
+            if(a[x].v&gt;a[y].v)return makeFrac(a[y].p-a[x].p,a[x].v-a[y].v);
+            else return makeFrac(l+a[x].p-a[y].p,a[y].v-a[x].v);
+        }
+        else{
+            if(a[x].v&gt;0)return makeFrac(a[y].p-a[x].p,a[x].v-a[y].v);
+            else return makeFrac(l+a[x].p-a[y].p,a[y].v-a[x].v);
+        }
+    }
+}
+
+void updateRemove(int x,int y){
+    if(x&gt;y)swap(x,y);
+    S.erase({System::calcTime(x,y),x,y});
+}
+void updateInsert(int x,int y){
+    if(x&gt;y)swap(x,y);
+    S.insert({System::calcTime(x,y),x,y});
+}
+
+int nxt[200001],pre[200001];
+
+int main(){
+    scanf(&#34;%d%d&#34;,&amp;n,&amp;l);
+    for(int i=1;i&lt;=n;i++)
+        scanf(&#34;%d&#34;,&amp;a[i].p);
+    for(int i=1;i&lt;=n;i++)
+        scanf(&#34;%d&#34;,&amp;a[i].v);
+    for(int i=1;i&lt;=n;i++)
+        scanf(&#34;%d&#34;,&amp;a[i].a);
+    sort(a+1,a+1+n);
+    for(int i=1;i&lt;=n;i++)
+        nxt[i]=i+1,pre[i]=i-1;
+    pre[1]=n,nxt[n]=1;
+    for(int i=1;i&lt;=n;i++)
+        updateInsert(i,nxt[i]);
+    for(int i=1;i&lt;=n-2;i++){
+        int u=(*S.begin()).u,v=(*S.begin()).v;
+        int loser=a[u].a&lt;a[v].a?u:v;
+        updateRemove(loser,pre[loser]);
+        updateRemove(loser,nxt[loser]);
+        updateInsert(pre[loser],nxt[loser]);
+        nxt[pre[loser]]=nxt[loser],
+        pre[nxt[loser]]=pre[loser];
+    }
+    printf(&#34;%d/%d\n&#34;,(*S.begin()).time.x,(*S.begin()).time.y);
+    return 0;
+}
+```</textarea>
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2>游戏（game）</h2>
+                <a class="topan-menu-option" href="/OI/problem/8aq3g0"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/8aq3g0/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/8aq3g0/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            
+                <div class="topan-section-shadow">
+                    <h2>
+                        碰撞时间计算
+                        
+                    </h2>
+                    
+                    <p>先考虑如何计算两辆车相撞时间。只需按照两辆车速度的正负分为相遇和追及两种情况讨论即可。</p>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre class="remove-style"><code><span class="hljs-keyword">namespace</span> System{
+    <span class="hljs-function">Frac <span class="hljs-title">calcTime</span><span class="hljs-params">(<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> y)</span></span>{
+        <span class="hljs-keyword">if</span>(x&gt;y)<span class="hljs-built_in">swap</span>(x,y);
+        <span class="hljs-keyword">if</span>((a[x].v&gt;<span class="hljs-number">0</span>&amp;&amp;a[y].v&gt;<span class="hljs-number">0</span>)||(a[x].v&lt;<span class="hljs-number">0</span>&amp;&amp;a[y].v&lt;<span class="hljs-number">0</span>)){
+            <span class="hljs-keyword">if</span>(a[x].v&gt;a[y].v)<span class="hljs-keyword">return</span> <span class="hljs-built_in">makeFrac</span>(a[y].p-a[x].p,a[x].v-a[y].v);
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> <span class="hljs-built_in">makeFrac</span>(l+a[x].p-a[y].p,a[y].v-a[x].v);
+        }
+        <span class="hljs-keyword">else</span>{
+            <span class="hljs-keyword">if</span>(a[x].v&gt;<span class="hljs-number">0</span>)<span class="hljs-keyword">return</span> <span class="hljs-built_in">makeFrac</span>(a[y].p-a[x].p,a[x].v-a[y].v);
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> <span class="hljs-built_in">makeFrac</span>(l+a[x].p-a[y].p,a[y].v-a[x].v);
+        }
+    }
+}</code></pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
+                <br>
+                
+                <div class="topan-section-shadow">
+                    <h2>
+                        一些观察与思考
+                        
+                    </h2>
+                    
+                    <p><strong>考虑从第一次相撞的两辆赛车入手。</strong> 容易知道第一次相撞一定是相邻的两个。（这是因为若不与相邻两个相撞，就永远在它们两个之间。）所以只需枚举相邻的两辆车计算出相撞时间即可。</p>
+<p>设第一次 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>r</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">r_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 出局，<strong>接着考虑第二次相撞</strong>。显然，该情形等价于 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mo separator="true">,</mo><mtext> </mtext><mn>2</mn><mo separator="true">,</mo><mtext> </mtext><mo>⋯</mo><mo separator="true">,</mo><mtext> </mtext><msub><mi>r</mi><mn>1</mn></msub><mo>−</mo><mn>1</mn><mo separator="true">,</mo><mtext> </mtext><msub><mi>r</mi><mn>1</mn></msub><mo>+</mo><mn>1</mn><mo separator="true">,</mo><mtext> </mtext><msub><mi>r</mi><mn>1</mn></msub><mo>+</mo><mn>2</mn><mo separator="true">,</mo><mtext> </mtext><mo>⋯</mo><mo separator="true">,</mo><mtext> </mtext><mi>n</mi></mrow><annotation encoding="application/x-tex">1,\ 2,\ \cdots,\ r_1-1,\ r_1+1,\ r_1+2,\ \cdots,\ n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.8388800000000001em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">1</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathrm">2</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="minner">⋯</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">−</span><span class="mord mathrm">1</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">+</span><span class="mord mathrm">1</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">+</span><span class="mord mathrm">2</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="minner">⋯</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit">n</span></span></span></span> 这 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">n-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord mathit">n</span><span class="mbin">−</span><span class="mord mathrm">1</span></span></span></span> 辆车的第一次相撞。（这是因为第二次相撞与 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>r</mi><mn>1</mn></msub></mrow><annotation encoding="application/x-tex">r_1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 无关。）</p>
+<p>同样，我们需要计算出相邻两项的相撞时间，即 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mo>−</mo><mn>2</mn><mo separator="true">,</mo><mtext> </mtext><mn>2</mn><mo>−</mo><mn>3</mn><mo separator="true">,</mo><mtext> </mtext><mo>⋯</mo><mo separator="true">,</mo><mtext> </mtext><mo>(</mo><msub><mi>r</mi><mn>1</mn></msub><mo>−</mo><mn>2</mn><mo>)</mo><mo>−</mo><mo>(</mo><msub><mi>r</mi><mn>1</mn></msub><mo>−</mo><mn>1</mn><mo>)</mo><mo separator="true">,</mo><mtext> </mtext><mo>(</mo><msub><mi>r</mi><mn>1</mn></msub><mo>−</mo><mn>1</mn><mo>)</mo><mo>−</mo><mo>(</mo><msub><mi>r</mi><mn>1</mn></msub><mo>+</mo><mn>1</mn><mo>)</mo><mo separator="true">,</mo><mtext> </mtext><mo>(</mo><msub><mi>r</mi><mn>1</mn></msub><mo>+</mo><mn>1</mn><mo>)</mo><mo>−</mo><mo>(</mo><msub><mi>r</mi><mn>1</mn></msub><mo>+</mo><mn>2</mn><mo>)</mo><mo separator="true">,</mo><mtext> </mtext><mo>(</mo><msub><mi>r</mi><mn>1</mn></msub><mo>+</mo><mn>2</mn><mo separator="true">,</mo><mtext> </mtext><msub><mi>r</mi><mn>1</mn></msub><mo>+</mo><mn>3</mn><mo>)</mo><mo separator="true">,</mo><mtext> </mtext><mo>⋯</mo><mo separator="true">,</mo><mtext> </mtext><mo>(</mo><mi>n</mi><mo>−</mo><mn>1</mn><mo>)</mo><mo>−</mo><mi>n</mi><mo separator="true">,</mo><mtext> </mtext><mi>n</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">1-2,\ 2-3,\ \cdots,\ (r_1-2)-(r_1-1),\ (r_1-1)-(r_1+1),\ (r_1+1)-(r_1+2),\ (r_1+2,\ r_1+3),\ \cdots,\ (n-1)-n,\ n-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">1</span><span class="mbin">−</span><span class="mord mathrm">2</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathrm">2</span><span class="mbin">−</span><span class="mord mathrm">3</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="minner">⋯</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mopen">(</span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">−</span><span class="mord mathrm">2</span><span class="mclose">)</span><span class="mbin">−</span><span class="mopen">(</span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">−</span><span class="mord mathrm">1</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mopen">(</span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">−</span><span class="mord mathrm">1</span><span class="mclose">)</span><span class="mbin">−</span><span class="mopen">(</span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">+</span><span class="mord mathrm">1</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mopen">(</span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">+</span><span class="mord mathrm">1</span><span class="mclose">)</span><span class="mbin">−</span><span class="mopen">(</span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">+</span><span class="mord mathrm">2</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mopen">(</span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">+</span><span class="mord mathrm">2</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">+</span><span class="mord mathrm">3</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="minner">⋯</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mbin">−</span><span class="mord mathrm">1</span><span class="mclose">)</span><span class="mbin">−</span><span class="mord mathit">n</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit">n</span><span class="mbin">−</span><span class="mord mathrm">1</span></span></span></span> 的相撞时间。类似的，我们写出第一次相撞时要计算的碰撞时间：<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mo>−</mo><mn>2</mn><mo separator="true">,</mo><mtext> </mtext><mn>2</mn><mo>−</mo><mn>3</mn><mo separator="true">,</mo><mtext> </mtext><mo>⋯</mo><mo separator="true">,</mo><mtext> </mtext><mo>(</mo><msub><mi>r</mi><mn>1</mn></msub><mo>−</mo><mn>2</mn><mo>)</mo><mo>−</mo><mo>(</mo><msub><mi>r</mi><mn>1</mn></msub><mo>−</mo><mn>1</mn><mo>)</mo><mo separator="true">,</mo><mtext> </mtext><mo>(</mo><msub><mi>r</mi><mn>1</mn></msub><mo>−</mo><mn>1</mn><mo>)</mo><mo>−</mo><msub><mi>r</mi><mn>1</mn></msub><mo separator="true">,</mo><mtext> </mtext><msub><mi>r</mi><mn>1</mn></msub><mo>−</mo><mo>(</mo><msub><mi>r</mi><mn>1</mn></msub><mo>+</mo><mn>1</mn><mo>)</mo><mo separator="true">,</mo><mtext> </mtext><mo>(</mo><msub><mi>r</mi><mn>1</mn></msub><mo>+</mo><mn>1</mn><mo>)</mo><mo>−</mo><mo>(</mo><msub><mi>r</mi><mn>1</mn></msub><mo>+</mo><mn>2</mn><mo>)</mo><mo separator="true">,</mo><mtext> </mtext><mo>(</mo><msub><mi>r</mi><mn>1</mn></msub><mo>+</mo><mn>2</mn><mo separator="true">,</mo><mtext> </mtext><msub><mi>r</mi><mn>1</mn></msub><mo>+</mo><mn>3</mn><mo>)</mo><mo separator="true">,</mo><mtext> </mtext><mo>⋯</mo><mo separator="true">,</mo><mtext> </mtext><mo>(</mo><mi>n</mi><mo>−</mo><mn>1</mn><mo>)</mo><mo>−</mo><mi>n</mi><mo separator="true">,</mo><mtext> </mtext><mi>n</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">1-2,\ 2-3,\ \cdots,\ (r_1-2)-(r_1-1),\ (r_1-1)-r_1,\ r_1-(r_1+1),\ (r_1+1)-(r_1+2),\ (r_1+2,\ r_1+3),\ \cdots,\ (n-1)-n,\ n-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">1</span><span class="mbin">−</span><span class="mord mathrm">2</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathrm">2</span><span class="mbin">−</span><span class="mord mathrm">3</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="minner">⋯</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mopen">(</span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">−</span><span class="mord mathrm">2</span><span class="mclose">)</span><span class="mbin">−</span><span class="mopen">(</span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">−</span><span class="mord mathrm">1</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mopen">(</span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">−</span><span class="mord mathrm">1</span><span class="mclose">)</span><span class="mbin">−</span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">−</span><span class="mopen">(</span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">+</span><span class="mord mathrm">1</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mopen">(</span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">+</span><span class="mord mathrm">1</span><span class="mclose">)</span><span class="mbin">−</span><span class="mopen">(</span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">+</span><span class="mord mathrm">2</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mopen">(</span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">+</span><span class="mord mathrm">2</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">+</span><span class="mord mathrm">3</span><span class="mclose">)</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="minner">⋯</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mbin">−</span><span class="mord mathrm">1</span><span class="mclose">)</span><span class="mbin">−</span><span class="mord mathit">n</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit">n</span><span class="mbin">−</span><span class="mord mathrm">1</span></span></span></span>。观察发现只是将 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><msub><mi>r</mi><mn>1</mn></msub><mo>−</mo><mn>1</mn><mo>)</mo><mo>−</mo><msub><mi>r</mi><mn>1</mn></msub><mo separator="true">,</mo><mtext> </mtext><msub><mi>r</mi><mn>1</mn></msub><mo>−</mo><mo>(</mo><msub><mi>r</mi><mn>1</mn></msub><mo>+</mo><mn>1</mn><mo>)</mo></mrow><annotation encoding="application/x-tex">(r_1-1)-r_1,\ r_1-(r_1+1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">(</span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">−</span><span class="mord mathrm">1</span><span class="mclose">)</span><span class="mbin">−</span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">−</span><span class="mopen">(</span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">+</span><span class="mord mathrm">1</span><span class="mclose">)</span></span></span></span> 变成了 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>(</mo><msub><mi>r</mi><mn>1</mn></msub><mo>−</mo><mn>1</mn><mo>)</mo><mo>−</mo><mo>(</mo><msub><mi>r</mi><mn>1</mn></msub><mo>+</mo><mn>1</mn><mo>)</mo></mrow><annotation encoding="application/x-tex">(r_1-1)-(r_1+1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">(</span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">−</span><span class="mord mathrm">1</span><span class="mclose">)</span><span class="mbin">−</span><span class="mopen">(</span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">+</span><span class="mord mathrm">1</span><span class="mclose">)</span></span></span></span>，<strong>其结构与链表极其类似</strong>。</p>
+
+                    
+                </div>
+            
+                <br>
+                
+                <div class="topan-section-shadow">
+                    <h2>
+                        解法
+                        
+                    </h2>
+                    
+                    <p>考虑建出一个循环链表，将相邻两辆赛车的相撞时间等数据加入待选目标中。</p>
+<p>每次（设为第 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.65952em;"></span><span class="strut bottom" style="height:0.65952em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">i</span></span></span></span> 次）从待选目标中选出时间最小的，此时会有赛车 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>r</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">r_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 出局，这时候将 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi><mi>r</mi><msub><mi>e</mi><mrow><msub><mi>r</mi><mi>i</mi></msub></mrow></msub><mo>−</mo><msub><mi>r</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">pre_{r_i}-r_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.58333em;"></span><span class="strut bottom" style="height:0.83833em;vertical-align:-0.255em;"></span><span class="base textstyle uncramped"><span class="mord mathit">p</span><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="mord"><span class="mord mathit">e</span><span class="vlist"><span style="top:0.15000000000000002em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord scriptstyle cramped"><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.07142857142857144em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-scriptstyle scriptscriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">−</span><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>r</mi><mi>i</mi></msub><mo>−</mo><mi>n</mi><mi>x</mi><msub><mi>t</mi><mrow><msub><mi>r</mi><mi>i</mi></msub></mrow></msub></mrow><annotation encoding="application/x-tex">r_i-nxt_{r_i}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.61508em;"></span><span class="strut bottom" style="height:0.87008em;vertical-align:-0.255em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">−</span><span class="mord mathit">n</span><span class="mord mathit">x</span><span class="mord"><span class="mord mathit">t</span><span class="vlist"><span style="top:0.15000000000000002em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord scriptstyle cramped"><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.07142857142857144em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-scriptstyle scriptscriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 从待选目标中删去，再加入 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi><mi>r</mi><msub><mi>e</mi><mrow><msub><mi>r</mi><mi>i</mi></msub></mrow></msub><mo>−</mo><mi>n</mi><mi>x</mi><msub><mi>t</mi><mrow><msub><mi>r</mi><mi>i</mi></msub></mrow></msub></mrow><annotation encoding="application/x-tex">pre_{r_i}-nxt_{r_i}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.61508em;"></span><span class="strut bottom" style="height:0.87008em;vertical-align:-0.255em;"></span><span class="base textstyle uncramped"><span class="mord mathit">p</span><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="mord"><span class="mord mathit">e</span><span class="vlist"><span style="top:0.15000000000000002em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord scriptstyle cramped"><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.07142857142857144em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-scriptstyle scriptscriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">−</span><span class="mord mathit">n</span><span class="mord mathit">x</span><span class="mord"><span class="mord mathit">t</span><span class="vlist"><span style="top:0.15000000000000002em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord scriptstyle cramped"><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.07142857142857144em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-scriptstyle scriptscriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 即可。并且将链表中的 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>r</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">r_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 删去即可。</p>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.07.22</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">Frac</span>{
+    <span class="hljs-type">int</span> x,y;
+    <span class="hljs-type">bool</span> <span class="hljs-keyword">operator</span>&lt;(Frac tmp)<span class="hljs-type">const</span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-number">1ll</span>*x*tmp.y&lt;<span class="hljs-number">1ll</span>*tmp.x*y;
+    }
+    <span class="hljs-type">bool</span> <span class="hljs-keyword">operator</span>==(Frac tmp)<span class="hljs-type">const</span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-number">1ll</span>*x*tmp.y==<span class="hljs-number">1ll</span>*tmp.x*y;
+    }
+};
+<span class="hljs-function">Frac <span class="hljs-title">makeFrac</span><span class="hljs-params">(<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> y)</span></span>{
+    <span class="hljs-keyword">return</span> {x/__gcd(x,y),y/__gcd(x,y)};
+}
+
+<span class="hljs-type">int</span> n,l;
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">Car</span>{
+    <span class="hljs-type">int</span> p,v,a;
+    <span class="hljs-type">bool</span> <span class="hljs-keyword">operator</span>&lt;(Car tmp)<span class="hljs-type">const</span>{
+        <span class="hljs-keyword">return</span> p&lt;tmp.p;
+    }
+}a[<span class="hljs-number">200001</span>];
+
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">BOMB</span>{
+    Frac time;
+    <span class="hljs-type">int</span> u,v;
+    <span class="hljs-type">bool</span> <span class="hljs-keyword">operator</span>&lt;(BOMB tmp)<span class="hljs-type">const</span>{
+        <span class="hljs-keyword">if</span>(time==tmp.time)<span class="hljs-keyword">return</span> u&lt;tmp.u;
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> time&lt;tmp.time;
+    }
+};
+
+set&lt;BOMB&gt; S;
+
+<span class="hljs-keyword">namespace</span> System{
+    <span class="hljs-function">Frac <span class="hljs-title">calcTime</span><span class="hljs-params">(<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> y)</span></span>{
+        <span class="hljs-keyword">if</span>(x&gt;y)<span class="hljs-built_in">swap</span>(x,y);
+        <span class="hljs-keyword">if</span>((a[x].v&gt;<span class="hljs-number">0</span>&amp;&amp;a[y].v&gt;<span class="hljs-number">0</span>)||(a[x].v&lt;<span class="hljs-number">0</span>&amp;&amp;a[y].v&lt;<span class="hljs-number">0</span>)){
+            <span class="hljs-keyword">if</span>(a[x].v&gt;a[y].v)<span class="hljs-keyword">return</span> <span class="hljs-built_in">makeFrac</span>(a[y].p-a[x].p,a[x].v-a[y].v);
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> <span class="hljs-built_in">makeFrac</span>(l+a[x].p-a[y].p,a[y].v-a[x].v);
+        }
+        <span class="hljs-keyword">else</span>{
+            <span class="hljs-keyword">if</span>(a[x].v&gt;<span class="hljs-number">0</span>)<span class="hljs-keyword">return</span> <span class="hljs-built_in">makeFrac</span>(a[y].p-a[x].p,a[x].v-a[y].v);
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> <span class="hljs-built_in">makeFrac</span>(l+a[x].p-a[y].p,a[y].v-a[x].v);
+        }
+    }
+}
+
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">updateRemove</span><span class="hljs-params">(<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> y)</span></span>{
+    <span class="hljs-keyword">if</span>(x&gt;y)<span class="hljs-built_in">swap</span>(x,y);
+    S.<span class="hljs-built_in">erase</span>({System::<span class="hljs-built_in">calcTime</span>(x,y),x,y});
+}
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">updateInsert</span><span class="hljs-params">(<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> y)</span></span>{
+    <span class="hljs-keyword">if</span>(x&gt;y)<span class="hljs-built_in">swap</span>(x,y);
+    S.<span class="hljs-built_in">insert</span>({System::<span class="hljs-built_in">calcTime</span>(x,y),x,y});
+}
+
+<span class="hljs-type">int</span> nxt[<span class="hljs-number">200001</span>],pre[<span class="hljs-number">200001</span>];
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d&quot;</span>,&amp;n,&amp;l);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;a[i].p);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;a[i].v);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;a[i].a);
+    <span class="hljs-built_in">sort</span>(a+<span class="hljs-number">1</span>,a+<span class="hljs-number">1</span>+n);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        nxt[i]=i+<span class="hljs-number">1</span>,pre[i]=i<span class="hljs-number">-1</span>;
+    pre[<span class="hljs-number">1</span>]=n,nxt[n]=<span class="hljs-number">1</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-built_in">updateInsert</span>(i,nxt[i]);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n<span class="hljs-number">-2</span>;i++){
+        <span class="hljs-type">int</span> u=(*S.<span class="hljs-built_in">begin</span>()).u,v=(*S.<span class="hljs-built_in">begin</span>()).v;
+        <span class="hljs-type">int</span> loser=a[u].a&lt;a[v].a?u:v;
+        <span class="hljs-built_in">updateRemove</span>(loser,pre[loser]);
+        <span class="hljs-built_in">updateRemove</span>(loser,nxt[loser]);
+        <span class="hljs-built_in">updateInsert</span>(pre[loser],nxt[loser]);
+        nxt[pre[loser]]=nxt[loser],
+        pre[nxt[loser]]=pre[loser];
+    }
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d/%d\n&quot;</span>,(*S.<span class="hljs-built_in">begin</span>()).time.x,(*S.<span class="hljs-built_in">begin</span>()).time.y);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
+        </div>
+    </div>
+</div>
+                    <br>
+                </div>
+                <footer class="topan-footer">
+                    <p></p>
+                    <p style="text-align: center; color: #555; font-size: 12px;">
+                        Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
+                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>&nbsp;&nbsp;&nbsp;
+                        <i class="fa fa-solid fa-eye"></i> 访客数量：<span id="busuanzi_value_site_pv">0</span>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>
+    

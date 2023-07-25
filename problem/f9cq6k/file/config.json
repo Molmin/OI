@@ -1,0 +1,30 @@
+{
+  "title": "奖牌（medal）",
+  "difficulty": {
+    "algorithm": 4,
+    "thinking": 7,
+    "implementation": 5
+  },
+  "judge": {
+    "time": "1 s",
+    "memory": "256 MiB"
+  },
+  "tags": "动态规划,数学,数学/组合数学,数学/组合数学/组合计数",
+  "source": "",
+  "statement": {
+    "简体中文": "statement_zh.md"
+  },
+  "solution": [
+    {
+      "title": "80 分做法：动态规划",
+      "file": "sol1.md",
+      "author": ""
+    },
+    {
+      "title": "100 分做法：分类讨论 & 组合数",
+      "file": "sol2.md",
+      "author": "",
+      "code": "code2.cpp"
+    }
+  ]
+}

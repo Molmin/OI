@@ -46,12 +46,12 @@
                 <div class="topan-mainpage-auto">
                     <br>
                     <style>
-    .messages-display{
+    .messages-display {
         color: #888;
     }
 </style>
 <style>
-    .tag{
+    .tag {
         padding: 2px 6px;
         border-radius: 3px;
         font-size: 90%;
@@ -60,43 +60,51 @@
         display: inline-block;
         line-height: 17.25px;
     }
-    .tag:hover{
+
+    .tag:hover {
         color: white !important;
         background: var(--tag-color-hover);
     }
-    .tag:hover::after{
+
+    .tag:hover::after {
         width: 0 !important;
     }
-    .tag-alg{
+
+    .tag-alg {
         --tag-color: #14558f;
         --tag-color-hover: #5388a7;
     }
-    .tag-time{
+
+    .tag-time {
         --tag-color: #1c830e;
         --tag-color-hover: #60af55;
     }
-    .tag-src{
+
+    .tag-src {
         --tag-color: #be9420;
         --tag-color-hover: #f0bb65;
     }
-    .tag-special{
+
+    .tag-special {
         --tag-color: #6926c0;
         --tag-color-hover: #8f5dd1;
     }
-    .tag-place{
+
+    .tag-place {
         --tag-color: #c33e85;
         --tag-color-hover: #e071ad;
     }
 </style>
+
 <script>
-    var directSearch=(rule)=>{
-        if(pageName=='problem_detail')
-            window.location.href=`/OI/?search=${rule}`;
-        if(pageName=='problem_list')
+    var directSearch = (rule) => {
+        if (pageName == 'problem_detail')
+            window.location.href = `/OI/?search=${rule}`;
+        if (pageName == 'problem_list')
             show(search(JSON.parse(decodeURIComponent(rule))));
     }
-    var movetoPage=(pageId)=>{
-        nowsearch.page=pageId;
+    var movetoPage = (pageId) => {
+        nowsearch.page = pageId;
         show(search(nowsearch));
     }
 </script>
@@ -127,7 +135,13 @@
                     
                     
                         <strong><i class="fa fa-solid fa-tag"></i> 标签：</strong>
-                        <a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95%2F%E9%80%92%E6%8E%A8%22%5D%7D')" class="tag tag-alg">递推</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%2F%E5%9D%97%E7%8A%B6%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%2F%E5%88%86%E5%9D%97%22%5D%7D')" class="tag tag-alg">分块</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%9D%A5%E6%BA%90%2F%E7%9C%81%E9%80%89%22%5D%7D')" class="tag tag-src">省选</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E5%9C%B0%E5%8C%BA%2F%E6%B9%96%E5%8D%97%22%5D%7D')" class="tag tag-place">湖南</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%97%B6%E9%97%B4%2F2010%22%5D%7D')" class="tag tag-time">2010</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E7%BC%BA%E9%A2%98%E8%A7%A3%22%5D%7D')" class="tag tag-special">缺题解</a>&nbsp;
+                        <a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95%2F%E9%80%92%E6%8E%A8%22%5D%7D')"
+      class="tag tag-alg">递推</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%2F%E5%9D%97%E7%8A%B6%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%2F%E5%88%86%E5%9D%97%22%5D%7D')"
+      class="tag tag-alg">分块</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%9D%A5%E6%BA%90%2F%E7%9C%81%E9%80%89%22%5D%7D')"
+      class="tag tag-src">省选</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E5%9C%B0%E5%8C%BA%2F%E6%B9%96%E5%8D%97%22%5D%7D')"
+      class="tag tag-place">湖南</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E6%97%B6%E9%97%B4%2F2010%22%5D%7D')"
+      class="tag tag-time">2010</a>&nbsp;<a href="javascript:directSearch('%7B%22folders%22%3A%5B%22%E7%BC%BA%E9%A2%98%E8%A7%A3%22%5D%7D')"
+      class="tag tag-special">缺题解</a>&nbsp;
                     
                 </p>
                 <p class="messages-display">
