@@ -23,7 +23,8 @@
     {
       "title": "题解",
       "file": "sol2.md",
-      "author": ""
+      "author": "",
+      "code": "code.cpp"
     }
   ]
 }
