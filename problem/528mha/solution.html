@@ -1,0 +1,382 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title id="title">题解与代码 - 树的统计 - OI Problems</title>
+        <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
+        <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
+        <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
+        <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script src="/OI/pub/busuanzi.pure.mini.js"></script>
+        <script src="/OI/pub/main.js"></script>
+        <link rel="stylesheet" href="/OI/pub/main.css">
+        
+    </head>
+    <body>
+        <div class="topan-header">
+            <div class="topan-header-home">
+                <a href="/OI">
+                    <button class="topan-button-ordinary topan-button-commonly topan-button-header-round-left">
+                        <i class="fa fa-home"></i>
+                    </button>
+                </a>
+            </div>
+            <div class="topan-header-left">
+                <span class="topan-header-text">OI Problems&nbsp;</span>
+                <a href="/OI/about">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
+                        <i class="fa fa-solid fa-circle-info"></i>
+                        <span>&nbsp;关于</span>
+                    </span>
+                </a>
+                
+                
+            </div>
+            <div class="topan-header-right">
+            </div>
+        </div>
+        <div class="topan-outer">
+            <div class="topan-page">
+                <div class="topan-mainpage-auto">
+                    <br>
+                    <style>
+    .options {
+        font-size: 16px;
+        font-weight: normal;
+    }
+</style>
+
+<script>
+    var Export = () => console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## a
+
+
+
+```cpp
+// 2023.07.26
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+int n,q,w[30001];
+
+struct Edge{
+    int to,nxt;
+}edge[60001];
+int cntEdge,head[30001];
+void addEdge(int u,int v){
+    edge[++cntEdge]={v,head[u]},head[u]=cntEdge;
+}
+
+int fa[30001],siz[30001],dep[30001],heavy[30001];
+void init(int id){
+    siz[id]=1;
+    for(int i=head[id];i;i=edge[i].nxt){
+        if(edge[i].to==fa[id])continue;
+        fa[edge[i].to]=id;
+        dep[edge[i].to]=dep[id]+1;
+        init(edge[i].to);
+        if(siz[edge[i].to]&gt;siz[heavy[id]])
+            heavy[id]=edge[i].to;
+        siz[id]+=siz[edge[i].to];
+    }
+}
+
+int cntdfn,dfn[30001],rnk[30001];
+int top[30001];
+void decomposition(int id,int x){
+    // x 为当前链顶端
+    top[id]=x,dfn[id]=++cntdfn,rnk[cntdfn]=id;
+    if(!heavy[id])return;
+    decomposition(heavy[id],x);
+    for(int i=head[id];i;i=edge[i].nxt)
+        if(edge[i].to!=heavy[id]&amp;&amp;edge[i].to!=fa[id])
+            decomposition(edge[i].to,edge[i].to);
+}
+
+namespace SegmentTree{
+    long long sum[120001];
+    int maxn[120001],len[120001];
+    void pushup(int id){
+        sum[id]=sum[id&lt;&lt;1]+sum[(id&lt;&lt;1)+1];
+        maxn[id]=max(maxn[id&lt;&lt;1],maxn[(id&lt;&lt;1)+1]);
+    }
+
+    void build(int id,int l,int r){
+        len[id]=r-l+1;
+        if(l==r)sum[id]=maxn[id]=w[rnk[l]];
+        else{
+            int mid=l+r&gt;&gt;1;
+            build(id&lt;&lt;1,l,mid);
+            build((id&lt;&lt;1)+1,mid+1,r);
+            pushup(id);
+        }
+    }
+
+    void updateSetOne(int id,int l,int r,int x,int y){
+        if(l==r){
+            sum[id]=maxn[id]=y;
+            return;
+        }
+        int mid=l+r&gt;&gt;1;
+        if(x&lt;=mid)updateSetOne(id&lt;&lt;1,l,mid,x,y);
+        else updateSetOne((id&lt;&lt;1)+1,mid+1,r,x,y);
+        pushup(id);
+    }
+
+    long long querySum(int id,int l,int r,int x,int y){
+        if(x&lt;=l&amp;&amp;r&lt;=y)return sum[id];
+        int mid=l+r&gt;&gt;1; long long res=0;
+        if(x&lt;=mid)res+=querySum(id&lt;&lt;1,l,mid,x,y);
+        if(mid&lt;y)res+=querySum((id&lt;&lt;1)+1,mid+1,r,x,y);
+        return res;
+    }
+    int queryMax(int id,int l,int r,int x,int y){
+        if(x&lt;=l&amp;&amp;r&lt;=y)return maxn[id];
+        int mid=l+r&gt;&gt;1,res=0x80000000;
+        if(x&lt;=mid)res=max(res,queryMax(id&lt;&lt;1,l,mid,x,y));
+        if(mid&lt;y)res=max(res,queryMax((id&lt;&lt;1)+1,mid+1,r,x,y));
+        return res;
+    }
+    long long queryListSum(int x,int y){
+        long long res=0; int topx=top[x],topy=top[y];
+        while(topx!=topy){
+            if(dep[topx]&lt;dep[topy])
+                swap(x,y),swap(topx,topy);
+            res+=querySum(1,1,n,dfn[topx],dfn[x]);
+            x=fa[topx],topx=top[x];
+        }
+        if(dep[x]&gt;dep[y])swap(x,y);
+        res+=querySum(1,1,n,dfn[x],dfn[y]);
+        return res;
+    }
+    int queryListMax(int x,int y){
+        int res=0x80000000,topx=top[x],topy=top[y];
+        while(topx!=topy){
+            if(dep[topx]&lt;dep[topy])
+                swap(x,y),swap(topx,topy);
+            res=max(res,queryMax(1,1,n,dfn[topx],dfn[x]));
+            x=fa[topx],topx=top[x];
+        }
+        if(dep[x]&gt;dep[y])swap(x,y);
+        res=max(res,queryMax(1,1,n,dfn[x],dfn[y]));
+        return res;
+    }
+}
+
+int main(){
+    scanf(&#34;%d&#34;,&amp;n);
+    for(int i=1;i&lt;n;i++){
+        int u,v;
+        scanf(&#34;%d%d&#34;,&amp;u,&amp;v);
+        addEdge(u,v);
+        addEdge(v,u);
+    }
+    for(int i=1;i&lt;=n;i++)
+        scanf(&#34;%d&#34;,w+i);
+    init(1); decomposition(1,1);
+    SegmentTree::build(1,1,n);
+
+    scanf(&#34;%d&#34;,&amp;q);
+    while(q--){
+        int u,v; string op; op.resize(10);
+        scanf(&#34;%s%d%d&#34;,&amp;op[0],&amp;u,&amp;v);
+        if(op[1]==&#39;H&#39;)SegmentTree::updateSetOne(1,1,n,dfn[u],v);
+        if(op[1]==&#39;M&#39;)printf(&#34;%d\n&#34;,SegmentTree::queryListMax(u,v));
+        if(op[1]==&#39;S&#39;)printf(&#34;%lld\n&#34;,SegmentTree::queryListSum(u,v));
+    }
+    return 0;
+}
+```</textarea>
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2>树的统计</h2>
+                <a class="topan-menu-option" href="/OI/problem/528mha"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/528mha/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/528mha/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            
+                <div class="topan-section-shadow">
+                    <h2>
+                        a
+                        
+                    </h2>
+                    
+                    
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.07.26</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+
+<span class="hljs-type">int</span> n,q,w[<span class="hljs-number">30001</span>];
+
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">Edge</span>{
+    <span class="hljs-type">int</span> to,nxt;
+}edge[<span class="hljs-number">60001</span>];
+<span class="hljs-type">int</span> cntEdge,head[<span class="hljs-number">30001</span>];
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">addEdge</span><span class="hljs-params">(<span class="hljs-type">int</span> u,<span class="hljs-type">int</span> v)</span></span>{
+    edge[++cntEdge]={v,head[u]},head[u]=cntEdge;
+}
+
+<span class="hljs-type">int</span> fa[<span class="hljs-number">30001</span>],siz[<span class="hljs-number">30001</span>],dep[<span class="hljs-number">30001</span>],heavy[<span class="hljs-number">30001</span>];
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">init</span><span class="hljs-params">(<span class="hljs-type">int</span> id)</span></span>{
+    siz[id]=<span class="hljs-number">1</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=head[id];i;i=edge[i].nxt){
+        <span class="hljs-keyword">if</span>(edge[i].to==fa[id])<span class="hljs-keyword">continue</span>;
+        fa[edge[i].to]=id;
+        dep[edge[i].to]=dep[id]+<span class="hljs-number">1</span>;
+        <span class="hljs-built_in">init</span>(edge[i].to);
+        <span class="hljs-keyword">if</span>(siz[edge[i].to]&gt;siz[heavy[id]])
+            heavy[id]=edge[i].to;
+        siz[id]+=siz[edge[i].to];
+    }
+}
+
+<span class="hljs-type">int</span> cntdfn,dfn[<span class="hljs-number">30001</span>],rnk[<span class="hljs-number">30001</span>];
+<span class="hljs-type">int</span> top[<span class="hljs-number">30001</span>];
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">decomposition</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> x)</span></span>{
+    <span class="hljs-comment">// x 为当前链顶端</span>
+    top[id]=x,dfn[id]=++cntdfn,rnk[cntdfn]=id;
+    <span class="hljs-keyword">if</span>(!heavy[id])<span class="hljs-keyword">return</span>;
+    <span class="hljs-built_in">decomposition</span>(heavy[id],x);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=head[id];i;i=edge[i].nxt)
+        <span class="hljs-keyword">if</span>(edge[i].to!=heavy[id]&amp;&amp;edge[i].to!=fa[id])
+            <span class="hljs-built_in">decomposition</span>(edge[i].to,edge[i].to);
+}
+
+<span class="hljs-keyword">namespace</span> SegmentTree{
+    <span class="hljs-type">long</span> <span class="hljs-type">long</span> sum[<span class="hljs-number">120001</span>];
+    <span class="hljs-type">int</span> maxn[<span class="hljs-number">120001</span>],len[<span class="hljs-number">120001</span>];
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">pushup</span><span class="hljs-params">(<span class="hljs-type">int</span> id)</span></span>{
+        sum[id]=sum[id&lt;&lt;<span class="hljs-number">1</span>]+sum[(id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>];
+        maxn[id]=<span class="hljs-built_in">max</span>(maxn[id&lt;&lt;<span class="hljs-number">1</span>],maxn[(id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>]);
+    }
+
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">build</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r)</span></span>{
+        len[id]=r-l+<span class="hljs-number">1</span>;
+        <span class="hljs-keyword">if</span>(l==r)sum[id]=maxn[id]=w[rnk[l]];
+        <span class="hljs-keyword">else</span>{
+            <span class="hljs-type">int</span> mid=l+r&gt;&gt;<span class="hljs-number">1</span>;
+            <span class="hljs-built_in">build</span>(id&lt;&lt;<span class="hljs-number">1</span>,l,mid);
+            <span class="hljs-built_in">build</span>((id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r);
+            <span class="hljs-built_in">pushup</span>(id);
+        }
+    }
+
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">updateSetOne</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r,<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> y)</span></span>{
+        <span class="hljs-keyword">if</span>(l==r){
+            sum[id]=maxn[id]=y;
+            <span class="hljs-keyword">return</span>;
+        }
+        <span class="hljs-type">int</span> mid=l+r&gt;&gt;<span class="hljs-number">1</span>;
+        <span class="hljs-keyword">if</span>(x&lt;=mid)<span class="hljs-built_in">updateSetOne</span>(id&lt;&lt;<span class="hljs-number">1</span>,l,mid,x,y);
+        <span class="hljs-keyword">else</span> <span class="hljs-built_in">updateSetOne</span>((id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r,x,y);
+        <span class="hljs-built_in">pushup</span>(id);
+    }
+
+    <span class="hljs-function"><span class="hljs-type">long</span> <span class="hljs-type">long</span> <span class="hljs-title">querySum</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r,<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> y)</span></span>{
+        <span class="hljs-keyword">if</span>(x&lt;=l&amp;&amp;r&lt;=y)<span class="hljs-keyword">return</span> sum[id];
+        <span class="hljs-type">int</span> mid=l+r&gt;&gt;<span class="hljs-number">1</span>; <span class="hljs-type">long</span> <span class="hljs-type">long</span> res=<span class="hljs-number">0</span>;
+        <span class="hljs-keyword">if</span>(x&lt;=mid)res+=<span class="hljs-built_in">querySum</span>(id&lt;&lt;<span class="hljs-number">1</span>,l,mid,x,y);
+        <span class="hljs-keyword">if</span>(mid&lt;y)res+=<span class="hljs-built_in">querySum</span>((id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r,x,y);
+        <span class="hljs-keyword">return</span> res;
+    }
+    <span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">queryMax</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r,<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> y)</span></span>{
+        <span class="hljs-keyword">if</span>(x&lt;=l&amp;&amp;r&lt;=y)<span class="hljs-keyword">return</span> maxn[id];
+        <span class="hljs-type">int</span> mid=l+r&gt;&gt;<span class="hljs-number">1</span>,res=<span class="hljs-number">0x80000000</span>;
+        <span class="hljs-keyword">if</span>(x&lt;=mid)res=<span class="hljs-built_in">max</span>(res,<span class="hljs-built_in">queryMax</span>(id&lt;&lt;<span class="hljs-number">1</span>,l,mid,x,y));
+        <span class="hljs-keyword">if</span>(mid&lt;y)res=<span class="hljs-built_in">max</span>(res,<span class="hljs-built_in">queryMax</span>((id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r,x,y));
+        <span class="hljs-keyword">return</span> res;
+    }
+    <span class="hljs-function"><span class="hljs-type">long</span> <span class="hljs-type">long</span> <span class="hljs-title">queryListSum</span><span class="hljs-params">(<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> y)</span></span>{
+        <span class="hljs-type">long</span> <span class="hljs-type">long</span> res=<span class="hljs-number">0</span>; <span class="hljs-type">int</span> topx=top[x],topy=top[y];
+        <span class="hljs-keyword">while</span>(topx!=topy){
+            <span class="hljs-keyword">if</span>(dep[topx]&lt;dep[topy])
+                <span class="hljs-built_in">swap</span>(x,y),<span class="hljs-built_in">swap</span>(topx,topy);
+            res+=<span class="hljs-built_in">querySum</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,n,dfn[topx],dfn[x]);
+            x=fa[topx],topx=top[x];
+        }
+        <span class="hljs-keyword">if</span>(dep[x]&gt;dep[y])<span class="hljs-built_in">swap</span>(x,y);
+        res+=<span class="hljs-built_in">querySum</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,n,dfn[x],dfn[y]);
+        <span class="hljs-keyword">return</span> res;
+    }
+    <span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">queryListMax</span><span class="hljs-params">(<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> y)</span></span>{
+        <span class="hljs-type">int</span> res=<span class="hljs-number">0x80000000</span>,topx=top[x],topy=top[y];
+        <span class="hljs-keyword">while</span>(topx!=topy){
+            <span class="hljs-keyword">if</span>(dep[topx]&lt;dep[topy])
+                <span class="hljs-built_in">swap</span>(x,y),<span class="hljs-built_in">swap</span>(topx,topy);
+            res=<span class="hljs-built_in">max</span>(res,<span class="hljs-built_in">queryMax</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,n,dfn[topx],dfn[x]));
+            x=fa[topx],topx=top[x];
+        }
+        <span class="hljs-keyword">if</span>(dep[x]&gt;dep[y])<span class="hljs-built_in">swap</span>(x,y);
+        res=<span class="hljs-built_in">max</span>(res,<span class="hljs-built_in">queryMax</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,n,dfn[x],dfn[y]));
+        <span class="hljs-keyword">return</span> res;
+    }
+}
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;n);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;n;i++){
+        <span class="hljs-type">int</span> u,v;
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d&quot;</span>,&amp;u,&amp;v);
+        <span class="hljs-built_in">addEdge</span>(u,v);
+        <span class="hljs-built_in">addEdge</span>(v,u);
+    }
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,w+i);
+    <span class="hljs-built_in">init</span>(<span class="hljs-number">1</span>); <span class="hljs-built_in">decomposition</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>);
+    SegmentTree::<span class="hljs-built_in">build</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,n);
+
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;q);
+    <span class="hljs-keyword">while</span>(q--){
+        <span class="hljs-type">int</span> u,v; string op; op.<span class="hljs-built_in">resize</span>(<span class="hljs-number">10</span>);
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%s%d%d&quot;</span>,&amp;op[<span class="hljs-number">0</span>],&amp;u,&amp;v);
+        <span class="hljs-keyword">if</span>(op[<span class="hljs-number">1</span>]==<span class="hljs-string">&#x27;H&#x27;</span>)SegmentTree::<span class="hljs-built_in">updateSetOne</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,n,dfn[u],v);
+        <span class="hljs-keyword">if</span>(op[<span class="hljs-number">1</span>]==<span class="hljs-string">&#x27;M&#x27;</span>)<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d\n&quot;</span>,SegmentTree::<span class="hljs-built_in">queryListMax</span>(u,v));
+        <span class="hljs-keyword">if</span>(op[<span class="hljs-number">1</span>]==<span class="hljs-string">&#x27;S&#x27;</span>)<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lld\n&quot;</span>,SegmentTree::<span class="hljs-built_in">queryListSum</span>(u,v));
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
+        </div>
+    </div>
+</div>
+                    <br>
+                </div>
+                <footer class="topan-footer">
+                    <p></p>
+                    <p style="text-align: center; color: #555; font-size: 12px;">
+                        Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
+                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>&nbsp;&nbsp;&nbsp;
+                        <i class="fa fa-solid fa-eye"></i> 访客数量：<span id="busuanzi_value_site_pv">0</span>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>
+    

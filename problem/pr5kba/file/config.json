@@ -1,0 +1,30 @@
+{
+  "title": "Iron Man",
+  "difficulty": {
+    "algorithm": 6,
+    "thinking": 6,
+    "implementation": 5
+  },
+  "judge": {
+    "time": "5 s",
+    "memory": "256 MiB"
+  },
+  "tags": "图论,图论/树,图论/树/树链剖分,图论/树/树链剖分/重链剖分,计算几何,计算几何/扫描线,来源/CodeForces",
+  "source": "[Codeforces Round 366 (Div. 1)](https://codeforces.com/contest/704) [Problem E](https://codeforces.com/contest/704/problem/E)",
+  "statement": {
+    "简体中文": "statement_zh.md"
+  },
+  "solution": [
+    {
+      "title": "链的情况",
+      "file": "sol_link.md",
+      "author": ""
+    },
+    {
+      "title": "树的情况",
+      "file": "sol.md",
+      "author": "",
+      "code": "code.cpp"
+    }
+  ]
+}

@@ -76,7 +76,7 @@ namespace SegmentTree{
         pushup(id);
     }
     void updateList(int x,int y){
-        // 将 x 到 y 这条链加 1
+        // 将从 x 到 y 这条链加 1
         int topx=top[x],topy=top[y];
         while(topx!=topy){
             if(dep[topx]<dep[topy])
@@ -97,7 +97,7 @@ namespace SegmentTree{
         return res%mod;
     }
     int queryList(int x,int y){
-        // 查询将 x 到 y 这条链的总和
+        // 查询从 x 到 y 这条链的总和
         int res=0,topx=top[x],topy=top[y];
         while(topx!=topy){
             if(dep[topx]<dep[topy])
@@ -107,7 +107,7 @@ namespace SegmentTree{
         }
         if(dep[x]>dep[y])swap(x,y);
         res+=querySum(1,1,n,rnk[x],rnk[y]);
-        return res%=mod;
+        return res%mod;
     }
 }
 

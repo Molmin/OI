@@ -149,7 +149,7 @@ namespace SegmentTree{
         pushup(id);
     }
     void updateList(int x,int y){
-        // 将 x 到 y 这条链加 1
+        // 将从 x 到 y 这条链加 1
         int topx=top[x],topy=top[y];
         while(topx!=topy){
             if(dep[topx]&lt;dep[topy])
@@ -170,7 +170,7 @@ namespace SegmentTree{
         return res%mod;
     }
     int queryList(int x,int y){
-        // 查询将 x 到 y 这条链的总和
+        // 查询从 x 到 y 这条链的总和
         int res=0,topx=top[x],topy=top[y];
         while(topx!=topy){
             if(dep[topx]&lt;dep[topy])
@@ -180,7 +180,7 @@ namespace SegmentTree{
         }
         if(dep[x]&gt;dep[y])swap(x,y);
         res+=querySum(1,1,n,rnk[x],rnk[y]);
-        return res%=mod;
+        return res%mod;
     }
 }
 
@@ -334,7 +334,7 @@ int main(){
         <span class="hljs-built_in">pushup</span>(id);
     }
     <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">updateList</span><span class="hljs-params">(<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> y)</span></span>{
-        <span class="hljs-comment">// 将 x 到 y 这条链加 1</span>
+        <span class="hljs-comment">// 将从 x 到 y 这条链加 1</span>
         <span class="hljs-type">int</span> topx=top[x],topy=top[y];
         <span class="hljs-keyword">while</span>(topx!=topy){
             <span class="hljs-keyword">if</span>(dep[topx]&lt;dep[topy])
@@ -355,7 +355,7 @@ int main(){
         <span class="hljs-keyword">return</span> res%mod;
     }
     <span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">queryList</span><span class="hljs-params">(<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> y)</span></span>{
-        <span class="hljs-comment">// 查询将 x 到 y 这条链的总和</span>
+        <span class="hljs-comment">// 查询从 x 到 y 这条链的总和</span>
         <span class="hljs-type">int</span> res=<span class="hljs-number">0</span>,topx=top[x],topy=top[y];
         <span class="hljs-keyword">while</span>(topx!=topy){
             <span class="hljs-keyword">if</span>(dep[topx]&lt;dep[topy])
@@ -365,7 +365,7 @@ int main(){
         }
         <span class="hljs-keyword">if</span>(dep[x]&gt;dep[y])<span class="hljs-built_in">swap</span>(x,y);
         res+=<span class="hljs-built_in">querySum</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,n,rnk[x],rnk[y]);
-        <span class="hljs-keyword">return</span> res%=mod;
+        <span class="hljs-keyword">return</span> res%mod;
     }
 }
 

@@ -1,0 +1,490 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title id="title">题解与代码 - Iron Man - OI Problems</title>
+        <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
+        <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
+        <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
+        <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script src="/OI/pub/busuanzi.pure.mini.js"></script>
+        <script src="/OI/pub/main.js"></script>
+        <link rel="stylesheet" href="/OI/pub/main.css">
+        
+    </head>
+    <body>
+        <div class="topan-header">
+            <div class="topan-header-home">
+                <a href="/OI">
+                    <button class="topan-button-ordinary topan-button-commonly topan-button-header-round-left">
+                        <i class="fa fa-home"></i>
+                    </button>
+                </a>
+            </div>
+            <div class="topan-header-left">
+                <span class="topan-header-text">OI Problems&nbsp;</span>
+                <a href="/OI/about">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
+                        <i class="fa fa-solid fa-circle-info"></i>
+                        <span>&nbsp;关于</span>
+                    </span>
+                </a>
+                
+                
+            </div>
+            <div class="topan-header-right">
+            </div>
+        </div>
+        <div class="topan-outer">
+            <div class="topan-page">
+                <div class="topan-mainpage-auto">
+                    <br>
+                    <style>
+    .options {
+        font-size: 16px;
+        font-weight: normal;
+    }
+</style>
+
+<script>
+    var Export = () => console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 链的情况
+
+首先考虑链的情况。
+
+建立平面直角坐标系，横轴为时间，纵轴为深度，那么链上人的运动在坐标系中是一条 **线段**。问题转化为这些线段的第一次相交时间。
+
+考虑扫描线。从左到右按时间先后扫描，同时维护一个线段集合，按照纵坐标深度排序。那么容易知道线段相交一定出现在集合中的相邻两个。
+
+时间复杂度 $\Theta(n\log n)$，其中 $n$ 为链长度。
+
+## 树的情况
+
+解决了链的情况，容易想到树链剖分。每个人都分成 $\Theta(\log n)$ 的链，由于相撞只能发生在同一条链上，所以我们只需要处理每条链即可。时间复杂度 $\Theta(n+m\log n\log m)$。
+
+实现细节：涉及精度问题，要使用 `long double`，如果还无法通过此题，就使用分数存储；计算线段交点时要注意处理两条线段平行的情况。
+
+```cpp
+// 2023.07.26
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+struct Frac{
+    long long x,y;
+    Frac(long long a=0,long long b=1):x(a),y(b){
+        long long gcd=__gcd(abs(x),abs(y));
+        if(y&lt;0)gcd=-gcd; x/=gcd,y/=gcd;
+    }
+    Frac operator+(Frac tmp)const{
+        return Frac(x*tmp.y+y*tmp.x,y*tmp.y);
+    }
+    Frac operator-(Frac tmp)const{
+        return Frac(x*tmp.y-y*tmp.x,y*tmp.y);
+    }
+    Frac operator*(Frac tmp)const{
+        return Frac(x*tmp.x,y*tmp.y);
+    }
+    Frac operator/(Frac tmp)const{
+        return Frac(x*tmp.y,y*tmp.x);
+    }
+    bool operator&lt;(Frac tmp)const{
+        return x*tmp.y&lt;y*tmp.x;
+    }
+    bool operator&lt;=(Frac tmp)const{
+        return x*tmp.y&lt;=y*tmp.x;
+    }
+    bool operator&gt;=(Frac tmp)const{
+        return x*tmp.y&gt;=y*tmp.x;
+    }
+    bool operator==(Frac tmp)const{
+        return x*tmp.y==y*tmp.x;
+    }
+    bool operator!=(Frac tmp)const{
+        return x*tmp.y!=y*tmp.x;
+    }
+};
+
+int n,m; Frac answer=Frac(1e14);
+
+struct Edge{
+    int to,nxt;
+}edge[500001];
+int cntEdge,head[200001];
+void addEdge(int u,int v){
+    edge[++cntEdge]={v,head[u]},head[u]=cntEdge;
+}
+
+int fa[200001],siz[200001],dep[200001],heavy[200001];
+void init(int id){
+    siz[id]=1;
+    for(int i=head[id];i;i=edge[i].nxt){
+        if(edge[i].to==fa[id])continue;
+        fa[edge[i].to]=id;
+        dep[edge[i].to]=dep[id]+1;
+        init(edge[i].to);
+        if(siz[edge[i].to]&gt;siz[heavy[id]])
+            heavy[id]=edge[i].to;
+        siz[id]+=siz[edge[i].to];
+    }
+}
+
+int cntdfn,dfn[200001],rnk[200001];
+int top[200001];
+void decomposition(int id,int x){
+    // x 为当前链顶端
+    top[id]=x,dfn[id]=++cntdfn,rnk[cntdfn]=id;
+    if(!heavy[id])return;
+    decomposition(heavy[id],x);
+    for(int i=head[id];i;i=edge[i].nxt)
+        if(edge[i].to!=heavy[id]&amp;&amp;edge[i].to!=fa[id])
+            decomposition(edge[i].to,edge[i].to);
+}
+
+int getlca(int u,int v){
+    while(top[u]!=top[v]){
+        if(dep[top[u]]&lt;dep[top[v]])swap(u,v);
+        u=fa[top[u]];
+    }
+    return dep[u]&lt;dep[v]?u:v;
+}
+
+Frac now;
+
+struct LineSegment{
+    Frac k,b,l,r; // 线段 y = kx + b，左右端点横坐标为 l 和 r
+    bool operator&lt;(LineSegment tmp)const{
+        if(k*now+b!=tmp.k*now+tmp.b)
+            return k*now+b&lt;tmp.k*now+tmp.b;
+        if(l!=tmp.l)return l&lt;tmp.l;
+        if(r!=tmp.r)return r&lt;tmp.r;
+        return k&lt;tmp.k;
+    }
+};
+bool operator&lt;(pair&lt;LineSegment,int&gt; x,pair&lt;LineSegment,int&gt; y){
+    Frac xt=x.second?x.first.l:x.first.r,
+         yt=y.second?y.first.l:y.first.r;
+    if(xt==yt)return x.second&gt;y.second;
+    else return xt&lt;yt;
+}
+vector&lt;LineSegment&gt; lines[200001];
+
+Frac calc(LineSegment x,LineSegment y){
+    if(x.k==y.k&amp;&amp;x.b==y.b)return max(x.l,y.l);
+    if(x.k==y.k)return Frac(1e14);
+    Frac res=(x.b-y.b)/(y.k-x.k);
+    if(max(x.l,y.l)&lt;=res&amp;&amp;res&lt;=min(x.r,y.r))return res;
+    else return Frac(1e14);
+}
+
+void solve(vector&lt;LineSegment&gt; r){
+    multiset&lt;LineSegment&gt; S;
+    vector&lt;pair&lt;LineSegment,int&gt; &gt; Q;
+    for(LineSegment i :r)
+        Q.push_back({i,1}),Q.push_back({i,0});
+    sort(Q.begin(),Q.end());
+    for(pair&lt;LineSegment,int&gt; i :Q){
+        now=i.second?i.first.l:i.first.r;
+        if(now&gt;=answer)break;
+        if(i.second){
+            auto tmp=S.insert(i.first),tmp1=tmp,tmp2=tmp;
+            if(tmp1!=S.begin())answer=min(answer,calc(*--tmp1,*tmp));
+            if(++tmp2!=S.end())answer=min(answer,calc(*tmp,*tmp2));
+        }
+        else{
+            auto tmp=S.lower_bound(i.first),tmp1=tmp,tmp2=tmp;
+            if(tmp1!=S.begin()&amp;&amp;++tmp2!=S.end())
+                answer=min(answer,calc(*--tmp1,*tmp2));
+            S.erase(tmp);
+        }
+    }
+}
+
+int main(){
+    scanf(&#34;%d%d&#34;,&amp;n,&amp;m);
+    for(int i=1;i&lt;n;i++){
+        int u,v;
+        scanf(&#34;%d%d&#34;,&amp;u,&amp;v);
+        addEdge(u,v);
+        addEdge(v,u);
+    }
+    init(1); decomposition(1,1);
+
+    for(int i=1;i&lt;=m;i++){
+        int x,y; Frac v,s,e;
+        scanf(&#34;%lld%lld%d%d&#34;,&amp;s.x,&amp;v.x,&amp;x,&amp;y);
+        e=Frac(dep[x]+dep[y]-dep[getlca(x,y)]*2)/v+s;
+        while(top[x]!=top[y]){
+            if(dep[top[x]]&lt;dep[top[y]]){
+                int from=y,to=fa[top[y]];
+                lines[top[y]].push_back({v,Frac(dep[from])-v*e,
+                    e-Frac(dep[from]-dep[to])/v,e});
+                e=e-Frac(dep[from]-dep[to])/v;
+                y=fa[top[y]];
+            }
+            else{
+                int from=x,to=fa[top[x]];
+                lines[top[x]].push_back({Frac(0)-v,Frac(dep[from])+v*s,
+                    s,s+Frac(dep[from]-dep[to])/v});
+                s=s+Frac(dep[from]-dep[to])/v;
+                x=fa[top[x]];
+            }
+        }
+        if(dep[x]&gt;dep[y])lines[top[x]].push_back({Frac(0)-v,Frac(dep[x])+v*s,s,e});
+        else lines[top[x]].push_back({v,Frac(dep[y])-v*e,s,e});
+    }
+    for(int i=1;i&lt;=n;i++)solve(lines[i]);
+    if(answer==Frac(1e14))return printf(&#34;-1\n&#34;),0;
+    printf(&#34;%.10Lf\n&#34;,(long double)answer.x/answer.y);
+    return 0;
+}
+```</textarea>
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2>Iron Man</h2>
+                <a class="topan-menu-option" href="/OI/problem/pr5kba"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/pr5kba/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/pr5kba/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            
+                <div class="topan-section-shadow">
+                    <h2>
+                        链的情况
+                        
+                    </h2>
+                    
+                    <p>首先考虑链的情况。</p>
+<p>建立平面直角坐标系，横轴为时间，纵轴为深度，那么链上人的运动在坐标系中是一条 <strong>线段</strong>。问题转化为这些线段的第一次相交时间。</p>
+<p>考虑扫描线。从左到右按时间先后扫描，同时维护一个线段集合，按照纵坐标深度排序。那么容易知道线段相交一定出现在集合中的相邻两个。</p>
+<p>时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>n</mi><mi>log</mi><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n\log n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mord mathit">n</span><span class="mclose">)</span></span></span></span>，其中 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">n</span></span></span></span> 为链长度。</p>
+
+                    
+                </div>
+            
+                <br>
+                
+                <div class="topan-section-shadow">
+                    <h2>
+                        树的情况
+                        
+                    </h2>
+                    
+                    <p>解决了链的情况，容易想到树链剖分。每个人都分成 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>log</mi><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(\log n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mord mathit">n</span><span class="mclose">)</span></span></span></span> 的链，由于相撞只能发生在同一条链上，所以我们只需要处理每条链即可。时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>n</mi><mo>+</mo><mi>m</mi><mi>log</mi><mi>n</mi><mi>log</mi><mi>m</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n+m\log n\log m)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mbin">+</span><span class="mord mathit">m</span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mord mathit">n</span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mord mathit">m</span><span class="mclose">)</span></span></span></span>。</p>
+<p>实现细节：涉及精度问题，要使用 <code class="hljs"><span class="hljs-type">long</span> <span class="hljs-type">double</span></code>，如果还无法通过此题，就使用分数存储；计算线段交点时要注意处理两条线段平行的情况。</p>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.07.26</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">Frac</span>{
+    <span class="hljs-type">long</span> <span class="hljs-type">long</span> x,y;
+    <span class="hljs-built_in">Frac</span>(<span class="hljs-type">long</span> <span class="hljs-type">long</span> a=<span class="hljs-number">0</span>,<span class="hljs-type">long</span> <span class="hljs-type">long</span> b=<span class="hljs-number">1</span>):<span class="hljs-built_in">x</span>(a),<span class="hljs-built_in">y</span>(b){
+        <span class="hljs-type">long</span> <span class="hljs-type">long</span> gcd=__gcd(<span class="hljs-built_in">abs</span>(x),<span class="hljs-built_in">abs</span>(y));
+        <span class="hljs-keyword">if</span>(y&lt;<span class="hljs-number">0</span>)gcd=-gcd; x/=gcd,y/=gcd;
+    }
+    Frac <span class="hljs-keyword">operator</span>+(Frac tmp)<span class="hljs-type">const</span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">Frac</span>(x*tmp.y+y*tmp.x,y*tmp.y);
+    }
+    Frac <span class="hljs-keyword">operator</span>-(Frac tmp)<span class="hljs-type">const</span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">Frac</span>(x*tmp.y-y*tmp.x,y*tmp.y);
+    }
+    Frac <span class="hljs-keyword">operator</span>*(Frac tmp)<span class="hljs-type">const</span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">Frac</span>(x*tmp.x,y*tmp.y);
+    }
+    Frac <span class="hljs-keyword">operator</span>/(Frac tmp)<span class="hljs-type">const</span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">Frac</span>(x*tmp.y,y*tmp.x);
+    }
+    <span class="hljs-type">bool</span> <span class="hljs-keyword">operator</span>&lt;(Frac tmp)<span class="hljs-type">const</span>{
+        <span class="hljs-keyword">return</span> x*tmp.y&lt;y*tmp.x;
+    }
+    <span class="hljs-type">bool</span> <span class="hljs-keyword">operator</span>&lt;=(Frac tmp)<span class="hljs-type">const</span>{
+        <span class="hljs-keyword">return</span> x*tmp.y&lt;=y*tmp.x;
+    }
+    <span class="hljs-type">bool</span> <span class="hljs-keyword">operator</span>&gt;=(Frac tmp)<span class="hljs-type">const</span>{
+        <span class="hljs-keyword">return</span> x*tmp.y&gt;=y*tmp.x;
+    }
+    <span class="hljs-type">bool</span> <span class="hljs-keyword">operator</span>==(Frac tmp)<span class="hljs-type">const</span>{
+        <span class="hljs-keyword">return</span> x*tmp.y==y*tmp.x;
+    }
+    <span class="hljs-type">bool</span> <span class="hljs-keyword">operator</span>!=(Frac tmp)<span class="hljs-type">const</span>{
+        <span class="hljs-keyword">return</span> x*tmp.y!=y*tmp.x;
+    }
+};
+
+<span class="hljs-type">int</span> n,m; Frac answer=<span class="hljs-built_in">Frac</span>(<span class="hljs-number">1e14</span>);
+
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">Edge</span>{
+    <span class="hljs-type">int</span> to,nxt;
+}edge[<span class="hljs-number">500001</span>];
+<span class="hljs-type">int</span> cntEdge,head[<span class="hljs-number">200001</span>];
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">addEdge</span><span class="hljs-params">(<span class="hljs-type">int</span> u,<span class="hljs-type">int</span> v)</span></span>{
+    edge[++cntEdge]={v,head[u]},head[u]=cntEdge;
+}
+
+<span class="hljs-type">int</span> fa[<span class="hljs-number">200001</span>],siz[<span class="hljs-number">200001</span>],dep[<span class="hljs-number">200001</span>],heavy[<span class="hljs-number">200001</span>];
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">init</span><span class="hljs-params">(<span class="hljs-type">int</span> id)</span></span>{
+    siz[id]=<span class="hljs-number">1</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=head[id];i;i=edge[i].nxt){
+        <span class="hljs-keyword">if</span>(edge[i].to==fa[id])<span class="hljs-keyword">continue</span>;
+        fa[edge[i].to]=id;
+        dep[edge[i].to]=dep[id]+<span class="hljs-number">1</span>;
+        <span class="hljs-built_in">init</span>(edge[i].to);
+        <span class="hljs-keyword">if</span>(siz[edge[i].to]&gt;siz[heavy[id]])
+            heavy[id]=edge[i].to;
+        siz[id]+=siz[edge[i].to];
+    }
+}
+
+<span class="hljs-type">int</span> cntdfn,dfn[<span class="hljs-number">200001</span>],rnk[<span class="hljs-number">200001</span>];
+<span class="hljs-type">int</span> top[<span class="hljs-number">200001</span>];
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">decomposition</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> x)</span></span>{
+    <span class="hljs-comment">// x 为当前链顶端</span>
+    top[id]=x,dfn[id]=++cntdfn,rnk[cntdfn]=id;
+    <span class="hljs-keyword">if</span>(!heavy[id])<span class="hljs-keyword">return</span>;
+    <span class="hljs-built_in">decomposition</span>(heavy[id],x);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=head[id];i;i=edge[i].nxt)
+        <span class="hljs-keyword">if</span>(edge[i].to!=heavy[id]&amp;&amp;edge[i].to!=fa[id])
+            <span class="hljs-built_in">decomposition</span>(edge[i].to,edge[i].to);
+}
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">getlca</span><span class="hljs-params">(<span class="hljs-type">int</span> u,<span class="hljs-type">int</span> v)</span></span>{
+    <span class="hljs-keyword">while</span>(top[u]!=top[v]){
+        <span class="hljs-keyword">if</span>(dep[top[u]]&lt;dep[top[v]])<span class="hljs-built_in">swap</span>(u,v);
+        u=fa[top[u]];
+    }
+    <span class="hljs-keyword">return</span> dep[u]&lt;dep[v]?u:v;
+}
+
+Frac now;
+
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">LineSegment</span>{
+    Frac k,b,l,r; <span class="hljs-comment">// 线段 y = kx + b，左右端点横坐标为 l 和 r</span>
+    <span class="hljs-type">bool</span> <span class="hljs-keyword">operator</span>&lt;(LineSegment tmp)<span class="hljs-type">const</span>{
+        <span class="hljs-keyword">if</span>(k*now+b!=tmp.k*now+tmp.b)
+            <span class="hljs-keyword">return</span> k*now+b&lt;tmp.k*now+tmp.b;
+        <span class="hljs-keyword">if</span>(l!=tmp.l)<span class="hljs-keyword">return</span> l&lt;tmp.l;
+        <span class="hljs-keyword">if</span>(r!=tmp.r)<span class="hljs-keyword">return</span> r&lt;tmp.r;
+        <span class="hljs-keyword">return</span> k&lt;tmp.k;
+    }
+};
+<span class="hljs-type">bool</span> <span class="hljs-keyword">operator</span>&lt;(pair&lt;LineSegment,<span class="hljs-type">int</span>&gt; x,pair&lt;LineSegment,<span class="hljs-type">int</span>&gt; y){
+    Frac xt=x.second?x.first.l:x.first.r,
+         yt=y.second?y.first.l:y.first.r;
+    <span class="hljs-keyword">if</span>(xt==yt)<span class="hljs-keyword">return</span> x.second&gt;y.second;
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> xt&lt;yt;
+}
+vector&lt;LineSegment&gt; lines[<span class="hljs-number">200001</span>];
+
+<span class="hljs-function">Frac <span class="hljs-title">calc</span><span class="hljs-params">(LineSegment x,LineSegment y)</span></span>{
+    <span class="hljs-keyword">if</span>(x.k==y.k&amp;&amp;x.b==y.b)<span class="hljs-keyword">return</span> <span class="hljs-built_in">max</span>(x.l,y.l);
+    <span class="hljs-keyword">if</span>(x.k==y.k)<span class="hljs-keyword">return</span> <span class="hljs-built_in">Frac</span>(<span class="hljs-number">1e14</span>);
+    Frac res=(x.b-y.b)/(y.k-x.k);
+    <span class="hljs-keyword">if</span>(<span class="hljs-built_in">max</span>(x.l,y.l)&lt;=res&amp;&amp;res&lt;=<span class="hljs-built_in">min</span>(x.r,y.r))<span class="hljs-keyword">return</span> res;
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">return</span> <span class="hljs-built_in">Frac</span>(<span class="hljs-number">1e14</span>);
+}
+
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">solve</span><span class="hljs-params">(vector&lt;LineSegment&gt; r)</span></span>{
+    multiset&lt;LineSegment&gt; S;
+    vector&lt;pair&lt;LineSegment,<span class="hljs-type">int</span>&gt; &gt; Q;
+    <span class="hljs-keyword">for</span>(LineSegment i :r)
+        Q.<span class="hljs-built_in">push_back</span>({i,<span class="hljs-number">1</span>}),Q.<span class="hljs-built_in">push_back</span>({i,<span class="hljs-number">0</span>});
+    <span class="hljs-built_in">sort</span>(Q.<span class="hljs-built_in">begin</span>(),Q.<span class="hljs-built_in">end</span>());
+    <span class="hljs-keyword">for</span>(pair&lt;LineSegment,<span class="hljs-type">int</span>&gt; i :Q){
+        now=i.second?i.first.l:i.first.r;
+        <span class="hljs-keyword">if</span>(now&gt;=answer)<span class="hljs-keyword">break</span>;
+        <span class="hljs-keyword">if</span>(i.second){
+            <span class="hljs-keyword">auto</span> tmp=S.<span class="hljs-built_in">insert</span>(i.first),tmp1=tmp,tmp2=tmp;
+            <span class="hljs-keyword">if</span>(tmp1!=S.<span class="hljs-built_in">begin</span>())answer=<span class="hljs-built_in">min</span>(answer,<span class="hljs-built_in">calc</span>(*--tmp1,*tmp));
+            <span class="hljs-keyword">if</span>(++tmp2!=S.<span class="hljs-built_in">end</span>())answer=<span class="hljs-built_in">min</span>(answer,<span class="hljs-built_in">calc</span>(*tmp,*tmp2));
+        }
+        <span class="hljs-keyword">else</span>{
+            <span class="hljs-keyword">auto</span> tmp=S.<span class="hljs-built_in">lower_bound</span>(i.first),tmp1=tmp,tmp2=tmp;
+            <span class="hljs-keyword">if</span>(tmp1!=S.<span class="hljs-built_in">begin</span>()&amp;&amp;++tmp2!=S.<span class="hljs-built_in">end</span>())
+                answer=<span class="hljs-built_in">min</span>(answer,<span class="hljs-built_in">calc</span>(*--tmp1,*tmp2));
+            S.<span class="hljs-built_in">erase</span>(tmp);
+        }
+    }
+}
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d&quot;</span>,&amp;n,&amp;m);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;n;i++){
+        <span class="hljs-type">int</span> u,v;
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d&quot;</span>,&amp;u,&amp;v);
+        <span class="hljs-built_in">addEdge</span>(u,v);
+        <span class="hljs-built_in">addEdge</span>(v,u);
+    }
+    <span class="hljs-built_in">init</span>(<span class="hljs-number">1</span>); <span class="hljs-built_in">decomposition</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>);
+
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=m;i++){
+        <span class="hljs-type">int</span> x,y; Frac v,s,e;
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%lld%lld%d%d&quot;</span>,&amp;s.x,&amp;v.x,&amp;x,&amp;y);
+        e=<span class="hljs-built_in">Frac</span>(dep[x]+dep[y]-dep[<span class="hljs-built_in">getlca</span>(x,y)]*<span class="hljs-number">2</span>)/v+s;
+        <span class="hljs-keyword">while</span>(top[x]!=top[y]){
+            <span class="hljs-keyword">if</span>(dep[top[x]]&lt;dep[top[y]]){
+                <span class="hljs-type">int</span> from=y,to=fa[top[y]];
+                lines[top[y]].<span class="hljs-built_in">push_back</span>({v,<span class="hljs-built_in">Frac</span>(dep[from])-v*e,
+                    e-<span class="hljs-built_in">Frac</span>(dep[from]-dep[to])/v,e});
+                e=e-<span class="hljs-built_in">Frac</span>(dep[from]-dep[to])/v;
+                y=fa[top[y]];
+            }
+            <span class="hljs-keyword">else</span>{
+                <span class="hljs-type">int</span> from=x,to=fa[top[x]];
+                lines[top[x]].<span class="hljs-built_in">push_back</span>({<span class="hljs-built_in">Frac</span>(<span class="hljs-number">0</span>)-v,<span class="hljs-built_in">Frac</span>(dep[from])+v*s,
+                    s,s+<span class="hljs-built_in">Frac</span>(dep[from]-dep[to])/v});
+                s=s+<span class="hljs-built_in">Frac</span>(dep[from]-dep[to])/v;
+                x=fa[top[x]];
+            }
+        }
+        <span class="hljs-keyword">if</span>(dep[x]&gt;dep[y])lines[top[x]].<span class="hljs-built_in">push_back</span>({<span class="hljs-built_in">Frac</span>(<span class="hljs-number">0</span>)-v,<span class="hljs-built_in">Frac</span>(dep[x])+v*s,s,e});
+        <span class="hljs-keyword">else</span> lines[top[x]].<span class="hljs-built_in">push_back</span>({v,<span class="hljs-built_in">Frac</span>(dep[y])-v*e,s,e});
+    }
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)<span class="hljs-built_in">solve</span>(lines[i]);
+    <span class="hljs-keyword">if</span>(answer==<span class="hljs-built_in">Frac</span>(<span class="hljs-number">1e14</span>))<span class="hljs-keyword">return</span> <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;-1\n&quot;</span>),<span class="hljs-number">0</span>;
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%.10Lf\n&quot;</span>,(<span class="hljs-type">long</span> <span class="hljs-type">double</span>)answer.x/answer.y);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
+        </div>
+    </div>
+</div>
+                    <br>
+                </div>
+                <footer class="topan-footer">
+                    <p></p>
+                    <p style="text-align: center; color: #555; font-size: 12px;">
+                        Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
+                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>&nbsp;&nbsp;&nbsp;
+                        <i class="fa fa-solid fa-eye"></i> 访客数量：<span id="busuanzi_value_site_pv">0</span>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>
+    
