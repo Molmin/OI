@@ -1,0 +1,432 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title id="title">题解与代码 - LCA - OI Problems</title>
+        <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
+        <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
+        <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
+        <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script src="/OI/pub/busuanzi.pure.mini.js"></script>
+        <script src="/OI/pub/main.js"></script>
+        <link rel="stylesheet" href="/OI/pub/main.css">
+        
+    </head>
+    <body>
+        <div class="topan-header">
+            <div class="topan-header-home">
+                <a href="/OI">
+                    <button class="topan-button-ordinary topan-button-commonly topan-button-header-round-left">
+                        <i class="fa fa-home"></i>
+                    </button>
+                </a>
+            </div>
+            <div class="topan-header-left">
+                <span class="topan-header-text">OI Problems&nbsp;</span>
+                <a href="/OI/about">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
+                        <i class="fa fa-solid fa-circle-info"></i>
+                        <span>&nbsp;关于</span>
+                    </span>
+                </a>
+                
+                
+            </div>
+            <div class="topan-header-right">
+            </div>
+        </div>
+        <div class="topan-outer">
+            <div class="topan-page">
+                <div class="topan-mainpage-auto">
+                    <br>
+                    <style>
+    .options {
+        font-size: 16px;
+        font-weight: normal;
+    }
+</style>
+
+<script>
+    var Export = () => console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 题解
+
+易知 $\text{LCA}(i,\ z)$ 一定在根节点到 $z$ 的路径上，而它的深度等价于它到根节点路径上的结点个数。
+
+只需将结点 $i$ 到根结点的路径上的结点都 $+1$，然后结点 $z$ 到根结点的路径上数值总和就是最近公共祖先的深度。
+
+这样，我们就只需要将 $l,\ l+1,\ \cdots,\ r$ 这些点到根结点的路径上结点全部 $+1$，再统计 $z$ 到根结点路径上结点的数值总和即可。
+
+考虑优化。首先有个显然的优化，$[l,\ r]$ 的问题可以转化为 $[1,\ r]$ 和 $[1,\ l-1]$ 的问题。此时问题转化为求若干个左端点为 $1$ 的问题。
+
+不妨将这些问题的右端点排序，依次将 $1,\ 2,\ \cdots$ 到根结点路径上的点 $+1$，若遇到询问就查询答案即可。
+
+时间复杂度 $\Theta(n\log^2n)$。
+
+```cpp
+// 2023.07.26
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+const int mod=201314;
+
+int n,m,fa[50001],ans[50001];
+
+struct Edge{
+    int to,nxt;
+}edge[50001];
+int cntEdge,head[50001];
+void addEdge(int u,int v){
+    edge[++cntEdge]={v,head[u]},head[u]=cntEdge;
+}
+
+int siz[50001],dep[50001],heavy[50001];
+void init(int id){
+    siz[id]=1;
+    for(int i=head[id];i;i=edge[i].nxt){
+        dep[edge[i].to]=dep[id]+1;
+        init(edge[i].to);
+        if(siz[edge[i].to]&gt;siz[heavy[id]])
+            heavy[id]=edge[i].to;
+        siz[id]+=siz[edge[i].to];
+    }
+}
+
+int cntdfn,dfn[50001],rnk[50001];
+int top[50001];
+void decomposition(int id,int x){
+    // x 为当前链顶端
+    top[id]=x,dfn[++cntdfn]=id,rnk[id]=cntdfn;
+    if(!heavy[id])return;
+    decomposition(heavy[id],x);
+    for(int i=head[id];i;i=edge[i].nxt)
+        if(edge[i].to!=heavy[id])
+            decomposition(edge[i].to,edge[i].to);
+}
+
+namespace SegmentTree{
+    int sum[200001],lazy[200001],len[200001];
+    void pushdown(int id){
+        if(lazy[id]){
+            sum[id&lt;&lt;1]+=len[id&lt;&lt;1]*lazy[id];
+            lazy[id&lt;&lt;1]+=lazy[id];
+            sum[(id&lt;&lt;1)+1]+=len[(id&lt;&lt;1)+1]*lazy[id];
+            lazy[(id&lt;&lt;1)+1]+=lazy[id];
+            sum[id&lt;&lt;1]%=mod,sum[(id&lt;&lt;1)+1]%=mod;
+            lazy[id]=0;
+        }
+    }
+    void pushup(int id){
+        sum[id]=(sum[id&lt;&lt;1]+sum[(id&lt;&lt;1)+1])%mod;
+    }
+
+    void build(int id,int l,int r){
+        sum[id]=lazy[id]=0;
+        len[id]=r-l+1;
+        if(l&lt;r){
+            int mid=l+r&gt;&gt;1;
+            build(id&lt;&lt;1,l,mid);
+            build((id&lt;&lt;1)+1,mid+1,r);
+        }
+    }
+
+    void updateAddOne(int id,int l,int r,int x,int y){
+        if(x&lt;=l&amp;&amp;r&lt;=y){
+            lazy[id]++; sum[id]+=len[id];
+            sum[id]%=mod; return;
+        }
+        int mid=l+r&gt;&gt;1;
+        pushdown(id);
+        if(x&lt;=mid)updateAddOne(id&lt;&lt;1,l,mid,x,y);
+        if(mid&lt;y)updateAddOne((id&lt;&lt;1)+1,mid+1,r,x,y);
+        pushup(id);
+    }
+    void updateList(int x,int y){
+        // 将 x 到 y 这条链加 1
+        int topx=top[x],topy=top[y];
+        while(topx!=topy){
+            if(dep[topx]&lt;dep[topy])
+                swap(x,y),swap(topx,topy);
+            updateAddOne(1,1,n,rnk[topx],rnk[x]);
+            x=fa[topx],topx=top[x];
+        }
+        if(dep[x]&gt;dep[y])swap(x,y);
+        updateAddOne(1,1,n,rnk[x],rnk[y]);
+    }
+
+    int querySum(int id,int l,int r,int x,int y){
+        if(x&lt;=l&amp;&amp;r&lt;=y)return sum[id];
+        int mid=l+r&gt;&gt;1,res=0;
+        pushdown(id);
+        if(x&lt;=mid)res+=querySum(id&lt;&lt;1,l,mid,x,y);
+        if(mid&lt;y)res+=querySum((id&lt;&lt;1)+1,mid+1,r,x,y);
+        return res%mod;
+    }
+    int queryList(int x,int y){
+        // 查询将 x 到 y 这条链的总和
+        int res=0,topx=top[x],topy=top[y];
+        while(topx!=topy){
+            if(dep[topx]&lt;dep[topy])
+                swap(x,y),swap(topx,topy);
+            res+=querySum(1,1,n,rnk[topx],rnk[x]);
+            x=fa[topx],topx=top[x];
+        }
+        if(dep[x]&gt;dep[y])swap(x,y);
+        res+=querySum(1,1,n,rnk[x],rnk[y]);
+        return res%=mod;
+    }
+}
+
+struct Query{
+    int id,weight;
+    int pos,x; // pos 表示询问 [1,pos] 区间，x 为结点 z
+    bool operator&lt;(Query tmp)const{
+        return pos&lt;tmp.pos;
+    }
+}Q[100001];
+int cntQuery;
+
+int main(){
+    scanf(&#34;%d%d&#34;,&amp;n,&amp;m);
+    for(int i=2;i&lt;=n;i++){
+        scanf(&#34;%d&#34;,fa+i),fa[i]++;
+        addEdge(fa[i],i);
+    }
+    for(int i=1;i&lt;=m;i++){
+        int l,r,z;
+        scanf(&#34;%d%d%d&#34;,&amp;l,&amp;r,&amp;z);
+        l++,r++,z++;
+        Q[++cntQuery]={i,-1,l-1,z};
+        Q[++cntQuery]={i,1,r,z};
+    }
+
+    sort(Q+1,Q+1+cntQuery);
+    dep[1]=1; init(1);
+    SegmentTree::build(1,1,n);
+    decomposition(1,1);
+    
+    int nowpos=0;
+    for(int i=1;i&lt;=cntQuery;i++){
+        while(nowpos&lt;Q[i].pos)
+            SegmentTree::updateList(1,++nowpos);
+        ans[Q[i].id]+=Q[i].weight*SegmentTree::queryList(1,Q[i].x);
+    }
+    for(int i=1;i&lt;=m;i++)
+        printf(&#34;%d\n&#34;,(ans[i]%mod+mod)%mod);
+    return 0;
+}
+```</textarea>
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2>LCA</h2>
+                <a class="topan-menu-option" href="/OI/problem/d48x79"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/d48x79/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/d48x79/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            
+                <div class="topan-section-shadow">
+                    <h2>
+                        题解
+                        
+                    </h2>
+                    
+                    <p>易知 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mtext><mi mathvariant="normal">L</mi><mi mathvariant="normal">C</mi><mi mathvariant="normal">A</mi></mtext><mo>(</mo><mi>i</mi><mo separator="true">,</mo><mtext> </mtext><mi>z</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\text{LCA}(i,\ z)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="text mord textstyle uncramped"><span class="mord mathrm">L</span><span class="mord mathrm">C</span><span class="mord mathrm">A</span></span><span class="mopen">(</span><span class="mord mathit">i</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit" style="margin-right:0.04398em;">z</span><span class="mclose">)</span></span></span></span> 一定在根节点到 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>z</mi></mrow><annotation encoding="application/x-tex">z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.04398em;">z</span></span></span></span> 的路径上，而它的深度等价于它到根节点路径上的结点个数。</p>
+<p>只需将结点 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.65952em;"></span><span class="strut bottom" style="height:0.65952em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">i</span></span></span></span> 到根结点的路径上的结点都 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">+1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord">+</span><span class="mord mathrm">1</span></span></span></span>，然后结点 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>z</mi></mrow><annotation encoding="application/x-tex">z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.04398em;">z</span></span></span></span> 到根结点的路径上数值总和就是最近公共祖先的深度。</p>
+<p>这样，我们就只需要将 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>l</mi><mo separator="true">,</mo><mtext> </mtext><mi>l</mi><mo>+</mo><mn>1</mn><mo separator="true">,</mo><mtext> </mtext><mo>⋯</mo><mo separator="true">,</mo><mtext> </mtext><mi>r</mi></mrow><annotation encoding="application/x-tex">l,\ l+1,\ \cdots,\ r</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.01968em;">l</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit" style="margin-right:0.01968em;">l</span><span class="mbin">+</span><span class="mord mathrm">1</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="minner">⋯</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit" style="margin-right:0.02778em;">r</span></span></span></span> 这些点到根结点的路径上结点全部 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">+1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord">+</span><span class="mord mathrm">1</span></span></span></span>，再统计 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>z</mi></mrow><annotation encoding="application/x-tex">z</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.04398em;">z</span></span></span></span> 到根结点路径上结点的数值总和即可。</p>
+<p>考虑优化。首先有个显然的优化，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>[</mo><mi>l</mi><mo separator="true">,</mo><mtext> </mtext><mi>r</mi><mo>]</mo></mrow><annotation encoding="application/x-tex">[l,\ r]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">[</span><span class="mord mathit" style="margin-right:0.01968em;">l</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="mclose">]</span></span></span></span> 的问题可以转化为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>[</mo><mn>1</mn><mo separator="true">,</mo><mtext> </mtext><mi>r</mi><mo>]</mo></mrow><annotation encoding="application/x-tex">[1,\ r]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">[</span><span class="mord mathrm">1</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="mclose">]</span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>[</mo><mn>1</mn><mo separator="true">,</mo><mtext> </mtext><mi>l</mi><mo>−</mo><mn>1</mn><mo>]</mo></mrow><annotation encoding="application/x-tex">[1,\ l-1]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">[</span><span class="mord mathrm">1</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit" style="margin-right:0.01968em;">l</span><span class="mbin">−</span><span class="mord mathrm">1</span><span class="mclose">]</span></span></span></span> 的问题。此时问题转化为求若干个左端点为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">1</span></span></span></span> 的问题。</p>
+<p>不妨将这些问题的右端点排序，依次将 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mo separator="true">,</mo><mtext> </mtext><mn>2</mn><mo separator="true">,</mo><mtext> </mtext><mo>⋯</mo></mrow><annotation encoding="application/x-tex">1,\ 2,\ \cdots</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.8388800000000001em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">1</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathrm">2</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="minner">⋯</span></span></span></span> 到根结点路径上的点 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">+1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord">+</span><span class="mord mathrm">1</span></span></span></span>，若遇到询问就查询答案即可。</p>
+<p>时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>n</mi><msup><mi>log</mi><mn>2</mn></msup><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n\log^2n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mop"><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">2</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mord mathit">n</span><span class="mclose">)</span></span></span></span>。</p>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.07.26</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+<span class="hljs-type">const</span> <span class="hljs-type">int</span> mod=<span class="hljs-number">201314</span>;
+
+<span class="hljs-type">int</span> n,m,fa[<span class="hljs-number">50001</span>],ans[<span class="hljs-number">50001</span>];
+
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">Edge</span>{
+    <span class="hljs-type">int</span> to,nxt;
+}edge[<span class="hljs-number">50001</span>];
+<span class="hljs-type">int</span> cntEdge,head[<span class="hljs-number">50001</span>];
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">addEdge</span><span class="hljs-params">(<span class="hljs-type">int</span> u,<span class="hljs-type">int</span> v)</span></span>{
+    edge[++cntEdge]={v,head[u]},head[u]=cntEdge;
+}
+
+<span class="hljs-type">int</span> siz[<span class="hljs-number">50001</span>],dep[<span class="hljs-number">50001</span>],heavy[<span class="hljs-number">50001</span>];
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">init</span><span class="hljs-params">(<span class="hljs-type">int</span> id)</span></span>{
+    siz[id]=<span class="hljs-number">1</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=head[id];i;i=edge[i].nxt){
+        dep[edge[i].to]=dep[id]+<span class="hljs-number">1</span>;
+        <span class="hljs-built_in">init</span>(edge[i].to);
+        <span class="hljs-keyword">if</span>(siz[edge[i].to]&gt;siz[heavy[id]])
+            heavy[id]=edge[i].to;
+        siz[id]+=siz[edge[i].to];
+    }
+}
+
+<span class="hljs-type">int</span> cntdfn,dfn[<span class="hljs-number">50001</span>],rnk[<span class="hljs-number">50001</span>];
+<span class="hljs-type">int</span> top[<span class="hljs-number">50001</span>];
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">decomposition</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> x)</span></span>{
+    <span class="hljs-comment">// x 为当前链顶端</span>
+    top[id]=x,dfn[++cntdfn]=id,rnk[id]=cntdfn;
+    <span class="hljs-keyword">if</span>(!heavy[id])<span class="hljs-keyword">return</span>;
+    <span class="hljs-built_in">decomposition</span>(heavy[id],x);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=head[id];i;i=edge[i].nxt)
+        <span class="hljs-keyword">if</span>(edge[i].to!=heavy[id])
+            <span class="hljs-built_in">decomposition</span>(edge[i].to,edge[i].to);
+}
+
+<span class="hljs-keyword">namespace</span> SegmentTree{
+    <span class="hljs-type">int</span> sum[<span class="hljs-number">200001</span>],lazy[<span class="hljs-number">200001</span>],len[<span class="hljs-number">200001</span>];
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">pushdown</span><span class="hljs-params">(<span class="hljs-type">int</span> id)</span></span>{
+        <span class="hljs-keyword">if</span>(lazy[id]){
+            sum[id&lt;&lt;<span class="hljs-number">1</span>]+=len[id&lt;&lt;<span class="hljs-number">1</span>]*lazy[id];
+            lazy[id&lt;&lt;<span class="hljs-number">1</span>]+=lazy[id];
+            sum[(id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>]+=len[(id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>]*lazy[id];
+            lazy[(id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>]+=lazy[id];
+            sum[id&lt;&lt;<span class="hljs-number">1</span>]%=mod,sum[(id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>]%=mod;
+            lazy[id]=<span class="hljs-number">0</span>;
+        }
+    }
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">pushup</span><span class="hljs-params">(<span class="hljs-type">int</span> id)</span></span>{
+        sum[id]=(sum[id&lt;&lt;<span class="hljs-number">1</span>]+sum[(id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>])%mod;
+    }
+
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">build</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r)</span></span>{
+        sum[id]=lazy[id]=<span class="hljs-number">0</span>;
+        len[id]=r-l+<span class="hljs-number">1</span>;
+        <span class="hljs-keyword">if</span>(l&lt;r){
+            <span class="hljs-type">int</span> mid=l+r&gt;&gt;<span class="hljs-number">1</span>;
+            <span class="hljs-built_in">build</span>(id&lt;&lt;<span class="hljs-number">1</span>,l,mid);
+            <span class="hljs-built_in">build</span>((id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r);
+        }
+    }
+
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">updateAddOne</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r,<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> y)</span></span>{
+        <span class="hljs-keyword">if</span>(x&lt;=l&amp;&amp;r&lt;=y){
+            lazy[id]++; sum[id]+=len[id];
+            sum[id]%=mod; <span class="hljs-keyword">return</span>;
+        }
+        <span class="hljs-type">int</span> mid=l+r&gt;&gt;<span class="hljs-number">1</span>;
+        <span class="hljs-built_in">pushdown</span>(id);
+        <span class="hljs-keyword">if</span>(x&lt;=mid)<span class="hljs-built_in">updateAddOne</span>(id&lt;&lt;<span class="hljs-number">1</span>,l,mid,x,y);
+        <span class="hljs-keyword">if</span>(mid&lt;y)<span class="hljs-built_in">updateAddOne</span>((id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r,x,y);
+        <span class="hljs-built_in">pushup</span>(id);
+    }
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">updateList</span><span class="hljs-params">(<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> y)</span></span>{
+        <span class="hljs-comment">// 将 x 到 y 这条链加 1</span>
+        <span class="hljs-type">int</span> topx=top[x],topy=top[y];
+        <span class="hljs-keyword">while</span>(topx!=topy){
+            <span class="hljs-keyword">if</span>(dep[topx]&lt;dep[topy])
+                <span class="hljs-built_in">swap</span>(x,y),<span class="hljs-built_in">swap</span>(topx,topy);
+            <span class="hljs-built_in">updateAddOne</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,n,rnk[topx],rnk[x]);
+            x=fa[topx],topx=top[x];
+        }
+        <span class="hljs-keyword">if</span>(dep[x]&gt;dep[y])<span class="hljs-built_in">swap</span>(x,y);
+        <span class="hljs-built_in">updateAddOne</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,n,rnk[x],rnk[y]);
+    }
+
+    <span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">querySum</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r,<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> y)</span></span>{
+        <span class="hljs-keyword">if</span>(x&lt;=l&amp;&amp;r&lt;=y)<span class="hljs-keyword">return</span> sum[id];
+        <span class="hljs-type">int</span> mid=l+r&gt;&gt;<span class="hljs-number">1</span>,res=<span class="hljs-number">0</span>;
+        <span class="hljs-built_in">pushdown</span>(id);
+        <span class="hljs-keyword">if</span>(x&lt;=mid)res+=<span class="hljs-built_in">querySum</span>(id&lt;&lt;<span class="hljs-number">1</span>,l,mid,x,y);
+        <span class="hljs-keyword">if</span>(mid&lt;y)res+=<span class="hljs-built_in">querySum</span>((id&lt;&lt;<span class="hljs-number">1</span>)+<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r,x,y);
+        <span class="hljs-keyword">return</span> res%mod;
+    }
+    <span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">queryList</span><span class="hljs-params">(<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> y)</span></span>{
+        <span class="hljs-comment">// 查询将 x 到 y 这条链的总和</span>
+        <span class="hljs-type">int</span> res=<span class="hljs-number">0</span>,topx=top[x],topy=top[y];
+        <span class="hljs-keyword">while</span>(topx!=topy){
+            <span class="hljs-keyword">if</span>(dep[topx]&lt;dep[topy])
+                <span class="hljs-built_in">swap</span>(x,y),<span class="hljs-built_in">swap</span>(topx,topy);
+            res+=<span class="hljs-built_in">querySum</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,n,rnk[topx],rnk[x]);
+            x=fa[topx],topx=top[x];
+        }
+        <span class="hljs-keyword">if</span>(dep[x]&gt;dep[y])<span class="hljs-built_in">swap</span>(x,y);
+        res+=<span class="hljs-built_in">querySum</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,n,rnk[x],rnk[y]);
+        <span class="hljs-keyword">return</span> res%=mod;
+    }
+}
+
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">Query</span>{
+    <span class="hljs-type">int</span> id,weight;
+    <span class="hljs-type">int</span> pos,x; <span class="hljs-comment">// pos 表示询问 [1,pos] 区间，x 为结点 z</span>
+    <span class="hljs-type">bool</span> <span class="hljs-keyword">operator</span>&lt;(Query tmp)<span class="hljs-type">const</span>{
+        <span class="hljs-keyword">return</span> pos&lt;tmp.pos;
+    }
+}Q[<span class="hljs-number">100001</span>];
+<span class="hljs-type">int</span> cntQuery;
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d&quot;</span>,&amp;n,&amp;m);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">2</span>;i&lt;=n;i++){
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,fa+i),fa[i]++;
+        <span class="hljs-built_in">addEdge</span>(fa[i],i);
+    }
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=m;i++){
+        <span class="hljs-type">int</span> l,r,z;
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d%d&quot;</span>,&amp;l,&amp;r,&amp;z);
+        l++,r++,z++;
+        Q[++cntQuery]={i,<span class="hljs-number">-1</span>,l<span class="hljs-number">-1</span>,z};
+        Q[++cntQuery]={i,<span class="hljs-number">1</span>,r,z};
+    }
+
+    <span class="hljs-built_in">sort</span>(Q+<span class="hljs-number">1</span>,Q+<span class="hljs-number">1</span>+cntQuery);
+    dep[<span class="hljs-number">1</span>]=<span class="hljs-number">1</span>; <span class="hljs-built_in">init</span>(<span class="hljs-number">1</span>);
+    SegmentTree::<span class="hljs-built_in">build</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,n);
+    <span class="hljs-built_in">decomposition</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>);
+    
+    <span class="hljs-type">int</span> nowpos=<span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=cntQuery;i++){
+        <span class="hljs-keyword">while</span>(nowpos&lt;Q[i].pos)
+            SegmentTree::<span class="hljs-built_in">updateList</span>(<span class="hljs-number">1</span>,++nowpos);
+        ans[Q[i].id]+=Q[i].weight*SegmentTree::<span class="hljs-built_in">queryList</span>(<span class="hljs-number">1</span>,Q[i].x);
+    }
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=m;i++)
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d\n&quot;</span>,(ans[i]%mod+mod)%mod);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
+        </div>
+    </div>
+</div>
+                    <br>
+                </div>
+                <footer class="topan-footer">
+                    <p></p>
+                    <p style="text-align: center; color: #555; font-size: 12px;">
+                        Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
+                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>&nbsp;&nbsp;&nbsp;
+                        <i class="fa fa-solid fa-eye"></i> 访客数量：<span id="busuanzi_value_site_pv">0</span>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>
+    
