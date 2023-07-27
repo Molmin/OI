@@ -4,3 +4,5 @@ data/
 dist/
 package-lock.json
 password
+yarn.lock
+captcha.png
