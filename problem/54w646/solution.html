@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title id="title">题解与代码 - Operation Hope - OI Problems</title>
+        <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
+        <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
+        <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
+        <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script src="/OI/pub/busuanzi.pure.mini.js"></script>
+        <script src="/OI/pub/main.js"></script>
+        <link rel="stylesheet" href="/OI/pub/main.css">
+        
+    </head>
+    <body>
+        <div class="topan-header">
+            <div class="topan-header-home">
+                <a href="/OI">
+                    <button class="topan-button-ordinary topan-button-commonly topan-button-header-round-left">
+                        <i class="fa fa-home"></i>
+                    </button>
+                </a>
+            </div>
+            <div class="topan-header-left">
+                <span class="topan-header-text">OI Problems&nbsp;</span>
+                <a href="/OI/about">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
+                        <i class="fa fa-solid fa-circle-info"></i>
+                        <span>&nbsp;关于</span>
+                    </span>
+                </a>
+                
+                
+            </div>
+            <div class="topan-header-right">
+            </div>
+        </div>
+        <div class="topan-outer">
+            <div class="topan-page">
+                <div class="topan-mainpage-auto">
+                    <br>
+                    <style>
+    .options{
+        font-size: 16px;
+        font-weight: normal;
+    }
+</style>
+
+<script>
+    var Export=()=>console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 题解
+
+维护三个 set 分别表示当前决策中选的 $a,\ b,\ c$ 的值。一开始决策全部选第一组数。
+
+每次尝试让极差最大的那个 set 的极差变小，于是取出最小的一项，如果是第一组数就换为第二组。
+
+如此更新若干次，直到一组数被找到两次，即换为第二组又要还回去，这是不合理的，此时退出循环。
+
+时间复杂度 $\Theta(n\log n)$。
+
+```cpp
+// 2023.09.02
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+int n,choice[100001];
+int a[100001][2],b[100001][2],c[100001][2];
+set&lt;pair&lt;int,int&gt; &gt; A,B,C;
+
+int main(){
+    int T; scanf(&#34;%d&#34;,&amp;T);
+    while(T--){
+        A.clear(),B.clear(),C.clear();
+        scanf(&#34;%d&#34;,&amp;n);
+        for(int i=1;i&lt;=n;i++){
+            scanf(&#34;%d%d%d&#34;,&amp;a[i][0],&amp;b[i][0],&amp;c[i][0]);
+            scanf(&#34;%d%d%d&#34;,&amp;a[i][1],&amp;b[i][1],&amp;c[i][1]);
+            choice[i]=0;
+            A.insert({a[i][0],i});
+            B.insert({b[i][0],i});
+            C.insert({c[i][0],i});
+        }
+        int answer=0x7fffffff;
+        while(true){
+            int aval=A.rbegin()-&gt;first-A.begin()-&gt;first,
+                bval=B.rbegin()-&gt;first-B.begin()-&gt;first,
+                cval=C.rbegin()-&gt;first-C.begin()-&gt;first;
+            answer=min(answer,max({aval,bval,cval}));
+            int x;
+            if(aval&gt;=bval&amp;&amp;aval&gt;=cval)x=A.begin()-&gt;second;
+            else if(bval&gt;=cval)x=B.begin()-&gt;second;
+            else x=C.begin()-&gt;second;
+            if(choice[x]==1)break;
+            choice[x]=1;
+            A.erase({a[x][0],x}),A.insert({a[x][1],x});
+            B.erase({b[x][0],x}),B.insert({b[x][1],x});
+            C.erase({c[x][0],x}),C.insert({c[x][1],x});
+        }
+        printf(&#34;%d\n&#34;,answer);
+    }
+    return 0;
+}
+```</textarea>
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2>Operation Hope</h2>
+                <a class="topan-menu-option" href="/OI/problem/54w646"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/54w646/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/54w646/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            
+                <div class="topan-section-shadow">
+                    <h2>
+                        题解
+                        
+                    </h2>
+                    
+                    <p>维护三个 set 分别表示当前决策中选的 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>a</mi><mo separator="true">,</mo><mtext> </mtext><mi>b</mi><mo separator="true">,</mo><mtext> </mtext><mi>c</mi></mrow><annotation encoding="application/x-tex">a,\ b,\ c</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit">a</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit">b</span><span class="mpunct">,</span><span class="mord mspace"> </span><span class="mord mathit">c</span></span></span></span> 的值。一开始决策全部选第一组数。</p>
+<p>每次尝试让极差最大的那个 set 的极差变小，于是取出最小的一项，如果是第一组数就换为第二组。</p>
+<p>如此更新若干次，直到一组数被找到两次，即换为第二组又要还回去，这是不合理的，此时退出循环。</p>
+<p>时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>n</mi><mi>log</mi><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n\log n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mord mathit">n</span><span class="mclose">)</span></span></span></span>。</p>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.09.02</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+
+<span class="hljs-type">int</span> n,choice[<span class="hljs-number">100001</span>];
+<span class="hljs-type">int</span> a[<span class="hljs-number">100001</span>][<span class="hljs-number">2</span>],b[<span class="hljs-number">100001</span>][<span class="hljs-number">2</span>],c[<span class="hljs-number">100001</span>][<span class="hljs-number">2</span>];
+set&lt;pair&lt;<span class="hljs-type">int</span>,<span class="hljs-type">int</span>&gt; &gt; A,B,C;
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-type">int</span> T; <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;T);
+    <span class="hljs-keyword">while</span>(T--){
+        A.<span class="hljs-built_in">clear</span>(),B.<span class="hljs-built_in">clear</span>(),C.<span class="hljs-built_in">clear</span>();
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;n);
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++){
+            <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d%d&quot;</span>,&amp;a[i][<span class="hljs-number">0</span>],&amp;b[i][<span class="hljs-number">0</span>],&amp;c[i][<span class="hljs-number">0</span>]);
+            <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d%d&quot;</span>,&amp;a[i][<span class="hljs-number">1</span>],&amp;b[i][<span class="hljs-number">1</span>],&amp;c[i][<span class="hljs-number">1</span>]);
+            choice[i]=<span class="hljs-number">0</span>;
+            A.<span class="hljs-built_in">insert</span>({a[i][<span class="hljs-number">0</span>],i});
+            B.<span class="hljs-built_in">insert</span>({b[i][<span class="hljs-number">0</span>],i});
+            C.<span class="hljs-built_in">insert</span>({c[i][<span class="hljs-number">0</span>],i});
+        }
+        <span class="hljs-type">int</span> answer=<span class="hljs-number">0x7fffffff</span>;
+        <span class="hljs-keyword">while</span>(<span class="hljs-literal">true</span>){
+            <span class="hljs-type">int</span> aval=A.<span class="hljs-built_in">rbegin</span>()-&gt;first-A.<span class="hljs-built_in">begin</span>()-&gt;first,
+                bval=B.<span class="hljs-built_in">rbegin</span>()-&gt;first-B.<span class="hljs-built_in">begin</span>()-&gt;first,
+                cval=C.<span class="hljs-built_in">rbegin</span>()-&gt;first-C.<span class="hljs-built_in">begin</span>()-&gt;first;
+            answer=<span class="hljs-built_in">min</span>(answer,<span class="hljs-built_in">max</span>({aval,bval,cval}));
+            <span class="hljs-type">int</span> x;
+            <span class="hljs-keyword">if</span>(aval&gt;=bval&amp;&amp;aval&gt;=cval)x=A.<span class="hljs-built_in">begin</span>()-&gt;second;
+            <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(bval&gt;=cval)x=B.<span class="hljs-built_in">begin</span>()-&gt;second;
+            <span class="hljs-keyword">else</span> x=C.<span class="hljs-built_in">begin</span>()-&gt;second;
+            <span class="hljs-keyword">if</span>(choice[x]==<span class="hljs-number">1</span>)<span class="hljs-keyword">break</span>;
+            choice[x]=<span class="hljs-number">1</span>;
+            A.<span class="hljs-built_in">erase</span>({a[x][<span class="hljs-number">0</span>],x}),A.<span class="hljs-built_in">insert</span>({a[x][<span class="hljs-number">1</span>],x});
+            B.<span class="hljs-built_in">erase</span>({b[x][<span class="hljs-number">0</span>],x}),B.<span class="hljs-built_in">insert</span>({b[x][<span class="hljs-number">1</span>],x});
+            C.<span class="hljs-built_in">erase</span>({c[x][<span class="hljs-number">0</span>],x}),C.<span class="hljs-built_in">insert</span>({c[x][<span class="hljs-number">1</span>],x});
+        }
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d\n&quot;</span>,answer);
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
+        </div>
+    </div>
+</div>
+                    <br>
+                </div>
+                <footer class="topan-footer">
+                    <p></p>
+                    <p style="text-align: center; color: #555; font-size: 12px;">
+                        Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
+                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>&nbsp;&nbsp;&nbsp;
+                        <i class="fa fa-solid fa-eye"></i> 访客数量：<span id="busuanzi_value_site_pv">0</span>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>
+    
