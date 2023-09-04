@@ -1,0 +1,190 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title id="title">题解与代码 - 高效制冷模块（freeze） - OI Problems</title>
+        <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
+        <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
+        <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
+        <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script src="/OI/pub/busuanzi.pure.mini.js"></script>
+        <script src="/OI/pub/main.js"></script>
+        <link rel="stylesheet" href="/OI/pub/main.css">
+        
+    </head>
+    <body>
+        <div class="topan-header">
+            <div class="topan-header-home">
+                <a href="/OI">
+                    <button class="topan-button-ordinary topan-button-commonly topan-button-header-round-left">
+                        <i class="fa fa-home"></i>
+                    </button>
+                </a>
+            </div>
+            <div class="topan-header-left">
+                <span class="topan-header-text">OI Problems&nbsp;</span>
+                <a href="/OI/about">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
+                        <i class="fa fa-solid fa-circle-info"></i>
+                        <span>&nbsp;关于</span>
+                    </span>
+                </a>
+                
+                
+            </div>
+            <div class="topan-header-right">
+            </div>
+        </div>
+        <div class="topan-outer">
+            <div class="topan-page">
+                <div class="topan-mainpage-auto">
+                    <br>
+                    <style>
+    .options {
+        font-size: 16px;
+        font-weight: normal;
+    }
+</style>
+
+<script>
+    var Export = () => console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 题解
+
+
+
+```cpp
+// 2023.09.04
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+const long long mod=998244353;
+
+int n,m,q,a[500001];
+int sum[500001],nxt[500001],pre[500001];
+long long sumnxt[500001];
+
+int main(){
+    freopen(&#34;freeze.in&#34;,&#34;r&#34;,stdin);
+    freopen(&#34;freeze.out&#34;,&#34;w&#34;,stdout);
+    scanf(&#34;%d%d%d&#34;,&amp;n,&amp;m,&amp;q);
+    for(int i=1;i&lt;=n;i++)scanf(&#34;%d&#34;,a+i);
+    for(int i=1;i&lt;n;i++)sum[i]=sum[i-1]+(a[i]!=a[i+1]);
+    nxt[n]=n;
+    for(int i=n-1;i&gt;=1;i--)
+        if(a[i]==a[i+1])nxt[i]=i;
+        else if(i+2&lt;=n&amp;&amp;a[i]==a[i+2])nxt[i]=nxt[i+1];
+        else nxt[i]=i+1;
+    for(int i=1;i&lt;=n;i++)
+        if(nxt[i]==nxt[i-1]&amp;&amp;i&gt;1)pre[i]=pre[i-1];
+        else pre[i]=i;
+    for(int i=1;i&lt;n;i++)sumnxt[i]=(nxt[i]-i+sumnxt[i-1])%mod;
+    while(q--){
+        int l,r; scanf(&#34;%d%d&#34;,&amp;l,&amp;r);
+        long long answer=0;
+        answer+=(r-l+1ll)*(m-1)%mod; // 情况 1：最长公共前缀与最长公共后缀长度和为 r-l
+        // 情况 2：最长公共前缀与最长公共后缀长度和小于 r-l
+        answer+=(r-l+1ll)*(m-1)%mod*(sum[r-1]-sum[l-1])%mod; // 基础情况
+        answer-=sumnxt[r-1]-sumnxt[l-1]; // 算重的部分
+        if(nxt[r-1]&gt;r&amp;&amp;l!=r)
+            answer+=1ll*(nxt[r-1]-r)*(r-max(pre[r-1],l))%mod; // nxt 值多出 r 的部分
+        printf(&#34;%lld\n&#34;,(answer%mod+mod)%mod);
+    }
+    return 0;
+}
+```</textarea>
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2>高效制冷模块（freeze）</h2>
+                <a class="topan-menu-option" href="/OI/problem/97jvzi"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/97jvzi/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/97jvzi/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            
+                <div class="topan-section-shadow">
+                    <h2>
+                        题解
+                        
+                    </h2>
+                    
+                    
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.09.04</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+<span class="hljs-type">const</span> <span class="hljs-type">long</span> <span class="hljs-type">long</span> mod=<span class="hljs-number">998244353</span>;
+
+<span class="hljs-type">int</span> n,m,q,a[<span class="hljs-number">500001</span>];
+<span class="hljs-type">int</span> sum[<span class="hljs-number">500001</span>],nxt[<span class="hljs-number">500001</span>],pre[<span class="hljs-number">500001</span>];
+<span class="hljs-type">long</span> <span class="hljs-type">long</span> sumnxt[<span class="hljs-number">500001</span>];
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">freopen</span>(<span class="hljs-string">&quot;freeze.in&quot;</span>,<span class="hljs-string">&quot;r&quot;</span>,stdin);
+    <span class="hljs-built_in">freopen</span>(<span class="hljs-string">&quot;freeze.out&quot;</span>,<span class="hljs-string">&quot;w&quot;</span>,stdout);
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d%d&quot;</span>,&amp;n,&amp;m,&amp;q);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)<span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,a+i);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;n;i++)sum[i]=sum[i<span class="hljs-number">-1</span>]+(a[i]!=a[i+<span class="hljs-number">1</span>]);
+    nxt[n]=n;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=n<span class="hljs-number">-1</span>;i&gt;=<span class="hljs-number">1</span>;i--)
+        <span class="hljs-keyword">if</span>(a[i]==a[i+<span class="hljs-number">1</span>])nxt[i]=i;
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(i+<span class="hljs-number">2</span>&lt;=n&amp;&amp;a[i]==a[i+<span class="hljs-number">2</span>])nxt[i]=nxt[i+<span class="hljs-number">1</span>];
+        <span class="hljs-keyword">else</span> nxt[i]=i+<span class="hljs-number">1</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-keyword">if</span>(nxt[i]==nxt[i<span class="hljs-number">-1</span>]&amp;&amp;i&gt;<span class="hljs-number">1</span>)pre[i]=pre[i<span class="hljs-number">-1</span>];
+        <span class="hljs-keyword">else</span> pre[i]=i;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;n;i++)sumnxt[i]=(nxt[i]-i+sumnxt[i<span class="hljs-number">-1</span>])%mod;
+    <span class="hljs-keyword">while</span>(q--){
+        <span class="hljs-type">int</span> l,r; <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d&quot;</span>,&amp;l,&amp;r);
+        <span class="hljs-type">long</span> <span class="hljs-type">long</span> answer=<span class="hljs-number">0</span>;
+        answer+=(r-l+<span class="hljs-number">1ll</span>)*(m<span class="hljs-number">-1</span>)%mod; <span class="hljs-comment">// 情况 1：最长公共前缀与最长公共后缀长度和为 r-l</span>
+        <span class="hljs-comment">// 情况 2：最长公共前缀与最长公共后缀长度和小于 r-l</span>
+        answer+=(r-l+<span class="hljs-number">1ll</span>)*(m<span class="hljs-number">-1</span>)%mod*(sum[r<span class="hljs-number">-1</span>]-sum[l<span class="hljs-number">-1</span>])%mod; <span class="hljs-comment">// 基础情况</span>
+        answer-=sumnxt[r<span class="hljs-number">-1</span>]-sumnxt[l<span class="hljs-number">-1</span>]; <span class="hljs-comment">// 算重的部分</span>
+        <span class="hljs-keyword">if</span>(nxt[r<span class="hljs-number">-1</span>]&gt;r&amp;&amp;l!=r)
+            answer+=<span class="hljs-number">1ll</span>*(nxt[r<span class="hljs-number">-1</span>]-r)*(r-<span class="hljs-built_in">max</span>(pre[r<span class="hljs-number">-1</span>],l))%mod; <span class="hljs-comment">// nxt 值多出 r 的部分</span>
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lld\n&quot;</span>,(answer%mod+mod)%mod);
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
+        </div>
+    </div>
+</div>
+                    <br>
+                </div>
+                <footer class="topan-footer">
+                    <p></p>
+                    <p style="text-align: center; color: #555; font-size: 12px;">
+                        Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
+                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>&nbsp;&nbsp;&nbsp;
+                        <i class="fa fa-solid fa-eye"></i> 访客数量：<span id="busuanzi_value_site_pv">0</span>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>
+    

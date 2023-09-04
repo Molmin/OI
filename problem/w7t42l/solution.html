@@ -1,0 +1,212 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title id="title">题解与代码 - 益智游戏（game） - OI Problems</title>
+        <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
+        <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
+        <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
+        <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script src="/OI/pub/busuanzi.pure.mini.js"></script>
+        <script src="/OI/pub/main.js"></script>
+        <link rel="stylesheet" href="/OI/pub/main.css">
+        
+    </head>
+    <body>
+        <div class="topan-header">
+            <div class="topan-header-home">
+                <a href="/OI">
+                    <button class="topan-button-ordinary topan-button-commonly topan-button-header-round-left">
+                        <i class="fa fa-home"></i>
+                    </button>
+                </a>
+            </div>
+            <div class="topan-header-left">
+                <span class="topan-header-text">OI Problems&nbsp;</span>
+                <a href="/OI/about">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
+                        <i class="fa fa-solid fa-circle-info"></i>
+                        <span>&nbsp;关于</span>
+                    </span>
+                </a>
+                
+                
+            </div>
+            <div class="topan-header-right">
+            </div>
+        </div>
+        <div class="topan-outer">
+            <div class="topan-page">
+                <div class="topan-mainpage-auto">
+                    <br>
+                    <style>
+    .options {
+        font-size: 16px;
+        font-weight: normal;
+    }
+</style>
+
+<script>
+    var Export = () => console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 题解
+
+TODO
+
+时间复杂度 $\Theta(n)$。
+
+```cpp
+// 2023.09.04
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+int n,a[2005][2005],c[2005][2005];
+long long sum[5][2005][2005],dp[5][2005][2005];
+// dp[k][i][j]: 表示在矩形的角 k 上到 i 行 j 列为止的最小花费
+// k = 1(左上), 2(右上), 3(左下), 4(右下)
+
+long long getsum(int k,int x1,int y1,int x2,int y2){
+    return sum[k][x2][y2]-sum[k][x1-1][y2]-sum[k][x2][y1-1]+sum[k][x1-1][y1-1];
+}
+
+int main(){
+    freopen(&#34;game.in&#34;,&#34;r&#34;,stdin);
+    freopen(&#34;game.out&#34;,&#34;w&#34;,stdout);
+    scanf(&#34;%d&#34;,&amp;n);
+    for(int i=1;i&lt;=n;i++)
+        for(int j=1;j&lt;=n;j++)
+            scanf(&#34;%d&#34;,&amp;c[i][j]);
+    for(int i=1;i&lt;=n;i++)
+        for(int j=1;j&lt;=n;j++){
+            scanf(&#34;%d&#34;,&amp;a[i][j]);
+            for(int k=1;k&lt;=4;k++)
+                sum[k][i][j]=sum[k][i-1][j]+sum[k][i][j-1]-sum[k][i-1][j-1]+a[i][j];
+            sum[c[i][j]][i][j]-=a[i][j];
+        }
+    for(int i=1;i&lt;=n;i++)
+        for(int j=1;j&lt;=n;j++)
+            dp[1][i][j]=min(dp[1][i-1][j]+getsum(4,i,1,i,j),dp[1][i][j-1]+getsum(1,1,j,i,j));
+    for(int i=1;i&lt;=n;i++)
+        for(int j=n;j&gt;=1;j--)
+            dp[2][i][j]=min(dp[2][i-1][j]+getsum(2,i,j,i,n),dp[2][i][j+1]+getsum(1,1,j,i,j));
+    for(int i=n;i&gt;=1;i--)
+        for(int j=1;j&lt;=n;j++)
+            dp[3][i][j]=min(dp[3][i+1][j]+getsum(4,i,1,i,j),dp[3][i][j-1]+getsum(3,i,j,n,j));
+    for(int i=n;i&gt;=1;i--)
+        for(int j=n;j&gt;=1;j--)
+            dp[4][i][j]=min(dp[4][i+1][j]+getsum(2,i,j,i,n),dp[4][i][j+1]+getsum(3,i,j,n,j));
+    long long answer=0x7fffffffffffffff;
+    for(int i=0;i&lt;=n;i++)
+        for(int j=0;j&lt;=n;j++)
+            answer=min(answer,dp[1][i][j]+dp[2][i][j+1]+dp[3][i+1][j]+dp[4][i+1][j+1]);
+    printf(&#34;%lld\n&#34;,answer);
+    return 0;
+}
+```</textarea>
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2>益智游戏（game）</h2>
+                <a class="topan-menu-option" href="/OI/problem/w7t42l"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/w7t42l/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/w7t42l/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            
+                <div class="topan-section-shadow">
+                    <h2>
+                        题解
+                        
+                    </h2>
+                    
+                    <p>TODO</p>
+<p>时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mclose">)</span></span></span></span>。</p>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.09.04</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+
+<span class="hljs-type">int</span> n,a[<span class="hljs-number">2005</span>][<span class="hljs-number">2005</span>],c[<span class="hljs-number">2005</span>][<span class="hljs-number">2005</span>];
+<span class="hljs-type">long</span> <span class="hljs-type">long</span> sum[<span class="hljs-number">5</span>][<span class="hljs-number">2005</span>][<span class="hljs-number">2005</span>],dp[<span class="hljs-number">5</span>][<span class="hljs-number">2005</span>][<span class="hljs-number">2005</span>];
+<span class="hljs-comment">// dp[k][i][j]: 表示在矩形的角 k 上到 i 行 j 列为止的最小花费</span>
+<span class="hljs-comment">// k = 1(左上), 2(右上), 3(左下), 4(右下)</span>
+
+<span class="hljs-function"><span class="hljs-type">long</span> <span class="hljs-type">long</span> <span class="hljs-title">getsum</span><span class="hljs-params">(<span class="hljs-type">int</span> k,<span class="hljs-type">int</span> x1,<span class="hljs-type">int</span> y1,<span class="hljs-type">int</span> x2,<span class="hljs-type">int</span> y2)</span></span>{
+    <span class="hljs-keyword">return</span> sum[k][x2][y2]-sum[k][x1<span class="hljs-number">-1</span>][y2]-sum[k][x2][y1<span class="hljs-number">-1</span>]+sum[k][x1<span class="hljs-number">-1</span>][y1<span class="hljs-number">-1</span>];
+}
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">freopen</span>(<span class="hljs-string">&quot;game.in&quot;</span>,<span class="hljs-string">&quot;r&quot;</span>,stdin);
+    <span class="hljs-built_in">freopen</span>(<span class="hljs-string">&quot;game.out&quot;</span>,<span class="hljs-string">&quot;w&quot;</span>,stdout);
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;n);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">1</span>;j&lt;=n;j++)
+            <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;c[i][j]);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">1</span>;j&lt;=n;j++){
+            <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;a[i][j]);
+            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> k=<span class="hljs-number">1</span>;k&lt;=<span class="hljs-number">4</span>;k++)
+                sum[k][i][j]=sum[k][i<span class="hljs-number">-1</span>][j]+sum[k][i][j<span class="hljs-number">-1</span>]-sum[k][i<span class="hljs-number">-1</span>][j<span class="hljs-number">-1</span>]+a[i][j];
+            sum[c[i][j]][i][j]-=a[i][j];
+        }
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">1</span>;j&lt;=n;j++)
+            dp[<span class="hljs-number">1</span>][i][j]=<span class="hljs-built_in">min</span>(dp[<span class="hljs-number">1</span>][i<span class="hljs-number">-1</span>][j]+<span class="hljs-built_in">getsum</span>(<span class="hljs-number">4</span>,i,<span class="hljs-number">1</span>,i,j),dp[<span class="hljs-number">1</span>][i][j<span class="hljs-number">-1</span>]+<span class="hljs-built_in">getsum</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,j,i,j));
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=n;j&gt;=<span class="hljs-number">1</span>;j--)
+            dp[<span class="hljs-number">2</span>][i][j]=<span class="hljs-built_in">min</span>(dp[<span class="hljs-number">2</span>][i<span class="hljs-number">-1</span>][j]+<span class="hljs-built_in">getsum</span>(<span class="hljs-number">2</span>,i,j,i,n),dp[<span class="hljs-number">2</span>][i][j+<span class="hljs-number">1</span>]+<span class="hljs-built_in">getsum</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,j,i,j));
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=n;i&gt;=<span class="hljs-number">1</span>;i--)
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">1</span>;j&lt;=n;j++)
+            dp[<span class="hljs-number">3</span>][i][j]=<span class="hljs-built_in">min</span>(dp[<span class="hljs-number">3</span>][i+<span class="hljs-number">1</span>][j]+<span class="hljs-built_in">getsum</span>(<span class="hljs-number">4</span>,i,<span class="hljs-number">1</span>,i,j),dp[<span class="hljs-number">3</span>][i][j<span class="hljs-number">-1</span>]+<span class="hljs-built_in">getsum</span>(<span class="hljs-number">3</span>,i,j,n,j));
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=n;i&gt;=<span class="hljs-number">1</span>;i--)
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=n;j&gt;=<span class="hljs-number">1</span>;j--)
+            dp[<span class="hljs-number">4</span>][i][j]=<span class="hljs-built_in">min</span>(dp[<span class="hljs-number">4</span>][i+<span class="hljs-number">1</span>][j]+<span class="hljs-built_in">getsum</span>(<span class="hljs-number">2</span>,i,j,i,n),dp[<span class="hljs-number">4</span>][i][j+<span class="hljs-number">1</span>]+<span class="hljs-built_in">getsum</span>(<span class="hljs-number">3</span>,i,j,n,j));
+    <span class="hljs-type">long</span> <span class="hljs-type">long</span> answer=<span class="hljs-number">0x7fffffffffffffff</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;i&lt;=n;i++)
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">0</span>;j&lt;=n;j++)
+            answer=<span class="hljs-built_in">min</span>(answer,dp[<span class="hljs-number">1</span>][i][j]+dp[<span class="hljs-number">2</span>][i][j+<span class="hljs-number">1</span>]+dp[<span class="hljs-number">3</span>][i+<span class="hljs-number">1</span>][j]+dp[<span class="hljs-number">4</span>][i+<span class="hljs-number">1</span>][j+<span class="hljs-number">1</span>]);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lld\n&quot;</span>,answer);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
+        </div>
+    </div>
+</div>
+                    <br>
+                </div>
+                <footer class="topan-footer">
+                    <p></p>
+                    <p style="text-align: center; color: #555; font-size: 12px;">
+                        Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
+                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>&nbsp;&nbsp;&nbsp;
+                        <i class="fa fa-solid fa-eye"></i> 访客数量：<span id="busuanzi_value_site_pv">0</span>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>
+    
