@@ -147,7 +147,8 @@
                         delete detail.statement; delete detail.judge;
                         var taghtml=``;
                         detail.tags.split(',').forEach(tag=>{
-                            taghtml+=`&nbsp;${Tag(tag)}`;
+                            if(tag.trim().length===0)return;
+                            taghtml+=`&nbsp;${Tag(tag.trim())}`;
                         });
                         detail.taghtml=taghtml, detail.id=pid;
                         UiContext.push(detail); %>
@@ -249,7 +250,7 @@
             var flag=true;
             if(rules.folders)
                 rules.folders.forEach(fold=>{
-                    if(!`,${pdoc.tags},`.includes(`,${fold},`))flag=false;
+                    if(!pdoc.tags||!`,${pdoc.tags},`.includes(`,${fold},`))flag=false;
                 });
             if(flag)res.push(pid);
         });
