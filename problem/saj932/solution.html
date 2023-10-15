@@ -1,0 +1,279 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title id="title">题解与代码 - 排序（sort） - OI Problems</title>
+        <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
+        <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
+        <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
+        <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script src="/OI/pub/busuanzi.pure.mini.js"></script>
+        <script src="/OI/pub/main.js"></script>
+        <link rel="stylesheet" href="/OI/pub/main.css">
+        
+    </head>
+    <body>
+        <div class="topan-header">
+            <div class="topan-header-home">
+                <a href="/OI">
+                    <button class="topan-button-ordinary topan-button-commonly topan-button-header-round-left">
+                        <i class="fa fa-home"></i>
+                    </button>
+                </a>
+            </div>
+            <div class="topan-header-left">
+                <span class="topan-header-text">OI Problems&nbsp;</span>
+                <a href="/OI/about">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
+                        <i class="fa fa-solid fa-circle-info"></i>
+                        <span>&nbsp;关于</span>
+                    </span>
+                </a>
+                
+                
+            </div>
+            <div class="topan-header-right">
+            </div>
+        </div>
+        <div class="topan-outer">
+            <div class="topan-page">
+                <div class="topan-mainpage-auto">
+                    <br>
+                    <style>
+    .options {
+        font-size: 16px;
+        font-weight: normal;
+    }
+</style>
+
+<script>
+    var Export = () => console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 思考
+
+容易发现每次进入 `sort` 函数的时候，传入的数组都是原数列取出一个值域范围得到的数组。
+
+问题简化成：每次调用 `sort` 传入值域区间 $[l,r]$，求出原数列中在区间内的数的位置中项。
+
+## 主席树
+
+相当于区间第 $k$ 小问题，直接主席树维护即可，时间复杂度 $\Theta(n\log n)$。
+
+## 树状数组
+
+考虑树状数组维护每个前缀有多少在当前值域范围的数，然后二分位置寻找中项。
+
+但是每次进入函数都需要重新构建树状数组，这大大增加了算法的复杂度。
+
+考虑取得中项后，值域区间分为长短两段。先把短的那段从树状数组删除，然后求解长的那一段（此时无需重新构建树状数组）；接着求解短的那段（此时需要重新构建树状数组）。
+
+时间复杂度 $O(n\log^3 n)$。
+
+```cpp
+// 2023.09.28
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+int n,a[700001],pos[700001];
+
+struct BIT{
+    int v[700001];
+    inline int lowbit(int x){return x&amp;-x;}
+    inline void clear(int x){for(;x&lt;=n;x+=lowbit(x))v[x]=0;}
+    inline void add(int x,int val){for(;x&lt;=n;x+=lowbit(x))v[x]+=val;}
+    inline int query(int x){int sum=0;for(;x;x-=lowbit(x))sum+=v[x];return sum;}
+}T;
+
+inline int find(int v){
+    int l=1,r=n;
+    while(l&lt;r){
+        int mid=l+r&gt;&gt;1;
+        if(v&lt;=T.query(mid))r=mid;
+        else l=mid+1;
+    }
+    return l;
+}
+
+long long solve(int l,int r,bool shouldInit){
+    if(l&gt;r)return 0;
+    if(l==r){
+        if(!shouldInit)T.add(pos[l],-1);
+        return 0;
+    }
+    if(shouldInit)for(int i=l;i&lt;=r;i++)T.add(pos[i],1);
+    long long ret=r-l+1;
+    int midId=find((r-l)/2+1),mid=a[midId];
+    T.add(midId,-1);
+    if(r-mid&gt;mid-l){
+        for(int i=l;i&lt;mid;i++)T.add(pos[i],-1);
+        ret+=solve(mid+1,r,false);
+        ret+=solve(l,mid-1,true);
+        for(int i=l;i&lt;mid;i++)T.clear(pos[i]);
+    }
+    else{
+        for(int i=mid+1;i&lt;=r;i++)T.add(pos[i],-1);
+        ret+=solve(l,mid-1,false);
+        ret+=solve(mid+1,r,true);
+        for(int i=mid+1;i&lt;=r;i++)T.clear(pos[i]);
+    }
+    return ret;
+}
+
+int main(){
+    freopen(&#34;sort.in&#34;,&#34;r&#34;,stdin);
+    freopen(&#34;sort.out&#34;,&#34;w&#34;,stdout);
+    scanf(&#34;%d&#34;,&amp;n);
+    for(int i=1;i&lt;=n;i++)
+        scanf(&#34;%d&#34;,a+i),pos[a[i]]=i;
+    printf(&#34;%lld&#34;,solve(1,n,true));
+    return 0;
+}
+```</textarea>
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2>排序（sort）</h2>
+                <a class="topan-menu-option" href="/OI/problem/saj932"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/saj932/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/saj932/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            
+                <div class="topan-section-shadow">
+                    <h2>
+                        思考
+                        
+                    </h2>
+                    
+                    <p>容易发现每次进入 <code class="hljs"><span class="hljs-built_in">sort</span></code> 函数的时候，传入的数组都是原数列取出一个值域范围得到的数组。</p>
+<p>问题简化成：每次调用 <code class="hljs"><span class="hljs-built_in">sort</span></code> 传入值域区间 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>[</mo><mi>l</mi><mo separator="true">,</mo><mi>r</mi><mo>]</mo></mrow><annotation encoding="application/x-tex">[l,r]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">[</span><span class="mord mathit" style="margin-right:0.01968em;">l</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="mclose">]</span></span></span></span>，求出原数列中在区间内的数的位置中项。</p>
+
+                    
+                </div>
+            
+                <br>
+                
+                <div class="topan-section-shadow">
+                    <h2>
+                        主席树
+                        
+                    </h2>
+                    
+                    <p>相当于区间第 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.69444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03148em;">k</span></span></span></span> 小问题，直接主席树维护即可，时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>n</mi><mi>log</mi><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n\log n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mord mathit">n</span><span class="mclose">)</span></span></span></span>。</p>
+
+                    
+                </div>
+            
+                <br>
+                
+                <div class="topan-section-shadow">
+                    <h2>
+                        树状数组
+                        
+                    </h2>
+                    
+                    <p>考虑树状数组维护每个前缀有多少在当前值域范围的数，然后二分位置寻找中项。</p>
+<p>但是每次进入函数都需要重新构建树状数组，这大大增加了算法的复杂度。</p>
+<p>考虑取得中项后，值域区间分为长短两段。先把短的那段从树状数组删除，然后求解长的那一段（此时无需重新构建树状数组）；接着求解短的那段（此时需要重新构建树状数组）。</p>
+<p>时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo>(</mo><mi>n</mi><msup><mi>log</mi><mn>3</mn></msup><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">O(n\log^3 n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mop"><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">3</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mord mathit">n</span><span class="mclose">)</span></span></span></span>。</p>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.09.28</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+
+<span class="hljs-type">int</span> n,a[<span class="hljs-number">700001</span>],pos[<span class="hljs-number">700001</span>];
+
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">BIT</span>{
+    <span class="hljs-type">int</span> v[<span class="hljs-number">700001</span>];
+    <span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-type">int</span> <span class="hljs-title">lowbit</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span></span>{<span class="hljs-keyword">return</span> x&amp;-x;}
+    <span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-type">void</span> <span class="hljs-title">clear</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span></span>{<span class="hljs-keyword">for</span>(;x&lt;=n;x+=<span class="hljs-built_in">lowbit</span>(x))v[x]=<span class="hljs-number">0</span>;}
+    <span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-type">void</span> <span class="hljs-title">add</span><span class="hljs-params">(<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> val)</span></span>{<span class="hljs-keyword">for</span>(;x&lt;=n;x+=<span class="hljs-built_in">lowbit</span>(x))v[x]+=val;}
+    <span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-type">int</span> <span class="hljs-title">query</span><span class="hljs-params">(<span class="hljs-type">int</span> x)</span></span>{<span class="hljs-type">int</span> sum=<span class="hljs-number">0</span>;<span class="hljs-keyword">for</span>(;x;x-=<span class="hljs-built_in">lowbit</span>(x))sum+=v[x];<span class="hljs-keyword">return</span> sum;}
+}T;
+
+<span class="hljs-function"><span class="hljs-keyword">inline</span> <span class="hljs-type">int</span> <span class="hljs-title">find</span><span class="hljs-params">(<span class="hljs-type">int</span> v)</span></span>{
+    <span class="hljs-type">int</span> l=<span class="hljs-number">1</span>,r=n;
+    <span class="hljs-keyword">while</span>(l&lt;r){
+        <span class="hljs-type">int</span> mid=l+r&gt;&gt;<span class="hljs-number">1</span>;
+        <span class="hljs-keyword">if</span>(v&lt;=T.<span class="hljs-built_in">query</span>(mid))r=mid;
+        <span class="hljs-keyword">else</span> l=mid+<span class="hljs-number">1</span>;
+    }
+    <span class="hljs-keyword">return</span> l;
+}
+
+<span class="hljs-function"><span class="hljs-type">long</span> <span class="hljs-type">long</span> <span class="hljs-title">solve</span><span class="hljs-params">(<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r,<span class="hljs-type">bool</span> shouldInit)</span></span>{
+    <span class="hljs-keyword">if</span>(l&gt;r)<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">if</span>(l==r){
+        <span class="hljs-keyword">if</span>(!shouldInit)T.<span class="hljs-built_in">add</span>(pos[l],<span class="hljs-number">-1</span>);
+        <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+    }
+    <span class="hljs-keyword">if</span>(shouldInit)<span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=l;i&lt;=r;i++)T.<span class="hljs-built_in">add</span>(pos[i],<span class="hljs-number">1</span>);
+    <span class="hljs-type">long</span> <span class="hljs-type">long</span> ret=r-l+<span class="hljs-number">1</span>;
+    <span class="hljs-type">int</span> midId=<span class="hljs-built_in">find</span>((r-l)/<span class="hljs-number">2</span>+<span class="hljs-number">1</span>),mid=a[midId];
+    T.<span class="hljs-built_in">add</span>(midId,<span class="hljs-number">-1</span>);
+    <span class="hljs-keyword">if</span>(r-mid&gt;mid-l){
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=l;i&lt;mid;i++)T.<span class="hljs-built_in">add</span>(pos[i],<span class="hljs-number">-1</span>);
+        ret+=<span class="hljs-built_in">solve</span>(mid+<span class="hljs-number">1</span>,r,<span class="hljs-literal">false</span>);
+        ret+=<span class="hljs-built_in">solve</span>(l,mid<span class="hljs-number">-1</span>,<span class="hljs-literal">true</span>);
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=l;i&lt;mid;i++)T.<span class="hljs-built_in">clear</span>(pos[i]);
+    }
+    <span class="hljs-keyword">else</span>{
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=mid+<span class="hljs-number">1</span>;i&lt;=r;i++)T.<span class="hljs-built_in">add</span>(pos[i],<span class="hljs-number">-1</span>);
+        ret+=<span class="hljs-built_in">solve</span>(l,mid<span class="hljs-number">-1</span>,<span class="hljs-literal">false</span>);
+        ret+=<span class="hljs-built_in">solve</span>(mid+<span class="hljs-number">1</span>,r,<span class="hljs-literal">true</span>);
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=mid+<span class="hljs-number">1</span>;i&lt;=r;i++)T.<span class="hljs-built_in">clear</span>(pos[i]);
+    }
+    <span class="hljs-keyword">return</span> ret;
+}
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">freopen</span>(<span class="hljs-string">&quot;sort.in&quot;</span>,<span class="hljs-string">&quot;r&quot;</span>,stdin);
+    <span class="hljs-built_in">freopen</span>(<span class="hljs-string">&quot;sort.out&quot;</span>,<span class="hljs-string">&quot;w&quot;</span>,stdout);
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;n);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,a+i),pos[a[i]]=i;
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lld&quot;</span>,<span class="hljs-built_in">solve</span>(<span class="hljs-number">1</span>,n,<span class="hljs-literal">true</span>));
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
+        </div>
+    </div>
+</div>
+                    <br>
+                </div>
+                <footer class="topan-footer">
+                    <p></p>
+                    <p style="text-align: center; color: #555; font-size: 12px;">
+                        Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
+                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>&nbsp;&nbsp;&nbsp;
+                        <i class="fa fa-solid fa-eye"></i> 访客数量：<span id="busuanzi_value_site_pv">0</span>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>
+    
