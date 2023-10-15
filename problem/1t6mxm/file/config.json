@@ -14,5 +14,17 @@
   "statement": {
     "简体中文": "statement_zh.md"
   },
-  "solution": []
+  "solution": [
+    {
+      "title": "$\\Theta(n^3)\\sim\\Theta(n^4)$ 动态规划",
+      "file": "sol_pre.md",
+      "author": ""
+    },
+    {
+      "title": "正解做法",
+      "file": "sol.md",
+      "author": "",
+      "code": "code.cpp"
+    }
+  ]
 }

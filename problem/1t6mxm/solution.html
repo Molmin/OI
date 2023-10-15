@@ -56,7 +56,66 @@
     var Export = () => console.log($('#exportcode').val());
 </script>
 
-<textarea style="display: none;" id="exportcode"></textarea>
+<textarea style="display: none;" id="exportcode">## $\Theta(n^3)\sim\Theta(n^4)$ 动态规划
+
+容易想到记 $f(i,j,k)$ 表示 $a[i-1]=k$ 且 $a[i-2]=j$ 时的方案总数。
+
+转移时间复杂度 $\Theta(n)$，总时间复杂度 $\Theta(n^4)$。
+
+前缀和优化后可以做到 $\Theta(n^3)$。
+
+## 正解做法
+
+考虑减少状态数目。
+
+记 $f(i,j,0)$ 表示处理到 $a_i$ 满足 $a_{i-1}\leq a_i=j$，且右端点可能情况已计算时的方案数，$f(i,j,1)$ 表示处理到 $a_i$ 满足 $j=a_{i-1}&gt;a_i$，且右端点可能情况未计算时的方案数。
+
+前缀和优化可以做到 $\Theta(n^2)$。
+
+```cpp
+// 2023.10.13
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+const long long mod=998244353;
+
+int n,w[4001],sum[4001];
+long long dp[4001][4001][2],f[4001],g[4001];
+// dp[i][j][0] 表示处理到 a[i] 满足 a[i-1]&lt;=a[i]=j，且右端点可能情况已计算
+// dp[i][j][1] 表示处理到 a[i] 满足 j=a[i-1]&gt;a[i]，且右端点可能情况未计算
+
+int main(){
+    freopen(&#34;sequence.in&#34;,&#34;r&#34;,stdin);
+    freopen(&#34;sequence.out&#34;,&#34;w&#34;,stdout);
+    scanf(&#34;%d&#34;,&amp;n);
+    for(int i=1;i&lt;=n;i++)
+        scanf(&#34;%d&#34;,w+i),sum[i]=(sum[i-1]+w[i])%mod;
+    for(int i=1;i&lt;=n;i++){
+        dp[3][i][0]=(1ll*i*w[i]%mod+sum[n]-sum[i])%mod*i%mod;
+        dp[3][i][1]=(1ll*i*w[i]%mod+sum[n]-sum[i])%mod;
+    }
+    for(int i=4;i&lt;=n;i++){
+        for(int j=1;j&lt;=n;j++)
+            dp[i][j][1]=dp[i-1][j][0]*w[j]%mod;
+        for(int j=1;j&lt;=n;j++){
+            f[j]=(f[j-1]+dp[i-1][j][0]+dp[i-1][j][1]*(j-1))%mod;
+            g[j]=(g[j-1]+dp[i-1][j][1]*w[j])%mod;
+        }
+        for(int j=1;j&lt;=n;j++){
+            dp[i][j][0]=f[j]*w[j]%mod,
+            dp[i][j][0]+=(g[n]-g[j])*j%mod;
+            dp[i][j][1]+=g[n]-g[j];
+        }
+        for(int j=1;j&lt;=n;j++)
+            dp[i][j][0]%=mod,dp[i][j][1]%=mod;
+    }
+    long long answer=0;
+    for(int i=1;i&lt;=n;i++)
+        answer+=dp[n][i][0]+dp[n][i][1]*(i-1)%mod;
+    printf(&#34;%lld\n&#34;,answer%mod);
+    return 0;
+}
+```</textarea>
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">
@@ -72,6 +131,82 @@
     </div>
     <div class="column-four-fifth">
         <div style="padding-left: 20px;">
+            
+                <div class="topan-section-shadow">
+                    <h2>
+                        <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><msup><mi>n</mi><mn>3</mn></msup><mo>)</mo><mo>∼</mo><mi mathvariant="normal">Θ</mi><mo>(</mo><msup><mi>n</mi><mn>4</mn></msup><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n^3)\sim\Theta(n^4)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord"><span class="mord mathit">n</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">3</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mclose">)</span><span class="mrel">∼</span><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord"><span class="mord mathit">n</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">4</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mclose">)</span></span></span></span> 动态规划
+                        
+                    </h2>
+                    
+                    <p>容易想到记 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mo>(</mo><mi>i</mi><mo separator="true">,</mo><mi>j</mi><mo separator="true">,</mo><mi>k</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">f(i,j,k)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathit">i</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.05724em;">j</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.03148em;">k</span><span class="mclose">)</span></span></span></span> 表示 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>a</mi><mo>[</mo><mi>i</mi><mo>−</mo><mn>1</mn><mo>]</mo><mo>=</mo><mi>k</mi></mrow><annotation encoding="application/x-tex">a[i-1]=k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathit">a</span><span class="mopen">[</span><span class="mord mathit">i</span><span class="mbin">−</span><span class="mord mathrm">1</span><span class="mclose">]</span><span class="mrel">=</span><span class="mord mathit" style="margin-right:0.03148em;">k</span></span></span></span> 且 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>a</mi><mo>[</mo><mi>i</mi><mo>−</mo><mn>2</mn><mo>]</mo><mo>=</mo><mi>j</mi></mrow><annotation encoding="application/x-tex">a[i-2]=j</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathit">a</span><span class="mopen">[</span><span class="mord mathit">i</span><span class="mbin">−</span><span class="mord mathrm">2</span><span class="mclose">]</span><span class="mrel">=</span><span class="mord mathit" style="margin-right:0.05724em;">j</span></span></span></span> 时的方案总数。</p>
+<p>转移时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord mathit">n</span><span class="mclose">)</span></span></span></span>，总时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><msup><mi>n</mi><mn>4</mn></msup><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n^4)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord"><span class="mord mathit">n</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">4</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mclose">)</span></span></span></span>。</p>
+<p>前缀和优化后可以做到 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><msup><mi>n</mi><mn>3</mn></msup><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n^3)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord"><span class="mord mathit">n</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">3</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mclose">)</span></span></span></span>。</p>
+
+                    
+                </div>
+            
+                <br>
+                
+                <div class="topan-section-shadow">
+                    <h2>
+                        正解做法
+                        
+                    </h2>
+                    
+                    <p>考虑减少状态数目。</p>
+<p>记 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mo>(</mo><mi>i</mi><mo separator="true">,</mo><mi>j</mi><mo separator="true">,</mo><mn>0</mn><mo>)</mo></mrow><annotation encoding="application/x-tex">f(i,j,0)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathit">i</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.05724em;">j</span><span class="mpunct">,</span><span class="mord mathrm">0</span><span class="mclose">)</span></span></span></span> 表示处理到 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>a</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">a_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">a</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 满足 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>a</mi><mrow><mi>i</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>≤</mo><msub><mi>a</mi><mi>i</mi></msub><mo>=</mo><mi>j</mi></mrow><annotation encoding="application/x-tex">a_{i-1}\leq a_i=j</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.65952em;"></span><span class="strut bottom" style="height:0.8678509999999999em;vertical-align:-0.208331em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">a</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord scriptstyle cramped"><span class="mord mathit">i</span><span class="mbin">−</span><span class="mord mathrm">1</span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mrel">≤</span><span class="mord"><span class="mord mathit">a</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mrel">=</span><span class="mord mathit" style="margin-right:0.05724em;">j</span></span></span></span>，且右端点可能情况已计算时的方案数，<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mo>(</mo><mi>i</mi><mo separator="true">,</mo><mi>j</mi><mo separator="true">,</mo><mn>1</mn><mo>)</mo></mrow><annotation encoding="application/x-tex">f(i,j,1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathit">i</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.05724em;">j</span><span class="mpunct">,</span><span class="mord mathrm">1</span><span class="mclose">)</span></span></span></span> 表示处理到 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>a</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">a_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">a</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 满足 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>j</mi><mo>=</mo><msub><mi>a</mi><mrow><mi>i</mi><mo>−</mo><mn>1</mn></mrow></msub><mo>&gt;</mo><msub><mi>a</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">j=a_{i-1}&gt;a_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.65952em;"></span><span class="strut bottom" style="height:0.8678509999999999em;vertical-align:-0.208331em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.05724em;">j</span><span class="mrel">=</span><span class="mord"><span class="mord mathit">a</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord scriptstyle cramped"><span class="mord mathit">i</span><span class="mbin">−</span><span class="mord mathrm">1</span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mrel">&gt;</span><span class="mord"><span class="mord mathit">a</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span>，且右端点可能情况未计算时的方案数。</p>
+<p>前缀和优化可以做到 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><msup><mi>n</mi><mn>2</mn></msup><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n^2)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord"><span class="mord mathit">n</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">2</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mclose">)</span></span></span></span>。</p>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.10.13</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+<span class="hljs-type">const</span> <span class="hljs-type">long</span> <span class="hljs-type">long</span> mod=<span class="hljs-number">998244353</span>;
+
+<span class="hljs-type">int</span> n,w[<span class="hljs-number">4001</span>],sum[<span class="hljs-number">4001</span>];
+<span class="hljs-type">long</span> <span class="hljs-type">long</span> dp[<span class="hljs-number">4001</span>][<span class="hljs-number">4001</span>][<span class="hljs-number">2</span>],f[<span class="hljs-number">4001</span>],g[<span class="hljs-number">4001</span>];
+<span class="hljs-comment">// dp[i][j][0] 表示处理到 a[i] 满足 a[i-1]&lt;=a[i]=j，且右端点可能情况已计算</span>
+<span class="hljs-comment">// dp[i][j][1] 表示处理到 a[i] 满足 j=a[i-1]&gt;a[i]，且右端点可能情况未计算</span>
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">freopen</span>(<span class="hljs-string">&quot;sequence.in&quot;</span>,<span class="hljs-string">&quot;r&quot;</span>,stdin);
+    <span class="hljs-built_in">freopen</span>(<span class="hljs-string">&quot;sequence.out&quot;</span>,<span class="hljs-string">&quot;w&quot;</span>,stdout);
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;n);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,w+i),sum[i]=(sum[i<span class="hljs-number">-1</span>]+w[i])%mod;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++){
+        dp[<span class="hljs-number">3</span>][i][<span class="hljs-number">0</span>]=(<span class="hljs-number">1ll</span>*i*w[i]%mod+sum[n]-sum[i])%mod*i%mod;
+        dp[<span class="hljs-number">3</span>][i][<span class="hljs-number">1</span>]=(<span class="hljs-number">1ll</span>*i*w[i]%mod+sum[n]-sum[i])%mod;
+    }
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">4</span>;i&lt;=n;i++){
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">1</span>;j&lt;=n;j++)
+            dp[i][j][<span class="hljs-number">1</span>]=dp[i<span class="hljs-number">-1</span>][j][<span class="hljs-number">0</span>]*w[j]%mod;
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">1</span>;j&lt;=n;j++){
+            f[j]=(f[j<span class="hljs-number">-1</span>]+dp[i<span class="hljs-number">-1</span>][j][<span class="hljs-number">0</span>]+dp[i<span class="hljs-number">-1</span>][j][<span class="hljs-number">1</span>]*(j<span class="hljs-number">-1</span>))%mod;
+            g[j]=(g[j<span class="hljs-number">-1</span>]+dp[i<span class="hljs-number">-1</span>][j][<span class="hljs-number">1</span>]*w[j])%mod;
+        }
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">1</span>;j&lt;=n;j++){
+            dp[i][j][<span class="hljs-number">0</span>]=f[j]*w[j]%mod,
+            dp[i][j][<span class="hljs-number">0</span>]+=(g[n]-g[j])*j%mod;
+            dp[i][j][<span class="hljs-number">1</span>]+=g[n]-g[j];
+        }
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">1</span>;j&lt;=n;j++)
+            dp[i][j][<span class="hljs-number">0</span>]%=mod,dp[i][j][<span class="hljs-number">1</span>]%=mod;
+    }
+    <span class="hljs-type">long</span> <span class="hljs-type">long</span> answer=<span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        answer+=dp[n][i][<span class="hljs-number">0</span>]+dp[n][i][<span class="hljs-number">1</span>]*(i<span class="hljs-number">-1</span>)%mod;
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lld\n&quot;</span>,answer%mod);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre>
+                            </dl>
+                        </div>
+                    
+                </div>
             
         </div>
     </div>
