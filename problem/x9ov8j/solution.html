@@ -1,0 +1,359 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title id="title">题解与代码 - 近似（approx） - OI Problems</title>
+        <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
+        <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
+        <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
+        <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script src="/OI/pub/busuanzi.pure.mini.js"></script>
+        <script src="/OI/pub/main.js"></script>
+        <link rel="stylesheet" href="/OI/pub/main.css">
+        
+    </head>
+    <body>
+        <div class="topan-header">
+            <div class="topan-header-home">
+                <a href="/OI">
+                    <button class="topan-button-ordinary topan-button-commonly topan-button-header-round-left">
+                        <i class="fa fa-home"></i>
+                    </button>
+                </a>
+            </div>
+            <div class="topan-header-left">
+                <span class="topan-header-text">OI Problems&nbsp;</span>
+                <a href="/OI/about">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
+                        <i class="fa fa-solid fa-circle-info"></i>
+                        <span>&nbsp;关于</span>
+                    </span>
+                </a>
+                
+                
+            </div>
+            <div class="topan-header-right">
+            </div>
+        </div>
+        <div class="topan-outer">
+            <div class="topan-page">
+                <div class="topan-mainpage-auto">
+                    <br>
+                    <style>
+    .options {
+        font-size: 16px;
+        font-weight: normal;
+    }
+</style>
+
+<script>
+    var Export = () => console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 分块 &amp; bitset
+
+把值域 $[1,m]$ 分为 $\sqrt m$ 块，每个块内使用 `bitset` 模拟操作。
+
+期望得分 $30$ 分。
+
+## 随机化部分分
+
+考虑给每一个数随机一个权值，把加入和移除操作转化为异或操作，然后判断当前值是否为 $0$ 就能知道集合 $T$ 是否为空。
+
+根据评分方式中的描述，判断正确可以获得 $30\%$ 的分数。
+
+## 最大似然法估计
+
+考虑对于概率 $p$，令对于任意 $i\in[1,m]$，都有 $p$ 的概率将其权值重置为 $0$，求解所得集合是否为空集。进行若干次抽样，使用 **最大似然法** 估计集合大小。
+
+设集合大小为 $x$，有 $p_1,p_2,\cdots,p_S$ 的概率重置其权值为 $0$，在 $T$ 次抽样中有 $y$ 次集合为空的概率为
+
+$$
+\prod_{i=1}^S\left(p_i^x\right)^y\left(1-p_i^x\right)^{T-y}.
+$$
+
+（$p_i^x$ 即整个集合的权值都被重置的概率。）
+
+取上式的对数得
+
+$$
+\sum_{i=1}^S\left[xy\ln p_i+(T-y)\ln\left(1-p_i^x\right)\right].
+$$
+
+又等价于
+
+$$
+\left(\sum_{i=1}^S y\ln p_i\right)x+\sum_{i=1}^S (T-y)\ln\left(1-p_i^x\right).
+$$
+
+易知上式是一个凸函数。根据最大似然法，三分出其极值点即为集合大小 $x$ 的近似值。
+
+在下面的代码中，使用了 $25$ 个 $p$ 值作为概率，每个 $p$ 值进行了 $10$ 次抽样测试。测试点最长用时 $7.15$ 秒，最大平均相对误差 $1.126$。
+
+```cpp
+// 2023.10.17
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+#define ull unsigned long long
+const int P_COUNT=25,TEST_COUNT=10;
+double P[P_COUNT],precalc[P_COUNT],precalc2[P_COUNT][1000001];
+ull randull(){
+    ull x=rand(),y=rand();
+    return (x&lt;&lt;31ull)|y;
+}
+
+int n,m,q,z[1000001];
+ull w[1000001];
+ull noww[1000001][TEST_COUNT],val[1000001][TEST_COUNT];
+vector&lt;int&gt; x[1000001];
+int total[1000001][P_COUNT];
+
+int main(){
+    srand(time(0));
+    scanf(&#34;%d%d%d&#34;,&amp;n,&amp;m,&amp;q);
+    for(int i=1;i&lt;=n;i++){
+        int k,v; scanf(&#34;%d&#34;,&amp;k);
+        while(k--)scanf(&#34;%d&#34;,&amp;v),x[i].push_back(v);
+    }
+    for(int i=1;i&lt;=q;i++)scanf(&#34;%d&#34;,z+i);
+    for(int i=1;i&lt;=m;i++)w[i]=randull();
+    for(int _=0;_&lt;P_COUNT;_++){
+        P[_]=_==0?1:(P[_-1]*0.55);
+        precalc[_]=log(1-P[_]);
+        for(int i=1;i&lt;=m;i++)precalc2[_][i]=log(1-pow(1-P[_],i));
+        memset(noww,0,sizeof noww);
+        memset(val,0,sizeof val);
+        if(P[_]&gt;=0.1){
+            for(int i=1;i&lt;=m;i++)
+                for(int j=0;j&lt;TEST_COUNT;j++)
+                    if(_==0||randull()%(ull)(1000000/P[_])&lt;1000000)noww[i][j]=w[i];
+        }
+        else{
+            int total=m*TEST_COUNT*P[_];
+            while(total--){
+                int id=rand()%m+1,testId=rand()%TEST_COUNT;
+                if(noww[id][testId])total++;
+                else noww[id][testId]=w[id];
+            }
+        }
+        for(int i=1;i&lt;=n;i++)
+            for(int v :x[i]){
+                if(v&lt;0)for(int j=0;j&lt;TEST_COUNT;j++)
+                    val[i][j]^=noww[-v][j];
+                else for(int j=0;j&lt;TEST_COUNT;j++)
+                    val[i][j]^=val[v][j];
+            }
+        ull current[TEST_COUNT]={};
+        for(int i=1;i&lt;=q;i++){
+            for(int j=0;j&lt;TEST_COUNT;j++)
+                current[j]^=val[z[i]][j],
+                total[i][_]+=current[j]!=0;
+        }
+    }
+    for(int i=1;i&lt;=q;i++){
+        if(total[i][0]==0){
+            printf(&#34;0\n&#34;);
+            continue;
+        }
+        double tmp=0;
+        for(int j=1;j&lt;P_COUNT;j++)
+            tmp+=(TEST_COUNT-total[i][j])*precalc[j];
+        auto calcP=[&amp;](double x){
+            double ret=x*tmp;
+            for(int j=1;j&lt;P_COUNT;j++)ret+=total[i][j]*precalc2[j][int(x)];
+            return ret;
+        };
+        double l=1,r=m;
+        while(l&lt;r*0.98){
+            // 注意到答案在对数坐标上均匀分布
+            double mid1=cbrt(l*l*r),mid2=cbrt(l*r*r);
+            if(calcP(mid1)&lt;calcP(mid2))l=mid1;
+            else r=mid2;
+        }
+        printf(&#34;%d\n&#34;,min(m,int(sqrt(l*r))));
+    }
+    return 0;
+}
+```</textarea>
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2>近似（approx）</h2>
+                <a class="topan-menu-option" href="/OI/problem/x9ov8j"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/x9ov8j/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/x9ov8j/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            
+                <div class="topan-section-shadow">
+                    <h2>
+                        分块 &amp; bitset
+                        
+                    </h2>
+                    
+                    <p>把值域 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>[</mo><mn>1</mn><mo separator="true">,</mo><mi>m</mi><mo>]</mo></mrow><annotation encoding="application/x-tex">[1,m]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">[</span><span class="mord mathrm">1</span><span class="mpunct">,</span><span class="mord mathit">m</span><span class="mclose">]</span></span></span></span> 分为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msqrt><mi>m</mi></msqrt></mrow><annotation encoding="application/x-tex">\sqrt m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8002800000000001em;"></span><span class="strut bottom" style="height:1.04em;vertical-align:-0.23972em;"></span><span class="base textstyle uncramped"><span class="sqrt mord"><span class="sqrt-sign" style="top:0.03971999999999998em;"><span class="style-wrap reset-textstyle textstyle uncramped">√</span></span><span class="vlist"><span style="top:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="mord mathit">m</span></span><span style="top:-0.72028em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span><span class="reset-textstyle textstyle uncramped sqrt-line"></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:1em;">​</span></span>​</span></span></span></span></span></span> 块，每个块内使用 <code class="hljs">bitset</code> 模拟操作。</p>
+<p>期望得分 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>3</mn><mn>0</mn></mrow><annotation encoding="application/x-tex">30</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">3</span><span class="mord mathrm">0</span></span></span></span> 分。</p>
+
+                    
+                </div>
+            
+                <br>
+                
+                <div class="topan-section-shadow">
+                    <h2>
+                        随机化部分分
+                        
+                    </h2>
+                    
+                    <p>考虑给每一个数随机一个权值，把加入和移除操作转化为异或操作，然后判断当前值是否为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">0</span></span></span></span> 就能知道集合 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>T</mi></mrow><annotation encoding="application/x-tex">T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.68333em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.13889em;">T</span></span></span></span> 是否为空。</p>
+<p>根据评分方式中的描述，判断正确可以获得 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>3</mn><mn>0</mn><mi mathvariant="normal">%</mi></mrow><annotation encoding="application/x-tex">30\%</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:0.80556em;vertical-align:-0.05556em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">3</span><span class="mord mathrm">0</span><span class="mord mathrm">%</span></span></span></span> 的分数。</p>
+
+                    
+                </div>
+            
+                <br>
+                
+                <div class="topan-section-shadow">
+                    <h2>
+                        最大似然法估计
+                        
+                    </h2>
+                    
+                    <p>考虑对于概率 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit">p</span></span></span></span>，令对于任意 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi><mo>∈</mo><mo>[</mo><mn>1</mn><mo separator="true">,</mo><mi>m</mi><mo>]</mo></mrow><annotation encoding="application/x-tex">i\in[1,m]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathit">i</span><span class="mrel">∈</span><span class="mopen">[</span><span class="mord mathrm">1</span><span class="mpunct">,</span><span class="mord mathit">m</span><span class="mclose">]</span></span></span></span>，都有 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit">p</span></span></span></span> 的概率将其权值重置为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">0</span></span></span></span>，求解所得集合是否为空集。进行若干次抽样，使用 <strong>最大似然法</strong> 估计集合大小。</p>
+<p>设集合大小为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">x</span></span></span></span>，有 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>p</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>p</mi><mn>2</mn></msub><mo separator="true">,</mo><mo>⋯</mo><mo separator="true">,</mo><msub><mi>p</mi><mi>S</mi></msub></mrow><annotation encoding="application/x-tex">p_1,p_2,\cdots,p_S</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">p</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mpunct">,</span><span class="mord"><span class="mord mathit">p</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathrm">2</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mpunct">,</span><span class="minner">⋯</span><span class="mpunct">,</span><span class="mord"><span class="mord mathit">p</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit" style="margin-right:0.05764em;">S</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 的概率重置其权值为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>0</mn></mrow><annotation encoding="application/x-tex">0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">0</span></span></span></span>，在 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>T</mi></mrow><annotation encoding="application/x-tex">T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.68333em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.13889em;">T</span></span></span></span> 次抽样中有 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>y</mi></mrow><annotation encoding="application/x-tex">y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03588em;">y</span></span></span></span> 次集合为空的概率为</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msubsup><mo>∏</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>S</mi></msubsup><msup><mrow><mo fence="true">(</mo><msubsup><mi>p</mi><mi>i</mi><mi>x</mi></msubsup><mo fence="true">)</mo></mrow><mi>y</mi></msup><msup><mrow><mo fence="true">(</mo><mn>1</mn><mo>−</mo><msubsup><mi>p</mi><mi>i</mi><mi>x</mi></msubsup><mo fence="true">)</mo></mrow><mrow><mi>T</mi><mo>−</mo><mi>y</mi></mrow></msup><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">\prod_{i=1}^S\left(p_i^x\right)^y\left(1-p_i^x\right)^{T-y}.
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:1.8283360000000002em;"></span><span class="strut bottom" style="height:3.106005em;vertical-align:-1.277669em;"></span><span class="base displaystyle textstyle uncramped"><span class="mop op-limits"><span class="vlist"><span style="top:1.1776689999999999em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord scriptstyle cramped"><span class="mord mathit">i</span><span class="mrel">=</span><span class="mord mathrm">1</span></span></span></span><span style="top:-0.000005000000000143778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span><span class="op-symbol large-op mop">∏</span></span></span><span style="top:-1.2500050000000003em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit" style="margin-right:0.05764em;">S</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="minner"><span class="minner displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">(</span><span class="mord"><span class="mord mathit">p</span><span class="vlist"><span style="top:0.247em;margin-left:0em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span style="top:-0.4129999999999999em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit">x</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">)</span></span><span class="vlist"><span style="top:-0.41300000000000003em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit" style="margin-right:0.03588em;">y</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="minner"><span class="minner displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">(</span><span class="mord mathrm">1</span><span class="mbin">−</span><span class="mord"><span class="mord mathit">p</span><span class="vlist"><span style="top:0.247em;margin-left:0em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span style="top:-0.4129999999999999em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit">x</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">)</span></span><span class="vlist"><span style="top:-0.41300000000000003em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord scriptstyle uncramped"><span class="mord mathit" style="margin-right:0.13889em;">T</span><span class="mbin">−</span><span class="mord mathit" style="margin-right:0.03588em;">y</span></span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mord mathrm">.</span></span></span></span></span></p>
+<p>（<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msubsup><mi>p</mi><mi>i</mi><mi>x</mi></msubsup></mrow><annotation encoding="application/x-tex">p_i^x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.664392em;"></span><span class="strut bottom" style="height:0.923056em;vertical-align:-0.258664em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit">p</span><span class="vlist"><span style="top:0.258664em;margin-left:0em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit">x</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 即整个集合的权值都被重置的概率。）</p>
+<p>取上式的对数得</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msubsup><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>S</mi></msubsup><mrow><mo fence="true">[</mo><mi>x</mi><mi>y</mi><mi>ln</mi><msub><mi>p</mi><mi>i</mi></msub><mo>+</mo><mo>(</mo><mi>T</mi><mo>−</mo><mi>y</mi><mo>)</mo><mi>ln</mi><mrow><mo fence="true">(</mo><mn>1</mn><mo>−</mo><msubsup><mi>p</mi><mi>i</mi><mi>x</mi></msubsup><mo fence="true">)</mo></mrow><mo fence="true">]</mo></mrow><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">\sum_{i=1}^S\left[xy\ln p_i+(T-y)\ln\left(1-p_i^x\right)\right].
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:1.8283360000000002em;"></span><span class="strut bottom" style="height:3.106005em;vertical-align:-1.277669em;"></span><span class="base displaystyle textstyle uncramped"><span class="mop op-limits"><span class="vlist"><span style="top:1.1776689999999999em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord scriptstyle cramped"><span class="mord mathit">i</span><span class="mrel">=</span><span class="mord mathrm">1</span></span></span></span><span style="top:-0.000005000000000143778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span><span class="op-symbol large-op mop">∑</span></span></span><span style="top:-1.2500050000000003em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit" style="margin-right:0.05764em;">S</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="minner displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">[</span><span class="mord mathit">x</span><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="mop">ln</span><span class="mord"><span class="mord mathit">p</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mbin">+</span><span class="mopen">(</span><span class="mord mathit" style="margin-right:0.13889em;">T</span><span class="mbin">−</span><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="mclose">)</span><span class="mop">ln</span><span class="minner displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">(</span><span class="mord mathrm">1</span><span class="mbin">−</span><span class="mord"><span class="mord mathit">p</span><span class="vlist"><span style="top:0.247em;margin-left:0em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span style="top:-0.4129999999999999em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit">x</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">)</span></span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">]</span></span><span class="mord mathrm">.</span></span></span></span></span></p>
+<p>又等价于</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mrow><mo fence="true">(</mo><msubsup><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>S</mi></msubsup><mi>y</mi><mi>ln</mi><msub><mi>p</mi><mi>i</mi></msub><mo fence="true">)</mo></mrow><mi>x</mi><mo>+</mo><msubsup><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>S</mi></msubsup><mo>(</mo><mi>T</mi><mo>−</mo><mi>y</mi><mo>)</mo><mi>ln</mi><mrow><mo fence="true">(</mo><mn>1</mn><mo>−</mo><msubsup><mi>p</mi><mi>i</mi><mi>x</mi></msubsup><mo fence="true">)</mo></mrow><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">\left(\sum_{i=1}^S y\ln p_i\right)x+\sum_{i=1}^S (T-y)\ln\left(1-p_i^x\right).
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:1.8283360000000002em;"></span><span class="strut bottom" style="height:3.106005em;vertical-align:-1.277669em;"></span><span class="base displaystyle textstyle uncramped"><span class="minner displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size4">(</span></span><span class="mop op-limits"><span class="vlist"><span style="top:1.1776689999999999em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord scriptstyle cramped"><span class="mord mathit">i</span><span class="mrel">=</span><span class="mord mathrm">1</span></span></span></span><span style="top:-0.000005000000000143778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span><span class="op-symbol large-op mop">∑</span></span></span><span style="top:-1.2500050000000003em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit" style="margin-right:0.05764em;">S</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="mop">ln</span><span class="mord"><span class="mord mathit">p</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;"><span class="delimsizing size4">)</span></span></span><span class="mord mathit">x</span><span class="mbin">+</span><span class="mop op-limits"><span class="vlist"><span style="top:1.1776689999999999em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord scriptstyle cramped"><span class="mord mathit">i</span><span class="mrel">=</span><span class="mord mathrm">1</span></span></span></span><span style="top:-0.000005000000000143778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span><span class="op-symbol large-op mop">∑</span></span></span><span style="top:-1.2500050000000003em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit" style="margin-right:0.05764em;">S</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mopen">(</span><span class="mord mathit" style="margin-right:0.13889em;">T</span><span class="mbin">−</span><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="mclose">)</span><span class="mop">ln</span><span class="minner displaystyle textstyle uncramped"><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">(</span><span class="mord mathrm">1</span><span class="mbin">−</span><span class="mord"><span class="mord mathit">p</span><span class="vlist"><span style="top:0.247em;margin-left:0em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span style="top:-0.4129999999999999em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit">x</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="style-wrap reset-textstyle textstyle uncramped" style="top:0em;">)</span></span><span class="mord mathrm">.</span></span></span></span></span></p>
+<p>易知上式是一个凸函数。根据最大似然法，三分出其极值点即为集合大小 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">x</span></span></span></span> 的近似值。</p>
+<p>在下面的代码中，使用了 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>2</mn><mn>5</mn></mrow><annotation encoding="application/x-tex">25</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">2</span><span class="mord mathrm">5</span></span></span></span> 个 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit">p</span></span></span></span> 值作为概率，每个 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>p</mi></mrow><annotation encoding="application/x-tex">p</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit">p</span></span></span></span> 值进行了 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mn>0</mn></mrow><annotation encoding="application/x-tex">10</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">1</span><span class="mord mathrm">0</span></span></span></span> 次抽样测试。测试点最长用时 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>7</mn><mi mathvariant="normal">.</mi><mn>1</mn><mn>5</mn></mrow><annotation encoding="application/x-tex">7.15</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">7</span><span class="mord mathrm">.</span><span class="mord mathrm">1</span><span class="mord mathrm">5</span></span></span></span> 秒，最大平均相对误差 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn><mi mathvariant="normal">.</mi><mn>1</mn><mn>2</mn><mn>6</mn></mrow><annotation encoding="application/x-tex">1.126</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">1</span><span class="mord mathrm">.</span><span class="mord mathrm">1</span><span class="mord mathrm">2</span><span class="mord mathrm">6</span></span></span></span>。</p>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.10.17</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+<span class="hljs-meta">#<span class="hljs-keyword">define</span> ull unsigned long long</span>
+<span class="hljs-type">const</span> <span class="hljs-type">int</span> P_COUNT=<span class="hljs-number">25</span>,TEST_COUNT=<span class="hljs-number">10</span>;
+<span class="hljs-type">double</span> P[P_COUNT],precalc[P_COUNT],precalc2[P_COUNT][<span class="hljs-number">1000001</span>];
+<span class="hljs-function">ull <span class="hljs-title">randull</span><span class="hljs-params">()</span></span>{
+    ull x=<span class="hljs-built_in">rand</span>(),y=<span class="hljs-built_in">rand</span>();
+    <span class="hljs-keyword">return</span> (x&lt;&lt;<span class="hljs-number">31ull</span>)|y;
+}
+
+<span class="hljs-type">int</span> n,m,q,z[<span class="hljs-number">1000001</span>];
+ull w[<span class="hljs-number">1000001</span>];
+ull noww[<span class="hljs-number">1000001</span>][TEST_COUNT],val[<span class="hljs-number">1000001</span>][TEST_COUNT];
+vector&lt;<span class="hljs-type">int</span>&gt; x[<span class="hljs-number">1000001</span>];
+<span class="hljs-type">int</span> total[<span class="hljs-number">1000001</span>][P_COUNT];
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">srand</span>(<span class="hljs-built_in">time</span>(<span class="hljs-number">0</span>));
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d%d&quot;</span>,&amp;n,&amp;m,&amp;q);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++){
+        <span class="hljs-type">int</span> k,v; <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;k);
+        <span class="hljs-keyword">while</span>(k--)<span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;v),x[i].<span class="hljs-built_in">push_back</span>(v);
+    }
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=q;i++)<span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,z+i);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=m;i++)w[i]=<span class="hljs-built_in">randull</span>();
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> _=<span class="hljs-number">0</span>;_&lt;P_COUNT;_++){
+        P[_]=_==<span class="hljs-number">0</span>?<span class="hljs-number">1</span>:(P[_<span class="hljs-number">-1</span>]*<span class="hljs-number">0.55</span>);
+        precalc[_]=<span class="hljs-built_in">log</span>(<span class="hljs-number">1</span>-P[_]);
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=m;i++)precalc2[_][i]=<span class="hljs-built_in">log</span>(<span class="hljs-number">1</span>-<span class="hljs-built_in">pow</span>(<span class="hljs-number">1</span>-P[_],i));
+        <span class="hljs-built_in">memset</span>(noww,<span class="hljs-number">0</span>,<span class="hljs-keyword">sizeof</span> noww);
+        <span class="hljs-built_in">memset</span>(val,<span class="hljs-number">0</span>,<span class="hljs-keyword">sizeof</span> val);
+        <span class="hljs-keyword">if</span>(P[_]&gt;=<span class="hljs-number">0.1</span>){
+            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=m;i++)
+                <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">0</span>;j&lt;TEST_COUNT;j++)
+                    <span class="hljs-keyword">if</span>(_==<span class="hljs-number">0</span>||<span class="hljs-built_in">randull</span>()%(ull)(<span class="hljs-number">1000000</span>/P[_])&lt;<span class="hljs-number">1000000</span>)noww[i][j]=w[i];
+        }
+        <span class="hljs-keyword">else</span>{
+            <span class="hljs-type">int</span> total=m*TEST_COUNT*P[_];
+            <span class="hljs-keyword">while</span>(total--){
+                <span class="hljs-type">int</span> id=<span class="hljs-built_in">rand</span>()%m+<span class="hljs-number">1</span>,testId=<span class="hljs-built_in">rand</span>()%TEST_COUNT;
+                <span class="hljs-keyword">if</span>(noww[id][testId])total++;
+                <span class="hljs-keyword">else</span> noww[id][testId]=w[id];
+            }
+        }
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> v :x[i]){
+                <span class="hljs-keyword">if</span>(v&lt;<span class="hljs-number">0</span>)<span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">0</span>;j&lt;TEST_COUNT;j++)
+                    val[i][j]^=noww[-v][j];
+                <span class="hljs-keyword">else</span> <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">0</span>;j&lt;TEST_COUNT;j++)
+                    val[i][j]^=val[v][j];
+            }
+        ull current[TEST_COUNT]={};
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=q;i++){
+            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">0</span>;j&lt;TEST_COUNT;j++)
+                current[j]^=val[z[i]][j],
+                total[i][_]+=current[j]!=<span class="hljs-number">0</span>;
+        }
+    }
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=q;i++){
+        <span class="hljs-keyword">if</span>(total[i][<span class="hljs-number">0</span>]==<span class="hljs-number">0</span>){
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;0\n&quot;</span>);
+            <span class="hljs-keyword">continue</span>;
+        }
+        <span class="hljs-type">double</span> tmp=<span class="hljs-number">0</span>;
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">1</span>;j&lt;P_COUNT;j++)
+            tmp+=(TEST_COUNT-total[i][j])*precalc[j];
+        <span class="hljs-keyword">auto</span> calcP=[&amp;](<span class="hljs-type">double</span> x){
+            <span class="hljs-type">double</span> ret=x*tmp;
+            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">1</span>;j&lt;P_COUNT;j++)ret+=total[i][j]*precalc2[j][<span class="hljs-built_in">int</span>(x)];
+            <span class="hljs-keyword">return</span> ret;
+        };
+        <span class="hljs-type">double</span> l=<span class="hljs-number">1</span>,r=m;
+        <span class="hljs-keyword">while</span>(l&lt;r*<span class="hljs-number">0.98</span>){
+            <span class="hljs-comment">// 注意到答案在对数坐标上均匀分布</span>
+            <span class="hljs-type">double</span> mid1=<span class="hljs-built_in">cbrt</span>(l*l*r),mid2=<span class="hljs-built_in">cbrt</span>(l*r*r);
+            <span class="hljs-keyword">if</span>(<span class="hljs-built_in">calcP</span>(mid1)&lt;<span class="hljs-built_in">calcP</span>(mid2))l=mid1;
+            <span class="hljs-keyword">else</span> r=mid2;
+        }
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d\n&quot;</span>,<span class="hljs-built_in">min</span>(m,<span class="hljs-built_in">int</span>(<span class="hljs-built_in">sqrt</span>(l*r))));
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
+        </div>
+    </div>
+</div>
+                    <br>
+                </div>
+                <footer class="topan-footer">
+                    <p></p>
+                    <p style="text-align: center; color: #555; font-size: 12px;">
+                        Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
+                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>&nbsp;&nbsp;&nbsp;
+                        <i class="fa fa-solid fa-eye"></i> 访客数量：<span id="busuanzi_value_site_pv">0</span>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>
+    

@@ -1,0 +1,18 @@
+{
+  "title": "子图（graph）",
+  "difficulty": {
+    "algorithm": 0,
+    "thinking": 0,
+    "implementation": 0
+  },
+  "judge": {
+    "time": "",
+    "memory": ""
+  },
+  "tags": "",
+  "source": "2023 年 10 月 13 日 NOIP 模拟赛第三题",
+  "statement": {
+    "简体中文": "statement_zh.md"
+  },
+  "solution": []
+}
