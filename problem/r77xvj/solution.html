@@ -56,7 +56,108 @@
     var Export = () => console.log($('#exportcode').val());
 </script>
 
-<textarea style="display: none;" id="exportcode"></textarea>
+<textarea style="display: none;" id="exportcode">## 题解
+
+一个非常经典的操作：
+
+$$
+|E|^k=\sum_{e_1,e_2,\cdots,e_k\in E}1.
+$$
+
+问题转化为求图中 $k$ 条边在同一个导出子图中的情况数。
+
+大力分类讨论即可。
+
+```cpp
+// 2023.10.17
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+const int mod=1e9+7;
+
+int power(int x,int y=mod-2){
+    if(y&lt;=0)return 1;
+    int tmp=power(x,y&gt;&gt;1);
+    tmp=1ll*tmp*tmp%mod;
+    if(y&amp;1)return 1ll*tmp*x%mod;
+    return tmp;
+}
+
+int n,m,k;
+vector&lt;int&gt; E[100001],E1[100001];
+int deg[100001];
+long long answer[100];
+bool vis[100001];
+
+int main(){
+    scanf(&#34;%d%d%d&#34;,&amp;n,&amp;m,&amp;k);
+    for(int i=1;i&lt;=m;i++){
+        int u,v;
+        scanf(&#34;%d%d&#34;,&amp;u,&amp;v);
+        E[u].push_back(v);
+        E[v].push_back(u);
+        deg[u]++,deg[v]++;
+    }
+
+    // k = 1
+    answer[11]=m;
+
+    // k = 2
+    // 1. 重边
+    answer[21]=m;
+    // 2. 链状
+    for(int i=1;i&lt;=n;i++)
+        answer[22]+=1ll*deg[i]*(deg[i]-1)%mod;
+    // 3. 两条不连通的边
+    answer[23]=(1ll*m*m-answer[21]-answer[22])%mod;
+
+    // k = 3
+    // 1. 重边
+    answer[31]=m;
+    // 2. 三元环
+    for(int i=1;i&lt;=n;i++)
+        for(int v :E[i])if(deg[v]&gt;deg[i]||(deg[v]==deg[i]&amp;&amp;v&gt;i))
+            E1[i].push_back(v);
+    for(int i=1;i&lt;=n;i++){
+        for(int v :E1[i])vis[v]=true;
+        for(int v :E1[i])for(int w :E1[v]){
+            answer[32]+=vis[w];
+        }
+        for(int v :E1[i])vis[v]=false;
+    }
+    answer[32]=answer[32]*6%mod;
+    // 3. 一条重边 + 一条独立边
+    answer[33]=answer[23]*3%mod;
+    // 4. 一条重边的端点连一条边
+    answer[34]=answer[22]*3%mod;
+    // 5. 菊花状
+    for(int i=1;i&lt;=n;i++)
+        answer[35]+=1ll*deg[i]*(deg[i]-1)%mod*(deg[i]-2)%mod;
+    answer[35]=answer[35]%mod;
+    // 6. 链状
+    for(int i=1;i&lt;=n;i++)
+        for(int v :E1[i])
+            answer[36]+=1ll*(deg[i]-1)*(deg[v]-1)%mod;
+    answer[36]=(6*answer[36]-3*answer[32])%mod;
+    // 7. 两条边的链与一条边不连通
+    answer[37]=(3*m*answer[22]%mod-3*answer[32]-2*answer[34]-3*answer[35]-2*answer[36])%mod;
+    // 8. 三条边不连通
+    answer[38]=1ll*m*m%mod*m%mod;
+    for(int i=31;i&lt;=37;i++)answer[38]-=answer[i];
+
+    int vs[100]={};
+    vs[11]=vs[21]=vs[31]=2;
+    vs[22]=vs[32]=vs[34]=3;
+    vs[23]=vs[33]=vs[35]=vs[36]=4;
+    vs[37]=5;
+    vs[38]=6;
+
+    for(int i=k*10+1;i&lt;=(k+1)*10;i++)
+        answer[0]+=answer[i]%mod*power(2,n-vs[i])%mod;
+    printf(&#34;%lld\n&#34;,(answer[0]%mod+mod)%mod);
+    return 0;
+}
+```</textarea>
 <div class="row">
     <div class="column-one-fifth">
         <div style="padding-right: 0px;">
@@ -72,6 +173,115 @@
     </div>
     <div class="column-four-fifth">
         <div style="padding-left: 20px;">
+            
+                <div class="topan-section-shadow">
+                    <h2>
+                        题解
+                        
+                    </h2>
+                    
+                    <p>一个非常经典的操作：</p>
+<p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">∣</mi><mi>E</mi><msup><mi mathvariant="normal">∣</mi><mi>k</mi></msup><mo>=</mo><msub><mo>∑</mo><mrow><msub><mi>e</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>e</mi><mn>2</mn></msub><mo separator="true">,</mo><mo>⋯</mo><mo separator="true">,</mo><msub><mi>e</mi><mi>k</mi></msub><mo>∈</mo><mi>E</mi></mrow></msub><mn>1</mn><mi mathvariant="normal">.</mi></mrow><annotation encoding="application/x-tex">|E|^k=\sum_{e_1,e_2,\cdots,e_k\in E}1.
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:1.050005em;"></span><span class="strut bottom" style="height:2.480449em;vertical-align:-1.430444em;"></span><span class="base displaystyle textstyle uncramped"><span class="mord mathrm">∣</span><span class="mord mathit" style="margin-right:0.05764em;">E</span><span class="mord"><span class="mord mathrm">∣</span><span class="vlist"><span style="top:-0.413em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathit" style="margin-right:0.03148em;">k</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mrel">=</span><span class="mop op-limits"><span class="vlist"><span style="top:1.194336em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord scriptstyle cramped"><span class="mord"><span class="mord mathit">e</span><span class="vlist"><span style="top:0.15em;margin-right:0.07142857142857144em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-scriptstyle scriptscriptstyle cramped"><span class="mord mathrm">1</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mpunct">,</span><span class="mord"><span class="mord mathit">e</span><span class="vlist"><span style="top:0.15em;margin-right:0.07142857142857144em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-scriptstyle scriptscriptstyle cramped"><span class="mord mathrm">2</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mpunct">,</span><span class="minner">⋯</span><span class="mpunct">,</span><span class="mord"><span class="mord mathit">e</span><span class="vlist"><span style="top:0.15122857142857138em;margin-right:0.07142857142857144em;margin-left:0em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-scriptstyle scriptscriptstyle cramped"><span class="mord mathit" style="margin-right:0.03148em;">k</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mrel">∈</span><span class="mord mathit" style="margin-right:0.05764em;">E</span></span></span></span><span style="top:-0.000005000000000032756em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span><span class="op-symbol large-op mop">∑</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mord mathrm">1</span><span class="mord mathrm">.</span></span></span></span></span></p>
+<p>问题转化为求图中 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>k</mi></mrow><annotation encoding="application/x-tex">k</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.69444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03148em;">k</span></span></span></span> 条边在同一个导出子图中的情况数。</p>
+<p>大力分类讨论即可。</p>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.10.17</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+<span class="hljs-type">const</span> <span class="hljs-type">int</span> mod=<span class="hljs-number">1e9</span>+<span class="hljs-number">7</span>;
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">power</span><span class="hljs-params">(<span class="hljs-type">int</span> x,<span class="hljs-type">int</span> y=mod<span class="hljs-number">-2</span>)</span></span>{
+    <span class="hljs-keyword">if</span>(y&lt;=<span class="hljs-number">0</span>)<span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+    <span class="hljs-type">int</span> tmp=<span class="hljs-built_in">power</span>(x,y&gt;&gt;<span class="hljs-number">1</span>);
+    tmp=<span class="hljs-number">1ll</span>*tmp*tmp%mod;
+    <span class="hljs-keyword">if</span>(y&amp;<span class="hljs-number">1</span>)<span class="hljs-keyword">return</span> <span class="hljs-number">1ll</span>*tmp*x%mod;
+    <span class="hljs-keyword">return</span> tmp;
+}
+
+<span class="hljs-type">int</span> n,m,k;
+vector&lt;<span class="hljs-type">int</span>&gt; E[<span class="hljs-number">100001</span>],E1[<span class="hljs-number">100001</span>];
+<span class="hljs-type">int</span> deg[<span class="hljs-number">100001</span>];
+<span class="hljs-type">long</span> <span class="hljs-type">long</span> answer[<span class="hljs-number">100</span>];
+<span class="hljs-type">bool</span> vis[<span class="hljs-number">100001</span>];
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d%d&quot;</span>,&amp;n,&amp;m,&amp;k);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=m;i++){
+        <span class="hljs-type">int</span> u,v;
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d&quot;</span>,&amp;u,&amp;v);
+        E[u].<span class="hljs-built_in">push_back</span>(v);
+        E[v].<span class="hljs-built_in">push_back</span>(u);
+        deg[u]++,deg[v]++;
+    }
+
+    <span class="hljs-comment">// k = 1</span>
+    answer[<span class="hljs-number">11</span>]=m;
+
+    <span class="hljs-comment">// k = 2</span>
+    <span class="hljs-comment">// 1. 重边</span>
+    answer[<span class="hljs-number">21</span>]=m;
+    <span class="hljs-comment">// 2. 链状</span>
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        answer[<span class="hljs-number">22</span>]+=<span class="hljs-number">1ll</span>*deg[i]*(deg[i]<span class="hljs-number">-1</span>)%mod;
+    <span class="hljs-comment">// 3. 两条不连通的边</span>
+    answer[<span class="hljs-number">23</span>]=(<span class="hljs-number">1ll</span>*m*m-answer[<span class="hljs-number">21</span>]-answer[<span class="hljs-number">22</span>])%mod;
+
+    <span class="hljs-comment">// k = 3</span>
+    <span class="hljs-comment">// 1. 重边</span>
+    answer[<span class="hljs-number">31</span>]=m;
+    <span class="hljs-comment">// 2. 三元环</span>
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> v :E[i])<span class="hljs-keyword">if</span>(deg[v]&gt;deg[i]||(deg[v]==deg[i]&amp;&amp;v&gt;i))
+            E1[i].<span class="hljs-built_in">push_back</span>(v);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++){
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> v :E1[i])vis[v]=<span class="hljs-literal">true</span>;
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> v :E1[i])<span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> w :E1[v]){
+            answer[<span class="hljs-number">32</span>]+=vis[w];
+        }
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> v :E1[i])vis[v]=<span class="hljs-literal">false</span>;
+    }
+    answer[<span class="hljs-number">32</span>]=answer[<span class="hljs-number">32</span>]*<span class="hljs-number">6</span>%mod;
+    <span class="hljs-comment">// 3. 一条重边 + 一条独立边</span>
+    answer[<span class="hljs-number">33</span>]=answer[<span class="hljs-number">23</span>]*<span class="hljs-number">3</span>%mod;
+    <span class="hljs-comment">// 4. 一条重边的端点连一条边</span>
+    answer[<span class="hljs-number">34</span>]=answer[<span class="hljs-number">22</span>]*<span class="hljs-number">3</span>%mod;
+    <span class="hljs-comment">// 5. 菊花状</span>
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        answer[<span class="hljs-number">35</span>]+=<span class="hljs-number">1ll</span>*deg[i]*(deg[i]<span class="hljs-number">-1</span>)%mod*(deg[i]<span class="hljs-number">-2</span>)%mod;
+    answer[<span class="hljs-number">35</span>]=answer[<span class="hljs-number">35</span>]%mod;
+    <span class="hljs-comment">// 6. 链状</span>
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> v :E1[i])
+            answer[<span class="hljs-number">36</span>]+=<span class="hljs-number">1ll</span>*(deg[i]<span class="hljs-number">-1</span>)*(deg[v]<span class="hljs-number">-1</span>)%mod;
+    answer[<span class="hljs-number">36</span>]=(<span class="hljs-number">6</span>*answer[<span class="hljs-number">36</span>]<span class="hljs-number">-3</span>*answer[<span class="hljs-number">32</span>])%mod;
+    <span class="hljs-comment">// 7. 两条边的链与一条边不连通</span>
+    answer[<span class="hljs-number">37</span>]=(<span class="hljs-number">3</span>*m*answer[<span class="hljs-number">22</span>]%mod<span class="hljs-number">-3</span>*answer[<span class="hljs-number">32</span>]<span class="hljs-number">-2</span>*answer[<span class="hljs-number">34</span>]<span class="hljs-number">-3</span>*answer[<span class="hljs-number">35</span>]<span class="hljs-number">-2</span>*answer[<span class="hljs-number">36</span>])%mod;
+    <span class="hljs-comment">// 8. 三条边不连通</span>
+    answer[<span class="hljs-number">38</span>]=<span class="hljs-number">1ll</span>*m*m%mod*m%mod;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">31</span>;i&lt;=<span class="hljs-number">37</span>;i++)answer[<span class="hljs-number">38</span>]-=answer[i];
+
+    <span class="hljs-type">int</span> vs[<span class="hljs-number">100</span>]={};
+    vs[<span class="hljs-number">11</span>]=vs[<span class="hljs-number">21</span>]=vs[<span class="hljs-number">31</span>]=<span class="hljs-number">2</span>;
+    vs[<span class="hljs-number">22</span>]=vs[<span class="hljs-number">32</span>]=vs[<span class="hljs-number">34</span>]=<span class="hljs-number">3</span>;
+    vs[<span class="hljs-number">23</span>]=vs[<span class="hljs-number">33</span>]=vs[<span class="hljs-number">35</span>]=vs[<span class="hljs-number">36</span>]=<span class="hljs-number">4</span>;
+    vs[<span class="hljs-number">37</span>]=<span class="hljs-number">5</span>;
+    vs[<span class="hljs-number">38</span>]=<span class="hljs-number">6</span>;
+
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=k*<span class="hljs-number">10</span>+<span class="hljs-number">1</span>;i&lt;=(k+<span class="hljs-number">1</span>)*<span class="hljs-number">10</span>;i++)
+        answer[<span class="hljs-number">0</span>]+=answer[i]%mod*<span class="hljs-built_in">power</span>(<span class="hljs-number">2</span>,n-vs[i])%mod;
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lld\n&quot;</span>,(answer[<span class="hljs-number">0</span>]%mod+mod)%mod);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre>
+                            </dl>
+                        </div>
+                    
+                </div>
             
         </div>
     </div>

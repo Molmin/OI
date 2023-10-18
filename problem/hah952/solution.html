@@ -1,0 +1,256 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title id="title">题解与代码 - 哈密顿路径（splitham） - OI Problems</title>
+        <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
+        <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
+        <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
+        <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script src="/OI/pub/busuanzi.pure.mini.js"></script>
+        <script src="/OI/pub/main.js"></script>
+        <link rel="stylesheet" href="/OI/pub/main.css">
+        
+    </head>
+    <body>
+        <div class="topan-header">
+            <div class="topan-header-home">
+                <a href="/OI">
+                    <button class="topan-button-ordinary topan-button-commonly topan-button-header-round-left">
+                        <i class="fa fa-home"></i>
+                    </button>
+                </a>
+            </div>
+            <div class="topan-header-left">
+                <span class="topan-header-text">OI Problems&nbsp;</span>
+                <a href="/OI/about">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
+                        <i class="fa fa-solid fa-circle-info"></i>
+                        <span>&nbsp;关于</span>
+                    </span>
+                </a>
+                
+                
+            </div>
+            <div class="topan-header-right">
+            </div>
+        </div>
+        <div class="topan-outer">
+            <div class="topan-page">
+                <div class="topan-mainpage-auto">
+                    <br>
+                    <style>
+    .options {
+        font-size: 16px;
+        font-weight: normal;
+    }
+</style>
+
+<script>
+    var Export = () => console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 题解
+
+考虑动态规划：记 $f(l,r)$ 表示该块内从 $l$ 走到 $r$ 的最短路径长度。
+
+实现函数
+
+```cpp
+void solve(int xl,int xr,int yl,int yr,bool sortX);
+```
+
+完成 $x$ 坐标在 $[xl,xr]$ 范围内且 $y$ 坐标在 $[yl,yr]$ 范围内的最短路计算。
+
+时间复杂度等价于树形背包，时间复杂度 $\Theta(n^3)$。
+
+```cpp
+// 2023.10.18
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+int n,x[501],y[501];
+double dp[501][501],dis[501][501];
+
+bool cmp1(int i,int j){return x[i]&lt;x[j];}
+bool cmp2(int i,int j){return y[i]&lt;y[j];}
+
+void solve(int xl,int xr,int yl,int yr,bool sortX){
+    vector&lt;int&gt; id;
+    for(int i=1;i&lt;=n;i++)
+        if(xl&lt;=x[i]&amp;&amp;x[i]&lt;=xr&amp;&amp;yl&lt;=y[i]&amp;&amp;y[i]&lt;=yr)id.push_back(i);
+    if(id.size()==1)return;
+    int cnt=id.size()&gt;&gt;1;
+    if(sortX){
+        sort(id.begin(),id.end(),cmp1);
+        solve(xl,x[id[cnt]]-1,yl,yr,!sortX);
+        solve(x[id[cnt]],xr,yl,yr,!sortX);
+    }
+    else{
+        sort(id.begin(),id.end(),cmp2);
+        solve(xl,xr,yl,y[id[cnt]]-1,!sortX);
+        solve(xl,xr,y[id[cnt]],yr,!sortX);
+    }
+    vector&lt;int&gt; l,r;
+    for(int i=0;i&lt;cnt;i++)l.push_back(id[i]);
+    for(int i=cnt;i&lt;id.size();i++)r.push_back(id[i]);
+    vector&lt;pair&lt;int,int&gt; &gt; tmp;
+    // 预处理第二块中的起点终点对
+    for(int i :r)for(int j :r)
+        if(dp[i][j]&lt;1e9)tmp.push_back({i,j});
+    // 转移
+    for(int i :l)for(int j :l)
+        if(dp[i][j]&lt;1e9)for(pair&lt;int,int&gt; t :tmp)
+            dp[i][t.second]=min(dp[i][t.second],dp[i][j]+dis[j][t.first]+dp[t.first][t.second]);
+    for(int i :l)for(int j :r)dp[j][i]=dp[i][j];
+    // 把同一块中的两点距离清除，防止影响后续计算
+    //（同一块中两点不能在其父块中成为起点和终点）
+    for(int i :l)for(int j :l)dp[i][j]=1e9;
+    for(int i :r)for(int j :r)dp[i][j]=1e9;
+}
+
+int main(){
+    scanf(&#34;%d&#34;,&amp;n);
+    for(int i=1;i&lt;=n;i++)
+        scanf(&#34;%d%d&#34;,x+i,y+i);
+    for(int i=1;i&lt;=n;i++)
+        for(int j=1;j&lt;=n;j++)
+            if(i!=j)dp[i][j]=1e9;
+    for(int i=1;i&lt;=n;i++)
+        for(int j=1;j&lt;=n;j++)
+            dis[i][j]=sqrt((x[i]-x[j])*(x[i]-x[j])+(y[i]-y[j])*(y[i]-y[j]));
+    solve(1,2000,1,2000,true);
+    double answer=1e9;
+    for(int i=1;i&lt;=n;i++)
+        for(int j=1;j&lt;=n;j++)
+            answer=min(answer,dp[i][j]);
+    printf(&#34;%.2lf\n&#34;,answer);
+    return 0;
+}
+```</textarea>
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2>哈密顿路径（splitham）</h2>
+                <a class="topan-menu-option" href="/OI/problem/hah952"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/hah952/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/hah952/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            
+                <div class="topan-section-shadow">
+                    <h2>
+                        题解
+                        
+                    </h2>
+                    
+                    <p>考虑动态规划：记 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>f</mi><mo>(</mo><mi>l</mi><mo separator="true">,</mo><mi>r</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">f(l,r)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.10764em;">f</span><span class="mopen">(</span><span class="mord mathit" style="margin-right:0.01968em;">l</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="mclose">)</span></span></span></span> 表示该块内从 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>l</mi></mrow><annotation encoding="application/x-tex">l</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.69444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.01968em;">l</span></span></span></span> 走到 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>r</mi></mrow><annotation encoding="application/x-tex">r</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.02778em;">r</span></span></span></span> 的最短路径长度。</p>
+<p>实现函数</p>
+<pre><code class="hljs language-cpp"><span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">solve</span><span class="hljs-params">(<span class="hljs-type">int</span> xl,<span class="hljs-type">int</span> xr,<span class="hljs-type">int</span> yl,<span class="hljs-type">int</span> yr,<span class="hljs-type">bool</span> sortX)</span></span>;
+</code></pre>
+<p>完成 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">x</span></span></span></span> 坐标在 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>[</mo><mi>x</mi><mi>l</mi><mo separator="true">,</mo><mi>x</mi><mi>r</mi><mo>]</mo></mrow><annotation encoding="application/x-tex">[xl,xr]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">[</span><span class="mord mathit">x</span><span class="mord mathit" style="margin-right:0.01968em;">l</span><span class="mpunct">,</span><span class="mord mathit">x</span><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="mclose">]</span></span></span></span> 范围内且 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>y</mi></mrow><annotation encoding="application/x-tex">y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.625em;vertical-align:-0.19444em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.03588em;">y</span></span></span></span> 坐标在 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>[</mo><mi>y</mi><mi>l</mi><mo separator="true">,</mo><mi>y</mi><mi>r</mi><mo>]</mo></mrow><annotation encoding="application/x-tex">[yl,yr]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">[</span><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="mord mathit" style="margin-right:0.01968em;">l</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.03588em;">y</span><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="mclose">]</span></span></span></span> 范围内的最短路计算。</p>
+<p>时间复杂度等价于树形背包，时间复杂度 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi mathvariant="normal">Θ</mi><mo>(</mo><msup><mi>n</mi><mn>3</mn></msup><mo>)</mo></mrow><annotation encoding="application/x-tex">\Theta(n^3)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.8141079999999999em;"></span><span class="strut bottom" style="height:1.064108em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">Θ</span><span class="mopen">(</span><span class="mord"><span class="mord mathit">n</span><span class="vlist"><span style="top:-0.363em;margin-right:0.05em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle uncramped"><span class="mord mathrm">3</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mclose">)</span></span></span></span>。</p>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.10.18</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+
+<span class="hljs-type">int</span> n,x[<span class="hljs-number">501</span>],y[<span class="hljs-number">501</span>];
+<span class="hljs-type">double</span> dp[<span class="hljs-number">501</span>][<span class="hljs-number">501</span>],dis[<span class="hljs-number">501</span>][<span class="hljs-number">501</span>];
+
+<span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">cmp1</span><span class="hljs-params">(<span class="hljs-type">int</span> i,<span class="hljs-type">int</span> j)</span></span>{<span class="hljs-keyword">return</span> x[i]&lt;x[j];}
+<span class="hljs-function"><span class="hljs-type">bool</span> <span class="hljs-title">cmp2</span><span class="hljs-params">(<span class="hljs-type">int</span> i,<span class="hljs-type">int</span> j)</span></span>{<span class="hljs-keyword">return</span> y[i]&lt;y[j];}
+
+<span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">solve</span><span class="hljs-params">(<span class="hljs-type">int</span> xl,<span class="hljs-type">int</span> xr,<span class="hljs-type">int</span> yl,<span class="hljs-type">int</span> yr,<span class="hljs-type">bool</span> sortX)</span></span>{
+    vector&lt;<span class="hljs-type">int</span>&gt; id;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-keyword">if</span>(xl&lt;=x[i]&amp;&amp;x[i]&lt;=xr&amp;&amp;yl&lt;=y[i]&amp;&amp;y[i]&lt;=yr)id.<span class="hljs-built_in">push_back</span>(i);
+    <span class="hljs-keyword">if</span>(id.<span class="hljs-built_in">size</span>()==<span class="hljs-number">1</span>)<span class="hljs-keyword">return</span>;
+    <span class="hljs-type">int</span> cnt=id.<span class="hljs-built_in">size</span>()&gt;&gt;<span class="hljs-number">1</span>;
+    <span class="hljs-keyword">if</span>(sortX){
+        <span class="hljs-built_in">sort</span>(id.<span class="hljs-built_in">begin</span>(),id.<span class="hljs-built_in">end</span>(),cmp1);
+        <span class="hljs-built_in">solve</span>(xl,x[id[cnt]]<span class="hljs-number">-1</span>,yl,yr,!sortX);
+        <span class="hljs-built_in">solve</span>(x[id[cnt]],xr,yl,yr,!sortX);
+    }
+    <span class="hljs-keyword">else</span>{
+        <span class="hljs-built_in">sort</span>(id.<span class="hljs-built_in">begin</span>(),id.<span class="hljs-built_in">end</span>(),cmp2);
+        <span class="hljs-built_in">solve</span>(xl,xr,yl,y[id[cnt]]<span class="hljs-number">-1</span>,!sortX);
+        <span class="hljs-built_in">solve</span>(xl,xr,y[id[cnt]],yr,!sortX);
+    }
+    vector&lt;<span class="hljs-type">int</span>&gt; l,r;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;i&lt;cnt;i++)l.<span class="hljs-built_in">push_back</span>(id[i]);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=cnt;i&lt;id.<span class="hljs-built_in">size</span>();i++)r.<span class="hljs-built_in">push_back</span>(id[i]);
+    vector&lt;pair&lt;<span class="hljs-type">int</span>,<span class="hljs-type">int</span>&gt; &gt; tmp;
+    <span class="hljs-comment">// 预处理第二块中的起点终点对</span>
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i :r)<span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j :r)
+        <span class="hljs-keyword">if</span>(dp[i][j]&lt;<span class="hljs-number">1e9</span>)tmp.<span class="hljs-built_in">push_back</span>({i,j});
+    <span class="hljs-comment">// 转移</span>
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i :l)<span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j :l)
+        <span class="hljs-keyword">if</span>(dp[i][j]&lt;<span class="hljs-number">1e9</span>)<span class="hljs-keyword">for</span>(pair&lt;<span class="hljs-type">int</span>,<span class="hljs-type">int</span>&gt; t :tmp)
+            dp[i][t.second]=<span class="hljs-built_in">min</span>(dp[i][t.second],dp[i][j]+dis[j][t.first]+dp[t.first][t.second]);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i :l)<span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j :r)dp[j][i]=dp[i][j];
+    <span class="hljs-comment">// 把同一块中的两点距离清除，防止影响后续计算</span>
+    <span class="hljs-comment">//（同一块中两点不能在其父块中成为起点和终点）</span>
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i :l)<span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j :l)dp[i][j]=<span class="hljs-number">1e9</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i :r)<span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j :r)dp[i][j]=<span class="hljs-number">1e9</span>;
+}
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,&amp;n);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d&quot;</span>,x+i,y+i);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">1</span>;j&lt;=n;j++)
+            <span class="hljs-keyword">if</span>(i!=j)dp[i][j]=<span class="hljs-number">1e9</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">1</span>;j&lt;=n;j++)
+            dis[i][j]=<span class="hljs-built_in">sqrt</span>((x[i]-x[j])*(x[i]-x[j])+(y[i]-y[j])*(y[i]-y[j]));
+    <span class="hljs-built_in">solve</span>(<span class="hljs-number">1</span>,<span class="hljs-number">2000</span>,<span class="hljs-number">1</span>,<span class="hljs-number">2000</span>,<span class="hljs-literal">true</span>);
+    <span class="hljs-type">double</span> answer=<span class="hljs-number">1e9</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">1</span>;j&lt;=n;j++)
+            answer=<span class="hljs-built_in">min</span>(answer,dp[i][j]);
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%.2lf\n&quot;</span>,answer);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
+        </div>
+    </div>
+</div>
+                    <br>
+                </div>
+                <footer class="topan-footer">
+                    <p></p>
+                    <p style="text-align: center; color: #555; font-size: 12px;">
+                        Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
+                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>&nbsp;&nbsp;&nbsp;
+                        <i class="fa fa-solid fa-eye"></i> 访客数量：<span id="busuanzi_value_site_pv">0</span>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>
+    

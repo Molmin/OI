@@ -6,10 +6,10 @@
     "implementation": 0
   },
   "judge": {
-    "time": "",
-    "memory": ""
+    "time": "2 s",
+    "memory": "1 GiB"
   },
-  "tags": "",
+  "tags": "数据结构,数据结构/主席树,数据结构/树状数组",
   "source": "2023 年 9 月 28 日 NOIP 模拟赛",
   "statement": {
     "简体中文": "statement_zh.md"

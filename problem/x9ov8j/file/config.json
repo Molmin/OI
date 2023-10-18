@@ -6,8 +6,8 @@
     "implementation": 0
   },
   "judge": {
-    "time": "",
-    "memory": ""
+    "time": "20 s",
+    "memory": "1 GiB"
   },
   "tags": "数学,数学/概率,块状数据结构/分块,数据结构/容器/bitset",
   "source": "2023 年 10 月 17 日 NOIP 模拟赛第四题",
