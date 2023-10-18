@@ -1,0 +1,412 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width">
+        <title id="title">题解与代码 - 序列（seq） - OI Problems</title>
+        <link rel="shortcut icon" type="image/x-icon" href="https://topan-dev.github.io/TopanUI/favicon.ico">
+        <script src="https://topan-dev.github.io/TopanUI/src/jquery.js"></script>
+        <link rel="stylesheet" href="https://topan-dev.github.io/TopanUI/topan.css">
+        <script src="https://topan-dev.github.io/TopanUI/topan.js"></script>
+        <script src="https://kit.fontawesome.com/0d8081718e.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-light.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+        <script src="/OI/pub/busuanzi.pure.mini.js"></script>
+        <script src="/OI/pub/main.js"></script>
+        <link rel="stylesheet" href="/OI/pub/main.css">
+        
+    </head>
+    <body>
+        <div class="topan-header">
+            <div class="topan-header-home">
+                <a href="/OI">
+                    <button class="topan-button-ordinary topan-button-commonly topan-button-header-round-left">
+                        <i class="fa fa-home"></i>
+                    </button>
+                </a>
+            </div>
+            <div class="topan-header-left">
+                <span class="topan-header-text">OI Problems&nbsp;</span>
+                <a href="/OI/about">
+                    <span class="topan-button-ordinary topan-button-commonly topan-button-header-block">
+                        <i class="fa fa-solid fa-circle-info"></i>
+                        <span>&nbsp;关于</span>
+                    </span>
+                </a>
+                
+                
+            </div>
+            <div class="topan-header-right">
+            </div>
+        </div>
+        <div class="topan-outer">
+            <div class="topan-page">
+                <div class="topan-mainpage-auto">
+                    <br>
+                    <style>
+    .options {
+        font-size: 16px;
+        font-weight: normal;
+    }
+</style>
+
+<script>
+    var Export = () => console.log($('#exportcode').val());
+</script>
+
+<textarea style="display: none;" id="exportcode">## 题解
+
+考虑离线处理这些询问。
+
+将 $R$ 指针扫描 $1$ 到 $n$，对每个 $L$ 维护区间 $[L,R]$ 的权值。
+
+考虑 $R$ 指针从 $x-1$ 移动到 $x$ 产生的影响。
+
+记 $l_i$ 和 $r_i$ 分别表示 $i$ 在数列中第一次出现的位置和最后一次出现的位置，容易发现它只影响了满足 $r_i=R$ 的 $i$ 对权值的贡献。即所有区间 $[L,R=x]$ 都需要与 $i$ 取 $\max$。
+
+注意到区间总是单调不升的，所以操作转化为区间修改操作。
+
+而所有子区间和可以转化为历史版本和，使用线段树维护 $3\times 3$ 矩阵做。
+
+```cpp
+// 2023.10.18
+
+#include&lt;bits/stdc++.h&gt;
+using namespace std;
+
+struct Matrix{
+    long long a[3][3];
+    Matrix operator*(Matrix m)const{
+        Matrix ret={{{0,0,0},{0,0,0},{0,0,0}}};
+        for(int k=0;k&lt;3;k++)
+            for(int i=0;i&lt;3;i++)
+                for(int j=0;j&lt;3;j++)
+                    ret.a[i][j]+=a[i][k]*m.a[k][j];
+        return ret;
+    }
+    Matrix operator+(Matrix m)const{
+        Matrix ret;
+        for(int i=0;i&lt;3;i++)
+            for(int j=0;j&lt;3;j++)
+                ret.a[i][j]=a[i][j]+m.a[i][j];
+        return ret;
+    }
+    bool operator!=(Matrix m)const{
+        for(int i=0;i&lt;3;i++)
+            for(int j=0;j&lt;3;j++)
+                if(a[i][j]!=m.a[i][j])return true;
+        return false;
+    }
+};
+
+struct SegmentTree{
+    struct Node{
+        int l,r;
+        Matrix val,tag;
+    }node[12000001];
+    const Matrix defaultTag={{{1,0,0},{0,1,0},{0,0,1}}};
+    const Matrix defaultValue={{{0,0,0},{0,0,0},{0,0,1}}};
+
+    void mul(int id,Matrix val){
+        node[id].val=val*node[id].val;
+        node[id].tag=val*node[id].tag;
+    }
+    void pushup(int id){
+        node[id].val=node[id&lt;&lt;1].val+node[id&lt;&lt;1|1].val;
+    }
+    void pushdown(int id){
+        if(node[id].tag!=defaultTag){
+            mul(id&lt;&lt;1,node[id].tag);
+            mul(id&lt;&lt;1|1,node[id].tag);
+            node[id].tag=defaultTag;
+        }
+    }
+
+    void build(int id,int l,int r){
+        node[id].tag=defaultTag;
+        node[id].l=l,node[id].r=r;
+        if(l==r)node[id].val=defaultValue;
+        else{
+            int mid=l+r&gt;&gt;1;
+            build(id&lt;&lt;1,l,mid);
+            build(id&lt;&lt;1|1,mid+1,r);
+            pushup(id);
+        }
+    }
+
+    void updateMulti(int id,int l,int r,Matrix val){
+        if(l&lt;=node[id].l&amp;&amp;node[id].r&lt;=r){mul(id,val);return;}
+        int mid=node[id].l+node[id].r&gt;&gt;1;
+        pushdown(id);
+        if(l&lt;=mid)updateMulti(id&lt;&lt;1,l,r,val);
+        if(mid&lt;r)updateMulti(id&lt;&lt;1|1,l,r,val);
+        pushup(id);
+    }
+    
+    Matrix query(int id,int l,int r){
+        if(l&lt;=node[id].l&amp;&amp;node[id].r&lt;=r)return node[id].val;
+        int mid=node[id].l+node[id].r&gt;&gt;1;
+        Matrix ret={{{0,0,0},{0,0,0},{0,0,0}}};
+        if(l&lt;=mid)ret=ret+query(id&lt;&lt;1,l,r);
+        if(mid&lt;r)ret=ret+query(id&lt;&lt;1|1,l,r);
+        return node[id].tag*ret;
+    }
+}_;
+
+int n,q,a[3000001],l[3000001],r[3000001];
+long long answer[3000001];
+
+struct Query{
+    int l,r,qid;
+    bool operator&lt;(Query q)const{
+        return r&lt;q.r;
+    }
+}Q[3000001];
+
+set&lt;pair&lt;int,int&gt; &gt; S;
+
+int main(){
+    scanf(&#34;%d%d&#34;,&amp;n,&amp;q);
+    for(int i=1;i&lt;=n;i++)
+        scanf(&#34;%d&#34;,a+i);
+    for(int i=n;i&gt;=1;i--)l[a[i]]=i;
+    for(int i=1;i&lt;=n;i++)r[a[i]]=i;
+    for(int i=1;i&lt;=q;i++){
+        int l,r;
+        scanf(&#34;%d%d&#34;,&amp;l,&amp;r);
+        Q[i]={l,r,i};
+    }
+    sort(Q+1,Q+1+q);
+    _.build(1,1,n);
+    int now=0;
+    for(int i=1;i&lt;=n;i++){
+        if(r[a[i]]==i){
+            pair&lt;int,int&gt; tmp={l[a[i]],a[i]};
+            Matrix setTo={{{0,0,a[i]},{0,1,0},{0,0,1}}};
+            auto it=S.lower_bound(tmp);
+            if(it==S.end()||a[i]&gt;it-&gt;second){
+                if(it==S.begin()){
+                    S.insert(tmp);
+                    _.updateMulti(1,1,tmp.first,setTo);
+                }
+                else{
+                    it--;
+                    while(it!=S.begin()&amp;&amp;a[i]&gt;it-&gt;second)S.erase(it--);
+                    if(a[i]&gt;it-&gt;second){
+                        S.erase(it);
+                        _.updateMulti(1,1,tmp.first,setTo);
+                    }
+                    else _.updateMulti(1,it-&gt;first+1,tmp.first,setTo);
+                    S.insert(tmp);
+                }
+            }
+        }
+        _.mul(1,{{{1,0,0},{1,1,0},{0,0,1}}});
+        while(now&lt;q&amp;&amp;Q[now+1].r==i){
+            now++;
+            answer[Q[now].qid]=_.query(1,Q[now].l,i).a[1][2];
+        }
+    }
+    for(int i=1;i&lt;=q;i++)printf(&#34;%lld\n&#34;,answer[i]);
+    return 0;
+}
+```</textarea>
+<div class="row">
+    <div class="column-one-fifth">
+        <div style="padding-right: 0px;">
+            <div class="topan-section-shadow">
+                <h2>序列（seq）</h2>
+                <a class="topan-menu-option" href="/OI/problem/3f3fy1"><i class="fa fa-regular fa-flag"></i>&nbsp;&nbsp;查看题目</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/3f3fy1/solution"><i class="fa fa-solid fa-book"></i>&nbsp;&nbsp;题解与代码</a>
+                
+                <a class="topan-menu-option" href="/OI/problem/3f3fy1/comment"><i class="fa fa-sharp fa-regular fa-comments"></i>&nbsp;&nbsp;评论</a>
+            </div>
+        </div>
+    </div>
+    <div class="column-four-fifth">
+        <div style="padding-left: 20px;">
+            
+                <div class="topan-section-shadow">
+                    <h2>
+                        题解
+                        
+                    </h2>
+                    
+                    <p>考虑离线处理这些询问。</p>
+<p>将 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi></mrow><annotation encoding="application/x-tex">R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.68333em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.00773em;">R</span></span></span></span> 指针扫描 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>1</mn></mrow><annotation encoding="application/x-tex">1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">1</span></span></span></span> 到 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>n</mi></mrow><annotation encoding="application/x-tex">n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">n</span></span></span></span>，对每个 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>L</mi></mrow><annotation encoding="application/x-tex">L</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.68333em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">L</span></span></span></span> 维护区间 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>[</mo><mi>L</mi><mo separator="true">,</mo><mi>R</mi><mo>]</mo></mrow><annotation encoding="application/x-tex">[L,R]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">[</span><span class="mord mathit">L</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.00773em;">R</span><span class="mclose">]</span></span></span></span> 的权值。</p>
+<p>考虑 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>R</mi></mrow><annotation encoding="application/x-tex">R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.68333em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit" style="margin-right:0.00773em;">R</span></span></span></span> 指针从 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">x-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord mathit">x</span><span class="mbin">−</span><span class="mord mathrm">1</span></span></span></span> 移动到 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">x</span></span></span></span> 产生的影响。</p>
+<p>记 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>l</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">l_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.69444em;"></span><span class="strut bottom" style="height:0.84444em;vertical-align:-0.15em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit" style="margin-right:0.01968em;">l</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.01968em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 和 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>r</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">r_i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span></span></span></span> 分别表示 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.65952em;"></span><span class="strut bottom" style="height:0.65952em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">i</span></span></span></span> 在数列中第一次出现的位置和最后一次出现的位置，容易发现它只影响了满足 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>r</mi><mi>i</mi></msub><mo>=</mo><mi>R</mi></mrow><annotation encoding="application/x-tex">r_i=R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.68333em;"></span><span class="strut bottom" style="height:0.83333em;vertical-align:-0.15em;"></span><span class="base textstyle uncramped"><span class="mord"><span class="mord mathit" style="margin-right:0.02778em;">r</span><span class="vlist"><span style="top:0.15em;margin-right:0.05em;margin-left:-0.02778em;"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span><span class="reset-textstyle scriptstyle cramped"><span class="mord mathit">i</span></span></span><span class="baseline-fix"><span class="fontsize-ensurer reset-size5 size5"><span style="font-size:0em;">​</span></span>​</span></span></span><span class="mrel">=</span><span class="mord mathit" style="margin-right:0.00773em;">R</span></span></span></span> 的 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.65952em;"></span><span class="strut bottom" style="height:0.65952em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">i</span></span></span></span> 对权值的贡献。即所有区间 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>[</mo><mi>L</mi><mo separator="true">,</mo><mi>R</mi><mo>=</mo><mi>x</mi><mo>]</mo></mrow><annotation encoding="application/x-tex">[L,R=x]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.75em;"></span><span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span><span class="base textstyle uncramped"><span class="mopen">[</span><span class="mord mathit">L</span><span class="mpunct">,</span><span class="mord mathit" style="margin-right:0.00773em;">R</span><span class="mrel">=</span><span class="mord mathit">x</span><span class="mclose">]</span></span></span></span> 都需要与 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>i</mi></mrow><annotation encoding="application/x-tex">i</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.65952em;"></span><span class="strut bottom" style="height:0.65952em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathit">i</span></span></span></span> 取 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>max</mi></mrow><annotation encoding="application/x-tex">\max</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.43056em;"></span><span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mop">max</span></span></span></span>。</p>
+<p>注意到区间总是单调不升的，所以操作转化为区间修改操作。</p>
+<p>而所有子区间和可以转化为历史版本和，使用线段树维护 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>3</mn><mo>×</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">3\times 3</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.72777em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">3</span><span class="mbin">×</span><span class="mord mathrm">3</span></span></span></span> 矩阵做。</p>
+
+                    
+                        <div class="topan-fold">
+                            <details><summary><i class="fa fa-solid fa-code"></i>&nbsp;&nbsp;代码</summary></details>
+                            <dl>
+                                <pre class="remove-style"><code><span class="hljs-comment">// 2023.10.18</span>
+
+<span class="hljs-meta">#<span class="hljs-keyword">include</span><span class="hljs-string">&lt;bits/stdc++.h&gt;</span></span>
+<span class="hljs-keyword">using</span> <span class="hljs-keyword">namespace</span> std;
+
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">Matrix</span>{
+    <span class="hljs-type">long</span> <span class="hljs-type">long</span> a[<span class="hljs-number">3</span>][<span class="hljs-number">3</span>];
+    Matrix <span class="hljs-keyword">operator</span>*(Matrix m)<span class="hljs-type">const</span>{
+        Matrix ret={{{<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>},{<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>},{<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>}}};
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> k=<span class="hljs-number">0</span>;k&lt;<span class="hljs-number">3</span>;k++)
+            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;i&lt;<span class="hljs-number">3</span>;i++)
+                <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">0</span>;j&lt;<span class="hljs-number">3</span>;j++)
+                    ret.a[i][j]+=a[i][k]*m.a[k][j];
+        <span class="hljs-keyword">return</span> ret;
+    }
+    Matrix <span class="hljs-keyword">operator</span>+(Matrix m)<span class="hljs-type">const</span>{
+        Matrix ret;
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;i&lt;<span class="hljs-number">3</span>;i++)
+            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">0</span>;j&lt;<span class="hljs-number">3</span>;j++)
+                ret.a[i][j]=a[i][j]+m.a[i][j];
+        <span class="hljs-keyword">return</span> ret;
+    }
+    <span class="hljs-type">bool</span> <span class="hljs-keyword">operator</span>!=(Matrix m)<span class="hljs-type">const</span>{
+        <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">0</span>;i&lt;<span class="hljs-number">3</span>;i++)
+            <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> j=<span class="hljs-number">0</span>;j&lt;<span class="hljs-number">3</span>;j++)
+                <span class="hljs-keyword">if</span>(a[i][j]!=m.a[i][j])<span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+    }
+};
+
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">SegmentTree</span>{
+    <span class="hljs-keyword">struct</span> <span class="hljs-title class_">Node</span>{
+        <span class="hljs-type">int</span> l,r;
+        Matrix val,tag;
+    }node[<span class="hljs-number">12000001</span>];
+    <span class="hljs-type">const</span> Matrix defaultTag={{{<span class="hljs-number">1</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>},{<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">0</span>},{<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">1</span>}}};
+    <span class="hljs-type">const</span> Matrix defaultValue={{{<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>},{<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>},{<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">1</span>}}};
+
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">mul</span><span class="hljs-params">(<span class="hljs-type">int</span> id,Matrix val)</span></span>{
+        node[id].val=val*node[id].val;
+        node[id].tag=val*node[id].tag;
+    }
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">pushup</span><span class="hljs-params">(<span class="hljs-type">int</span> id)</span></span>{
+        node[id].val=node[id&lt;&lt;<span class="hljs-number">1</span>].val+node[id&lt;&lt;<span class="hljs-number">1</span>|<span class="hljs-number">1</span>].val;
+    }
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">pushdown</span><span class="hljs-params">(<span class="hljs-type">int</span> id)</span></span>{
+        <span class="hljs-keyword">if</span>(node[id].tag!=defaultTag){
+            <span class="hljs-built_in">mul</span>(id&lt;&lt;<span class="hljs-number">1</span>,node[id].tag);
+            <span class="hljs-built_in">mul</span>(id&lt;&lt;<span class="hljs-number">1</span>|<span class="hljs-number">1</span>,node[id].tag);
+            node[id].tag=defaultTag;
+        }
+    }
+
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">build</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r)</span></span>{
+        node[id].tag=defaultTag;
+        node[id].l=l,node[id].r=r;
+        <span class="hljs-keyword">if</span>(l==r)node[id].val=defaultValue;
+        <span class="hljs-keyword">else</span>{
+            <span class="hljs-type">int</span> mid=l+r&gt;&gt;<span class="hljs-number">1</span>;
+            <span class="hljs-built_in">build</span>(id&lt;&lt;<span class="hljs-number">1</span>,l,mid);
+            <span class="hljs-built_in">build</span>(id&lt;&lt;<span class="hljs-number">1</span>|<span class="hljs-number">1</span>,mid+<span class="hljs-number">1</span>,r);
+            <span class="hljs-built_in">pushup</span>(id);
+        }
+    }
+
+    <span class="hljs-function"><span class="hljs-type">void</span> <span class="hljs-title">updateMulti</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r,Matrix val)</span></span>{
+        <span class="hljs-keyword">if</span>(l&lt;=node[id].l&amp;&amp;node[id].r&lt;=r){<span class="hljs-built_in">mul</span>(id,val);<span class="hljs-keyword">return</span>;}
+        <span class="hljs-type">int</span> mid=node[id].l+node[id].r&gt;&gt;<span class="hljs-number">1</span>;
+        <span class="hljs-built_in">pushdown</span>(id);
+        <span class="hljs-keyword">if</span>(l&lt;=mid)<span class="hljs-built_in">updateMulti</span>(id&lt;&lt;<span class="hljs-number">1</span>,l,r,val);
+        <span class="hljs-keyword">if</span>(mid&lt;r)<span class="hljs-built_in">updateMulti</span>(id&lt;&lt;<span class="hljs-number">1</span>|<span class="hljs-number">1</span>,l,r,val);
+        <span class="hljs-built_in">pushup</span>(id);
+    }
+    
+    <span class="hljs-function">Matrix <span class="hljs-title">query</span><span class="hljs-params">(<span class="hljs-type">int</span> id,<span class="hljs-type">int</span> l,<span class="hljs-type">int</span> r)</span></span>{
+        <span class="hljs-keyword">if</span>(l&lt;=node[id].l&amp;&amp;node[id].r&lt;=r)<span class="hljs-keyword">return</span> node[id].val;
+        <span class="hljs-type">int</span> mid=node[id].l+node[id].r&gt;&gt;<span class="hljs-number">1</span>;
+        Matrix ret={{{<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>},{<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>},{<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>}}};
+        <span class="hljs-keyword">if</span>(l&lt;=mid)ret=ret+<span class="hljs-built_in">query</span>(id&lt;&lt;<span class="hljs-number">1</span>,l,r);
+        <span class="hljs-keyword">if</span>(mid&lt;r)ret=ret+<span class="hljs-built_in">query</span>(id&lt;&lt;<span class="hljs-number">1</span>|<span class="hljs-number">1</span>,l,r);
+        <span class="hljs-keyword">return</span> node[id].tag*ret;
+    }
+}_;
+
+<span class="hljs-type">int</span> n,q,a[<span class="hljs-number">3000001</span>],l[<span class="hljs-number">3000001</span>],r[<span class="hljs-number">3000001</span>];
+<span class="hljs-type">long</span> <span class="hljs-type">long</span> answer[<span class="hljs-number">3000001</span>];
+
+<span class="hljs-keyword">struct</span> <span class="hljs-title class_">Query</span>{
+    <span class="hljs-type">int</span> l,r,qid;
+    <span class="hljs-type">bool</span> <span class="hljs-keyword">operator</span>&lt;(Query q)<span class="hljs-type">const</span>{
+        <span class="hljs-keyword">return</span> r&lt;q.r;
+    }
+}Q[<span class="hljs-number">3000001</span>];
+
+set&lt;pair&lt;<span class="hljs-type">int</span>,<span class="hljs-type">int</span>&gt; &gt; S;
+
+<span class="hljs-function"><span class="hljs-type">int</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span>{
+    <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d&quot;</span>,&amp;n,&amp;q);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d&quot;</span>,a+i);
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=n;i&gt;=<span class="hljs-number">1</span>;i--)l[a[i]]=i;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++)r[a[i]]=i;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=q;i++){
+        <span class="hljs-type">int</span> l,r;
+        <span class="hljs-built_in">scanf</span>(<span class="hljs-string">&quot;%d%d&quot;</span>,&amp;l,&amp;r);
+        Q[i]={l,r,i};
+    }
+    <span class="hljs-built_in">sort</span>(Q+<span class="hljs-number">1</span>,Q+<span class="hljs-number">1</span>+q);
+    _.<span class="hljs-built_in">build</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,n);
+    <span class="hljs-type">int</span> now=<span class="hljs-number">0</span>;
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=n;i++){
+        <span class="hljs-keyword">if</span>(r[a[i]]==i){
+            pair&lt;<span class="hljs-type">int</span>,<span class="hljs-type">int</span>&gt; tmp={l[a[i]],a[i]};
+            Matrix setTo={{{<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,a[i]},{<span class="hljs-number">0</span>,<span class="hljs-number">1</span>,<span class="hljs-number">0</span>},{<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">1</span>}}};
+            <span class="hljs-keyword">auto</span> it=S.<span class="hljs-built_in">lower_bound</span>(tmp);
+            <span class="hljs-keyword">if</span>(it==S.<span class="hljs-built_in">end</span>()||a[i]&gt;it-&gt;second){
+                <span class="hljs-keyword">if</span>(it==S.<span class="hljs-built_in">begin</span>()){
+                    S.<span class="hljs-built_in">insert</span>(tmp);
+                    _.<span class="hljs-built_in">updateMulti</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,tmp.first,setTo);
+                }
+                <span class="hljs-keyword">else</span>{
+                    it--;
+                    <span class="hljs-keyword">while</span>(it!=S.<span class="hljs-built_in">begin</span>()&amp;&amp;a[i]&gt;it-&gt;second)S.<span class="hljs-built_in">erase</span>(it--);
+                    <span class="hljs-keyword">if</span>(a[i]&gt;it-&gt;second){
+                        S.<span class="hljs-built_in">erase</span>(it);
+                        _.<span class="hljs-built_in">updateMulti</span>(<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,tmp.first,setTo);
+                    }
+                    <span class="hljs-keyword">else</span> _.<span class="hljs-built_in">updateMulti</span>(<span class="hljs-number">1</span>,it-&gt;first+<span class="hljs-number">1</span>,tmp.first,setTo);
+                    S.<span class="hljs-built_in">insert</span>(tmp);
+                }
+            }
+        }
+        _.<span class="hljs-built_in">mul</span>(<span class="hljs-number">1</span>,{{{<span class="hljs-number">1</span>,<span class="hljs-number">0</span>,<span class="hljs-number">0</span>},{<span class="hljs-number">1</span>,<span class="hljs-number">1</span>,<span class="hljs-number">0</span>},{<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-number">1</span>}}});
+        <span class="hljs-keyword">while</span>(now&lt;q&amp;&amp;Q[now+<span class="hljs-number">1</span>].r==i){
+            now++;
+            answer[Q[now].qid]=_.<span class="hljs-built_in">query</span>(<span class="hljs-number">1</span>,Q[now].l,i).a[<span class="hljs-number">1</span>][<span class="hljs-number">2</span>];
+        }
+    }
+    <span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> i=<span class="hljs-number">1</span>;i&lt;=q;i++)<span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%lld\n&quot;</span>,answer[i]);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre>
+                            </dl>
+                        </div>
+                    
+                </div>
+            
+        </div>
+    </div>
+</div>
+                    <br>
+                </div>
+                <footer class="topan-footer">
+                    <p></p>
+                    <p style="text-align: center; color: #555; font-size: 12px;">
+                        Powered by <a href="https://github.com/Molmin/OI.git">Molmin/OI</a>&nbsp;&nbsp;&nbsp;
+                        © 2023 <a href="https://github.com/Molmin/">Milmon</a>&nbsp;&nbsp;&nbsp;
+                        <i class="fa fa-solid fa-eye"></i> 访客数量：<span id="busuanzi_value_site_pv">0</span>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </body>
+</html>
+    
