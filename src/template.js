@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs'
-var System = JSON.parse(readFileSync('./data/system.json'))
+let System = JSON.parse(readFileSync('./data/system.json'))
 
 export default (config, HTML) => {
     System = JSON.parse(readFileSync('./data/system.json'))

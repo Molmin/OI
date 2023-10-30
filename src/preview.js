@@ -8,10 +8,10 @@ import Tag from './lib/tag.js'
 import MarkdownIt from './lib/markdown.js'
 
 const router = Router()
-var System = JSON.parse(fs.readFileSync('./data/system.json'))
+let System = JSON.parse(fs.readFileSync('./data/system.json'))
 
 router.get('/', (req, res) => {
-  var problemList = fs.readFileSync('data/problem.json', 'utf8')
+  let problemList = fs.readFileSync('data/problem.json', 'utf8')
   problemList = JSON.parse(problemList)
   System = JSON.parse(fs.readFileSync('./data/system.json'))
   renderFile("./src/templates/problem_list.html",
@@ -40,7 +40,7 @@ router.get('/about', (req, res) => {
 
 router.get('/problem/:pid', (req, res) => {
   System = JSON.parse(fs.readFileSync('./data/system.json'))
-  var prodata = JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
+  let prodata = JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
   prodata.pid = req.params.pid
   renderFile("./src/templates/problem_detail.html",
     { isadmin: req.logined, System, prodata, fs, MarkdownIt, Tag }, (err, HTML) => {
@@ -54,7 +54,7 @@ router.get('/problem/:pid', (req, res) => {
 })
 router.get('/problem/:pid/solution', (req, res) => {
   System = JSON.parse(fs.readFileSync('./data/system.json'))
-  var prodata = JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
+  let prodata = JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
   prodata.pid = req.params.pid
   renderFile("./src/templates/problem_solution.html",
     { isadmin: req.logined, System, prodata, MarkdownIt, fs, highlightjs }, (err, HTML) => {
@@ -68,7 +68,7 @@ router.get('/problem/:pid/solution', (req, res) => {
 })
 router.get('/problem/:pid/statements', (req, res) => {
   System = JSON.parse(fs.readFileSync('./data/system.json'))
-  var prodata = JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
+  let prodata = JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
   prodata.pid = req.params.pid
   renderFile("./src/templates/problem_statements_list.html",
     { isadmin: req.logined, System, prodata, MarkdownIt, fs }, (err, HTML) => {
@@ -82,7 +82,7 @@ router.get('/problem/:pid/statements', (req, res) => {
 })
 router.get('/problem/:pid/comment', (req, res) => {
   System = JSON.parse(fs.readFileSync('./data/system.json'))
-  var prodata = JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
+  let prodata = JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
   prodata.pid = req.params.pid
   renderFile("./src/templates/problem_comment.html",
     { isadmin: req.logined, prodata, System }, (err, HTML) => {
@@ -96,7 +96,7 @@ router.get('/problem/:pid/comment', (req, res) => {
 })
 router.get('/problem/:pid/files', (req, res) => {
   System = JSON.parse(fs.readFileSync('./data/system.json'))
-  var prodata = JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
+  let prodata = JSON.parse(fs.readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
   prodata.pid = req.params.pid
   renderFile("./src/templates/problem_files.html",
     { isadmin: req.logined, fileSize, System, prodata, fs }, (err, HTML) => {

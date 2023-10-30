@@ -3,7 +3,7 @@ const router = Router()
 import { renderFile } from 'ejs'
 import { readFileSync, writeFileSync, mkdirSync, unlinkSync } from 'fs'
 import Template from './template.js'
-var System = JSON.parse(readFileSync('./data/system.json'))
+let System = JSON.parse(readFileSync('./data/system.json'))
 import { checkloginByReq, checkloginByPassword, Encode } from './lib/admin.js'
 import { parse } from 'url'
 import deletedir from './lib/deletedir.js'
@@ -115,7 +115,7 @@ router.get('/logout', (req, res) => {
   if (req.logined) {
     res.cookie("oiblog-cookie", '')
     if (!req.headers.referer) return res.redirect("/")
-    var direct = parse(req.headers.referer)
+    let direct = parse(req.headers.referer)
     if (direct.host != req.headers.host) res.redirect("/")
     else res.redirect(direct.href)
   }
@@ -136,7 +136,7 @@ router.get('/create', (req, res) => {
 })
 router.get('/problem/:pid/config', (req, res) => {
   System = JSON.parse(readFileSync('./data/system.json'))
-  var prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
+  let prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
   prodata.pid = req.params.pid
   renderFile("./src/templates/problem_config.html",
     { isadmin: req.logined, System, prodata }, (err, HTML) => {
@@ -150,16 +150,16 @@ router.get('/problem/:pid/config', (req, res) => {
 })
 router.post('/problem/:pid/edit', (req, res) => {
   if (req.params.pid == '0') {
-    var pid = "", charlist = "abcdefghijklmnopqrstuvwxyz01234567890123456789"
-    for (var i = 0; i < 6; i++)
+    let pid = "", charlist = "abcdefghijklmnopqrstuvwxyz01234567890123456789"
+    for (let i = 0; i < 6; i++)
       pid += charlist[parseInt(Math.random() * charlist.length)]
-    var problemList = readFileSync('data/problem.json', 'utf8')
-    var tmp = JSON.parse(problemList)
+    let problemList = readFileSync('data/problem.json', 'utf8')
+    let tmp = JSON.parse(problemList)
     tmp.push(pid)
     problemList = JSON.stringify(tmp, null, "  ")
     writeFileSync('data/problem.json', problemList)
     mkdirSync(`data/${pid}`)
-    var problemConfig = JSON.parse(req.body.prodata)
+    let problemConfig = JSON.parse(req.body.prodata)
     problemConfig.statement = { "简体中文": "statement_zh.md" }
     problemConfig.solution = []
     writeFileSync(`data/${pid}/config.json`, JSON.stringify(problemConfig, null, "  "))
@@ -168,14 +168,14 @@ router.post('/problem/:pid/edit', (req, res) => {
     res.status(200).json({ pid })
   }
   else {
-    var prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
-    var problemConfig = JSON.parse(req.body.prodata)
+    let prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
+    let problemConfig = JSON.parse(req.body.prodata)
     prodata.title = problemConfig.title
     prodata.difficulty = problemConfig.difficulty
     prodata.judge = problemConfig.judge
     prodata.tags = problemConfig.tags
     prodata.source = problemConfig.source
-    var opId = newOperationId()
+    let opId = newOperationId()
     backupFile(opId, `${req.params.pid}/config.json`)
     writeFileSync(`data/${req.params.pid}/config.json`, JSON.stringify(prodata, null, "  "))
     log(req, `edited a problem (${req.params.pid})`, opId)
@@ -183,12 +183,12 @@ router.post('/problem/:pid/edit', (req, res) => {
   }
 })
 router.post('/problem/:pid/delete', (req, res) => {
-  var opId = newOperationId()
+  let opId = newOperationId()
   backupFile(opId, `${req.params.pid}`, true)
   deletedir(`data/${req.params.pid}`)
-  var problemList = readFileSync('data/problem.json', 'utf8')
-  var tmp = JSON.parse(problemList)
-  var i = 0
+  let problemList = readFileSync('data/problem.json', 'utf8')
+  let tmp = JSON.parse(problemList)
+  let i = 0
   while (tmp[i] && tmp[i] != req.params.pid) i++
   tmp.splice(i, 1)
   problemList = JSON.stringify(tmp, null, "  ")
@@ -199,7 +199,7 @@ router.post('/problem/:pid/delete', (req, res) => {
 
 router.get('/problem/:pid/statement/create', (req, res) => {
   System = JSON.parse(readFileSync('./data/system.json'))
-  var prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
+  let prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
   prodata.pid = req.params.pid
   renderFile("./src/templates/problem_statement_create.html",
     { isadmin: req.logined, System, prodata }, (err, HTML) => {
@@ -212,10 +212,10 @@ router.get('/problem/:pid/statement/create', (req, res) => {
     })
 })
 router.post('/problem/:pid/statement/create', (req, res) => {
-  var prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
+  let prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
   if (prodata.statement[req.body.name]) req.body.name += ' (1)'
   prodata.statement[req.body.name] = req.body.file
-  var opId = newOperationId()
+  let opId = newOperationId()
   backupFile(opId, `${req.params.pid}/${req.body.file}`)
   backupFile(opId, `${req.params.pid}/config.json`)
   writeFileSync(`data/${req.params.pid}/${req.body.file}`, req.body.code)
@@ -225,7 +225,7 @@ router.post('/problem/:pid/statement/create', (req, res) => {
 })
 router.get('/problem/:pid/statement/:statementName/edit', (req, res) => {
   System = JSON.parse(readFileSync('./data/system.json'))
-  var prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
+  let prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
   prodata.pid = req.params.pid
   renderFile("./src/templates/problem_statement_edit.html",
     { isadmin: req.logined, System, prodata, statementName: req.params.statementName, fs }, (err, HTML) => {
@@ -238,21 +238,21 @@ router.get('/problem/:pid/statement/:statementName/edit', (req, res) => {
     })
 })
 router.post('/problem/:pid/statement/:statementName/delete', (req, res) => {
-  var prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
+  let prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
   {
-    var total = 0
-    for (var key in prodata.statement) total++
+    let total = 0
+    for (let key in prodata.statement) total++
     if (total < 2) {
       res.status(200).json({})
       return
     }
   }
-  var key = req.params.statementName
+  let key = req.params.statementName
   if (!prodata.statement[key]) {
     res.status(200).json({})
     return
   }
-  var opId = newOperationId()
+  let opId = newOperationId()
   backupFile(opId, `${req.params.pid}/${prodata.statement[key]}`)
   backupFile(opId, `${req.params.pid}/config.json`)
   unlinkSync(`data/${req.params.pid}/${prodata.statement[key]}`, err => { })
@@ -262,9 +262,9 @@ router.post('/problem/:pid/statement/:statementName/delete', (req, res) => {
   res.status(200).json({})
 })
 router.post('/problem/:pid/statement/:statementName/edit', (req, res) => {
-  var prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
-  var key = req.params.statementName
-  var opId = newOperationId()
+  let prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
+  let key = req.params.statementName
+  let opId = newOperationId()
   backupFile(opId, `${req.params.pid}/${prodata.statement[key]}`)
   backupFile(opId, `${req.params.pid}/config.json`)
   unlinkSync(`data/${req.params.pid}/${prodata.statement[key]}`, err => { })
@@ -278,9 +278,9 @@ router.post('/problem/:pid/statement/:statementName/edit', (req, res) => {
 })
 
 router.post('/problem/:pid/solution/:para/delete', (req, res) => {
-  var prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
-  var tmp = prodata.solution[req.params.para]
-  var opId = newOperationId()
+  let prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
+  let tmp = prodata.solution[req.params.para]
+  let opId = newOperationId()
   backupFile(opId, `${req.params.pid}/config.json`)
   backupFile(opId, `${req.params.pid}/${prodata.solution[req.params.para].file}`)
   unlinkSync(`data/${req.params.pid}/${prodata.solution[req.params.para].file}`)
@@ -294,7 +294,7 @@ router.post('/problem/:pid/solution/:para/delete', (req, res) => {
 })
 router.get('/problem/:pid/solution/:para/edit', (req, res) => {
   System = JSON.parse(readFileSync('./data/system.json'))
-  var prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
+  let prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
   prodata.pid = req.params.pid
   renderFile("./src/templates/problem_solution_edit.html",
     { isadmin: req.logined, System, fs, prodata, paraId: req.params.para }, (err, HTML) => {
@@ -307,8 +307,8 @@ router.get('/problem/:pid/solution/:para/edit', (req, res) => {
     })
 })
 router.post('/problem/:pid/solution/:para/edit', (req, res) => {
-  var prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
-  var opId = newOperationId()
+  let prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
+  let opId = newOperationId()
   backupFile(opId, `${req.params.pid}/config.json`)
   backupFile(opId, `${req.params.pid}/${prodata.solution[req.params.para].file}`)
   unlinkSync(`data/${req.params.pid}/${prodata.solution[req.params.para].file}`)
@@ -322,7 +322,7 @@ router.post('/problem/:pid/solution/:para/edit', (req, res) => {
 })
 router.get('/problem/:pid/solution/:para/editcode', (req, res) => {
   System = JSON.parse(readFileSync('./data/system.json'))
-  var prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
+  let prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
   prodata.pid = req.params.pid
   renderFile("./src/templates/problem_solution_editcode.html",
     { isadmin: req.logined, System, fs, prodata, paraId: req.params.para }, (err, HTML) => {
@@ -335,9 +335,9 @@ router.get('/problem/:pid/solution/:para/editcode', (req, res) => {
     })
 })
 router.post('/problem/:pid/solution/:para/editcode', (req, res) => {
-  var prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8')),
+  let prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8')),
     tmp = prodata.solution[req.params.para]
-  var opId = newOperationId()
+  let opId = newOperationId()
   backupFile(opId, `${req.params.pid}/config.json`)
   if (prodata.solution[req.params.para].code)
     unlinkSync(`data/${req.params.pid}/${prodata.solution[req.params.para].code}`),
@@ -353,7 +353,7 @@ router.post('/problem/:pid/solution/:para/editcode', (req, res) => {
 })
 router.get('/problem/:pid/solution/:para/insert', (req, res) => {
   System = JSON.parse(readFileSync('./data/system.json'))
-  var prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
+  let prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
   prodata.pid = req.params.pid
   renderFile("./src/templates/problem_solution_insert.html",
     { isadmin: req.logined, System, prodata, paraId: req.params.para }, (err, HTML) => {
@@ -366,7 +366,7 @@ router.get('/problem/:pid/solution/:para/insert', (req, res) => {
     })
 })
 router.post('/problem/:pid/solution/:para/insert', (req, res) => {
-  var prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
+  let prodata = JSON.parse(readFileSync(`data/${req.params.pid}/config.json`, 'utf8'))
   writeFileSync(`data/${req.params.pid}/${req.body.filename}`, req.body.code)
   prodata.solution.splice(req.params.para, 0, {
     title: req.body.title,
