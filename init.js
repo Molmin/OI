@@ -26,13 +26,13 @@ if (!existsSync('data/system.json')) writeFileSync('data/system.json', JSON.stri
     async
 ></script>`,
     repository: {
-        "db": {
-            "repo": "git@github.com:Molmin/OI-data.git",
-            "branch": "data"
+        db: {
+            repo: "git@github.com:Molmin/OI-data.git",
+            branch: "data"
         },
-        "ghpage": {
-            "repo": "git@github.com:Molmin/OI.git",
-            "branch": "gh-pages"
+        ghpage: {
+            repo: "git@github.com:Molmin/OI.git",
+            branch: "gh-pages"
         }
     },
     on: "OI",

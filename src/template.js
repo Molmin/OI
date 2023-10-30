@@ -1,8 +1,8 @@
 import { readFileSync } from 'fs'
-var System = JSON.parse(readFileSync('./data/system.json'));
+var System = JSON.parse(readFileSync('./data/system.json'))
 
 export default (config, HTML) => {
-    System = JSON.parse(readFileSync('./data/system.json'));
+    System = JSON.parse(readFileSync('./data/system.json'))
     return `
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -78,5 +78,5 @@ export default (config, HTML) => {
         </div>
     </body>
 </html>
-    `;
-};
+    `
+}
