@@ -1,13 +1,14 @@
-module.exports = () => {
+// import fs from 'fs'
+import path from 'path'
+import EJS from 'ejs'
+import Template from './../template.js'
+import highlightjs from 'highlight.js'
+import Tag from './../lib/tag.js'
+import fs from 'node:fs'
+import MarkdownIt from './../lib/markdown.js'
 
-  const fs = require('fs');
-  const path = require('path');
-  const ejs = require('ejs');
-  const Template = require('./../template.js');
-  const highlightjs = require('highlight.js');
-  const Tag = require('./../lib/tag.js');
+function build() {
   var System = JSON.parse(fs.readFileSync('./data/system.json'));
-  var MarkdownIt = require('./../lib/markdown.js');
 
   var deleteDir = (url) => {
     if (fs.existsSync(url)) {
@@ -36,7 +37,7 @@ module.exports = () => {
   problemList = JSON.parse(problemList);
 
   {
-    ejs.renderFile("./src/templates/problem_list.html",
+    EJS.renderFile("./src/templates/problem_list.html",
       { isadmin: false, problemList, fs, System, Tag, eachPage: System.eachPage }, (err, HTML) => {
         fs.writeFileSync("dist/index.html",
           Template({
@@ -47,7 +48,7 @@ module.exports = () => {
       });
   }
 
-  ejs.renderFile(
+  EJS.renderFile(
     "./src/templates/about.html",
     { html: MarkdownIt.render(fs.readFileSync('data/readme.md', 'utf8')) },
     (err, HTML) => {
@@ -64,7 +65,7 @@ module.exports = () => {
   problemList.forEach(pid => {
     var prodata = JSON.parse(fs.readFileSync(`data/${pid}/config.json`, 'utf8'));
     prodata.pid = pid;
-    ejs.renderFile("./src/templates/problem_detail.html",
+    EJS.renderFile("./src/templates/problem_detail.html",
       { isadmin: false, System, prodata, fs, MarkdownIt, Tag }, (err, HTML) => {
         fs.writeFileSync(`dist/problem/${prodata.pid}.html`,
           Template({
@@ -74,7 +75,7 @@ module.exports = () => {
         );
       });
     fs.mkdirSync(`dist/problem/${prodata.pid}`);
-    ejs.renderFile("./src/templates/problem_solution.html",
+    EJS.renderFile("./src/templates/problem_solution.html",
       { isadmin: false, System, prodata, fs, MarkdownIt, highlightjs }, (err, HTML) => {
         fs.writeFileSync(`dist/problem/${prodata.pid}/solution.html`,
           Template({
@@ -83,7 +84,7 @@ module.exports = () => {
           }, HTML)
         );
       });
-    ejs.renderFile("./src/templates/problem_comment.html",
+    EJS.renderFile("./src/templates/problem_comment.html",
       { isadmin: false, System, prodata }, (err, HTML) => {
         fs.writeFileSync(`dist/problem/${prodata.pid}/comment.html`,
           Template({
@@ -99,3 +100,5 @@ module.exports = () => {
   });
 
 }
+
+export default build

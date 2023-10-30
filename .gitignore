@@ -1,5 +1,6 @@
 node_modules/
 .vscode/
+data_1/
 data/
 dist/
 package-lock.json

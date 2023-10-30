@@ -1,13 +1,20 @@
-var MarkdownIt = require('markdown-it')({
+import MarkdownIt from 'markdown-it'
+import MarkdownItKatex from 'markdown-it-katex'
+import MarkdownItImsize from 'markdown-it-imsize'
+import MarkdownItFootnote from 'markdown-it-footnote'
+import MarkdownItHighlightJS from 'markdown-it-highlightjs'
+import MarkdownItContainer from 'markdown-it-container'
+
+var markdown = MarkdownIt({
     html: true,
     linkify: true,
 });
-MarkdownIt.use(require('markdown-it-katex'));
-MarkdownIt.use(require('markdown-it-imsize'));
-MarkdownIt.use(require('markdown-it-footnote'));
-MarkdownIt.use(require('markdown-it-highlightjs'), { inline: true });
+markdown.use(MarkdownItKatex);
+markdown.use(MarkdownItImsize);
+markdown.use(MarkdownItFootnote);
+markdown.use(MarkdownItHighlightJS, { inline: true });
 
-MarkdownIt.use(require('markdown-it-container'), 'warning', {
+markdown.use(MarkdownItContainer, 'warning', {
     validate: (params) =>
         params.includes('note') ||
         params.includes('warning') ||
@@ -19,4 +26,4 @@ MarkdownIt.use(require('markdown-it-container'), 'warning', {
     }
 });
 
-module.exports = MarkdownIt;
+export default markdown

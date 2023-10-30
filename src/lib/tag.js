@@ -1,4 +1,4 @@
-module.exports = (tag) => {
+export default (tag) => {
     var tagname = tag.split('/')[tag.split('/').length - 1];
     var tagtype = 'alg';
     if (tag.split('/')[0] == '时间') tagtype = 'time';
@@ -8,5 +8,5 @@ module.exports = (tag) => {
     var search = { folders: [tag] };
     var searchcode = encodeURIComponent(JSON.stringify(search));
     return `<a href="javascript:directSearch('${searchcode}')"
-      class="tag tag-${tagtype}">${tagname}</a>`;
+        class="tag tag-${tagtype}">${tagname}</a>`;
 }

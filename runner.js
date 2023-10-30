@@ -1,43 +1,53 @@
-const express=require('express'),
-      app=express();
-const fs=require('fs');
-const path=require('path');
-const cors=require('cors');
+import Express from 'express'
+import { readFileSync, writeFileSync } from 'fs'
+import Path from 'path'
+import { fileURLToPath } from 'url'
+import cors from 'cors'
+import BodyParser from 'body-parser'
+import CookieParser from 'cookie-parser'
+import { checkloginByReq } from './src/lib/admin.js'
+
+const app = Express();
 app.use(cors());
-const bodyParser=require('body-parser');
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended:false}));
-const cookieParser=require('cookie-parser');
-app.use(cookieParser());
-var System=JSON.parse(fs.readFileSync('./data/system.json'));
-const Admin=require('./src/lib/admin.js');
+app.use(BodyParser.json());
+app.use(BodyParser.urlencoded({ extended: false }));
+app.use(CookieParser());
+var System = JSON.parse(readFileSync('./data/system.json'));
 
-var password=parseInt(Math.random()*1000000);
-if(System.password)password=System.password;
+var password = parseInt(Math.random() * 1000000);
+if (System.password) password = System.password;
 else console.log(`Password is: ${password}`);
-fs.writeFileSync("password",`${password}`,(err)=>{});
+writeFileSync("password", `${password}`, (err) => { });
 
-app.all('*',(req,res,next)=>{
-    if(Admin.checkloginByReq(req))
-        req.logined=true;
+app.all('*', (req, res, next) => {
+    if (checkloginByReq(req))
+        req.logined = true;
     else
-        res.cookie('oiblog-cookie',''),
-        req.logined=false;
-    res.set('Access-Control-Allow-Origin','*');
-    res.set('Access-Control-Allow-Methods','GET');
-    res.set('Access-Control-Allow-Headers','X-Requested-With, Content-Type');
-    if ('OPTIONS'==req.method)return res.send(200);
+        res.cookie('oiblog-cookie', ''),
+            req.logined = false;
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Methods', 'GET');
+    res.set('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type');
+    if ('OPTIONS' == req.method) return res.send(200);
     next();
 });
 
-app.get("/",(req,res)=>{
+app.get("/", (req, res) => {
     res.redirect(`/${System.on}`);
 });
-app.use("/file",express.static(path.join(__dirname,'src/assets')));
-app.use(`/${System.on}/pub`,express.static(path.join(__dirname,'src/assets/public')));
-app.use(`/${System.on}`,require('./src/preview.js'));
-app.use(`/admin`,require('./src/admin.js'));
 
-app.listen(System.port,()=>{
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = Path.dirname(__filename);
+
+app.use("/file", Express.static(Path.join(__dirname, 'src/assets')));
+app.use(`/${System.on}/pub`, Express.static(Path.join(__dirname, 'src/assets/public')));
+
+import PreviewHandler from './src/preview.js'
+import AdminHandler from './src/admin.js'
+
+app.use(`/${System.on}`, PreviewHandler);
+app.use(`/admin`, AdminHandler);
+
+app.listen(System.port, () => {
     console.log(`Port :${System.port} is opened`);
 });

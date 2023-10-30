@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "",
   "main": "runner.js",
+  "type": "module",
   "scripts": {
     "start": "node runner.js",
     "build": "node src/build/bin.js"

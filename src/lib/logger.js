@@ -1,6 +1,6 @@
-const { readFileSync, writeFileSync, existsSync } = require('fs');
+import { readFileSync, writeFileSync, existsSync } from 'fs';
 
-var log = (req, message, opId) => {
+export const log = (req, message, opId) => {
     var logs;
     if (existsSync('data/system.log'))
         logs = readFileSync("data/system.log", 'utf8');
@@ -9,9 +9,7 @@ var log = (req, message, opId) => {
     writeFileSync('data/system.log', logs);
 };
 
-var list = () => {
+export const list = () => {
     var logs = readFileSync("data/system.log", 'utf8');
     return logs.split('\n').slice(-100).join('\n');
 };
-
-module.exports = { log, list };

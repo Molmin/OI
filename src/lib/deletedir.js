@@ -1,13 +1,12 @@
-const { existsSync, readdirSync, 
-    statSync, unlinkSync, rmdirSync } = require('fs');
-const path = require('path');
+import { existsSync, readdirSync, statSync, unlinkSync, rmdirSync } from 'fs';
+import { join } from 'path';
 
 var deletedir = (url) => {
     if (existsSync(url)) {
         var files = [];
         files = readdirSync(url);
         files.forEach(file => {
-            var curPath = path.join(url, file);
+            var curPath = join(url, file);
             if (statSync(curPath).isDirectory())
                 deletedir(curPath);
             else unlinkSync(curPath);
@@ -16,4 +15,4 @@ var deletedir = (url) => {
     }
 };
 
-module.exports = deletedir;
+export default deletedir;
