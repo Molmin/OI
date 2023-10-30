@@ -30,6 +30,12 @@ git clone https://github.com/Molmin/OI.git
 npm install
 ```
 
+再初始化数据库：
+
+```shell
+node init.js
+```
+
 然后就可以启动项目：
 
 ```shell
